@@ -1,0 +1,1 @@
+export { StorageImage } from "./StorageImage";

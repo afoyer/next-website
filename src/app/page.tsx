@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/StorageImage";
 import Image from "next/image";
 
 export default function Home() {
@@ -58,6 +59,12 @@ export default function Home() {
           >
             Documentation
           </a>
+          <StorageImage
+            storagePath="public/pantonify/current.png"
+            alt="Hero image"
+            width={100}
+            height={100}
+          />
         </div>
       </main>
     </div>
