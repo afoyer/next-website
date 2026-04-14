@@ -1,18 +1,16 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { registerTransitionElements } from "@/lib/page-transition";
+import { registerTransitionElements, TRANSITION_CONFIG } from "@/lib/page-transition";
 
 export default function PageTransition() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const blurRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (containerRef.current && blurRef.current && bgRef.current && labelRef.current) {
+    if (containerRef.current && bgRef.current && labelRef.current) {
       registerTransitionElements(
         containerRef.current,
-        blurRef.current,
         bgRef.current,
         labelRef.current
       );
@@ -20,14 +18,28 @@ export default function PageTransition() {
   }, []);
 
   return (
-    <div ref={containerRef} className="fixed inset-0 z-[100] pointer-events-none">
-      {/* blur layer */}
-      <div ref={blurRef} className="absolute inset-0 opacity-0" />
-      {/* solid bg layer */}
-      <div ref={bgRef} className="absolute inset-0 bg-foreground opacity-0" />
-      {/* text */}
-      <div className="absolute inset-0 flex items-center justify-center z-10">
-        <span ref={labelRef} className="text-background text-2xl font-medium opacity-0" />
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-[200] pointer-events-none"
+      aria-hidden="true"
+      role="presentation"
+    >
+      {/* Dark circle overlay — GSAP drives clipPath on this element */}
+      <div
+        ref={bgRef}
+        className="absolute inset-0"
+        style={{
+          backgroundColor: "var(--nav-bg)",
+          opacity: TRANSITION_CONFIG.overlayOpacity,
+          clipPath: "circle(0% at 50% 50%)",
+        }}
+      />
+      {/* Destination label — sibling to bgRef so it renders above the circle */}
+      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+        <span
+          ref={labelRef}
+          className="text-[color:var(--nav-icon)] text-2xl font-medium uppercase tracking-widest opacity-0 select-none"
+        />
       </div>
     </div>
   );

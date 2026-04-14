@@ -1,54 +1,82 @@
 import gsap from "gsap";
 
+export const TRANSITION_CONFIG = {
+  /** Total animation duration in seconds */
+  duration: 1,
+  /** Alpha of the dark circle overlay (0–1). Change to adjust darkness. */
+  overlayOpacity: 0.92,
+  /** GSAP easing for the circle expand/collapse */
+  ease: "cubic-bezier(0.76, 0, 0.24, 1)",
+};
+
 let containerEl: HTMLElement | null = null;
-let blurEl: HTMLElement | null = null;
 let bgEl: HTMLElement | null = null;
 let labelEl: HTMLElement | null = null;
 
 export function registerTransitionElements(
   container: HTMLElement,
-  blur: HTMLElement,
   bg: HTMLElement,
   label: HTMLElement
 ) {
   containerEl = container;
-  blurEl = blur;
   bgEl = bg;
   labelEl = label;
 }
 
-// duration = total transition time in seconds
+export interface TransitionOptions {
+  /** Screen coords of the click origin. Defaults to screen center. */
+  origin?: { x: number; y: number };
+  /** Override total duration (seconds). */
+  duration?: number;
+}
+
 export function triggerPageTransition(
   href: string,
   text: string,
   push: (href: string) => void,
-  duration = 1
+  options: TransitionOptions = {}
 ) {
-  if (!containerEl || !blurEl || !bgEl || !labelEl) {
+  // Respect reduced-motion preference
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     push(href);
     return;
   }
 
-  labelEl.textContent = text;
+  if (!containerEl || !bgEl || !labelEl) {
+    push(href);
+    return;
+  }
+
+  const cx = options.origin?.x ?? window.innerWidth / 2;
+  const cy = options.origin?.y ?? window.innerHeight / 2;
+  const duration = options.duration ?? TRANSITION_CONFIG.duration;
   const d = duration / 6;
+  const ease = TRANSITION_CONFIG.ease;
+  const at = `${cx}px ${cy}px`;
+
+  if (labelEl) labelEl.textContent = text;
 
   gsap
     .timeline()
     .set(containerEl, { pointerEvents: "auto" })
-    .set([blurEl, bgEl, labelEl], { opacity: 0 })
-    .set(blurEl, { backdropFilter: "blur(0px)" })
-    // blur in
-    .to(blurEl, { opacity: 1, backdropFilter: "blur(16px)", duration: d, ease: "power2.inOut" })
-    // solid bg fades in (overlaps with blur)
-    .to(bgEl, { opacity: 1, duration: d, ease: "power2.inOut" }, `-=${d * 0.5}`)
-    // text fades in
-    .to(labelEl, { opacity: 1, duration: d + 0.5, ease: "power2.inOut" })
+    .set(bgEl, { clipPath: `circle(0% at ${at})`, opacity: TRANSITION_CONFIG.overlayOpacity })
+    .set(labelEl, { opacity: 0 })
+    // Expand circle from origin
+    .to(bgEl, {
+      clipPath: `circle(150% at ${at})`,
+      duration: d * 2,
+      ease,
+    })
+    // Label fades in while circle is full
+    .to(labelEl, { opacity: 1, duration: d, ease: "power2.inOut" }, `-=${d * 0.5}`)
     .call(() => push(href))
-    // reverse: text out
+    // Label fades out
     .to(labelEl, { opacity: 0, duration: d, ease: "power2.inOut" })
-    // solid bg fades out
-    .to(bgEl, { opacity: 0, duration: d, ease: "power2.inOut" })
-    // blur out (overlaps with bg)
-    .to(blurEl, { opacity: 0, backdropFilter: "blur(0px)", duration: d, ease: "power2.inOut" }, `-=${d * 0.5}`)
+    // Circle collapses back to origin
+    .to(bgEl, {
+      clipPath: `circle(0% at ${at})`,
+      duration: d * 2,
+      ease,
+    }, `-=${d * 0.5}`)
     .set(containerEl, { pointerEvents: "none" });
 }
