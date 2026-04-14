@@ -52,24 +52,10 @@ export default function Nav() {
 
   // Entrance — runs once after mount when isMobile is correctly set by useLayoutEffect
   useEffect(() => {
-    if (isMobile && pathName === "/") {
-      navControls.set({ opacity: 0 });
-      return;
-    }
     navControls.set({ y: isMobile ? -80 : 80, opacity: 0 });
     navControls.start({ y: 0, opacity: 1, transition: { duration: 0.6, ease } });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Mobile hide/show when navigating to/from the homepage
-  useEffect(() => {
-    if (!isMobile) return;
-    navControls.start({
-      y: pathName === "/" ? -80 : 0,
-      opacity: pathName === "/" ? 0 : 1,
-      transition: { duration: 0.4, ease },
-    });
-  }, [pathName, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useGSAP(() => { changePath(pathName); }, { dependencies: [pathName, mode] });
 
