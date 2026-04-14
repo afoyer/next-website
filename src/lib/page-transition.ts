@@ -74,30 +74,53 @@ export function triggerPageTransition(
   const at = `${cx}px ${cy}px`;
   const screenCenter = `${window.innerWidth / 2}px ${window.innerHeight / 2}px`;
 
-  labelEl.textContent = text;
-  bgEl.style.backgroundColor = getPageColor(href);
+  // Non-null refs guaranteed by the guard above
+  const bg = bgEl;
+  const label = labelEl;
+  const container = containerEl;
+
+  label.textContent = text;
+  bg.style.backgroundColor = getPageColor(href);
+
+  // Proxy used to drive the mask-radius during the exit phase
+  const maskProxy = { r: 0 };
+
+  const setMask = (r: number) => {
+    const v = `${r}%`;
+    bg.style.maskImage = `radial-gradient(circle at ${screenCenter}, transparent ${v}, black ${v})`;
+  };
 
   gsap
     .timeline()
-    .set(containerEl, { pointerEvents: "auto" })
-    .set(bgEl, { clipPath: `circle(0% at ${at})`, opacity: TRANSITION_CONFIG.overlayOpacity })
-    .set(labelEl, { opacity: 0 })
+    .set(container, { pointerEvents: "auto" })
+    .set(bg, { clipPath: `circle(0% at ${at})`, opacity: TRANSITION_CONFIG.overlayOpacity })
+    .set(label, { opacity: 0 })
     // Expand circle from click origin
-    .to(bgEl, {
+    .to(bg, {
       clipPath: `circle(150% at ${at})`,
       duration: phaseDuration * 2,
       ease,
     })
     // Label fades in while circle is full
-    .to(labelEl, { opacity: 1, duration: phaseDuration, ease: "power2.inOut" }, `-=${phaseDuration * 0.5}`)
+    .to(label, { opacity: 1, duration: phaseDuration, ease: "power2.inOut" }, `-=${phaseDuration * 0.5}`)
     .call(() => push(href))
     // Label fades out
-    .to(labelEl, { opacity: 0, duration: phaseDuration, ease: "power2.inOut" })
-    // Circle collapses out from screen center
-    .to(bgEl, {
-      clipPath: `circle(0% at ${screenCenter})`,
+    .to(label, { opacity: 0, duration: phaseDuration, ease: "power2.inOut" })
+    // Switch from clip-path to mask for the opening exit
+    .call(() => {
+      gsap.set(bg, { clipPath: "none" });
+      maskProxy.r = 0;
+      setMask(0);
+    })
+    // Hole expands from screen center, revealing the new page
+    .to(maskProxy, {
+      r: 150,
       duration: phaseDuration * 2,
       ease,
-    }, `-=${phaseDuration * 0.5}`)
-    .set(containerEl, { pointerEvents: "none" });
+      onUpdate: () => setMask(maskProxy.r),
+      onComplete: () => {
+        bg.style.maskImage = "";
+      },
+    })
+    .set(container, { pointerEvents: "none" });
 }
