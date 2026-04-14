@@ -120,6 +120,7 @@ export function triggerPageTransition(
       onUpdate: () => setMask(maskProxy.r),
       onComplete: () => {
         bg.style.maskImage = "";
+        gsap.set(bg, { clipPath: "circle(0% at 50% 50%)" });
       },
     })
     .set(container, { pointerEvents: "none" });
