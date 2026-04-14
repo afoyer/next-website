@@ -2,8 +2,8 @@
 
 import { useGSAP } from "@gsap/react";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useAnimationControls } from "motion/react";
 import Link from "next/link";
 import { House } from "lucide-react";
 import Projects from "./projects";
@@ -47,6 +47,30 @@ export default function Nav() {
     setIsMobileMenuOpen((v) => !v);
   };
 
+  const navControls = useAnimationControls();
+  const ease = [0.76, 0, 0.24, 1] as const;
+
+  // Entrance — runs once after mount when isMobile is correctly set by useLayoutEffect
+  useEffect(() => {
+    if (isMobile && pathName === "/") {
+      navControls.set({ opacity: 0 });
+      return;
+    }
+    navControls.set({ y: isMobile ? -80 : 80, opacity: 0 });
+    navControls.start({ y: 0, opacity: 1, transition: { duration: 0.6, ease } });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Mobile hide/show when navigating to/from the homepage
+  useEffect(() => {
+    if (!isMobile) return;
+    navControls.start({
+      y: pathName === "/" ? -80 : 0,
+      opacity: pathName === "/" ? 0 : 1,
+      transition: { duration: 0.4, ease },
+    });
+  }, [pathName, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useGSAP(() => { changePath(pathName); }, { dependencies: [pathName, mode] });
 
   const segment = pathName.split("/").filter(Boolean).pop();
@@ -64,13 +88,8 @@ export default function Nav() {
       <motion.nav
         ref={navRef}
         className="block z-[151] fixed w-full top-[10px] lg:top-auto bottom-auto lg:bottom-[33px]"
-        initial={{ y: isMobile ? -80 : 80, opacity: 0 }}
-        animate={
-          isMobile && pathName === "/"
-            ? { y: -80, opacity: 0 }
-            : { y: 0, opacity: 1 }
-        }
-        transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+        initial={{ opacity: 0 }}
+        animate={navControls}
       >
         <div className={styles.navbar}>
           <motion.header
