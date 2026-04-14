@@ -3,12 +3,14 @@ import type { Project } from "../projects";
 export const projects: Project[] = [
   {
     title: "",
+    transitionLabel: "Pantonify",
     image: "/images/nav/pantonify.png",
     gif: "/images/nav/pantonify.mp4",
     link: "/projects/pantonify",
   },
   {
     title: "",
+    transitionLabel: "Amazon",
     image: "/images/nav/aws.gif",
     link: "/work/amazon",
   },

@@ -7,6 +7,8 @@ import { triggerPageTransition } from "@/lib/page-transition";
 
 export type Project = {
   title: string;
+  /** Shown in the page transition overlay. Defaults to title if omitted. */
+  transitionLabel?: string;
   image: string;
   gif?: string;
   link: string;
@@ -134,7 +136,7 @@ function ProjectItem({
             const r = el.getBoundingClientRect();
             origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
           }
-          triggerPageTransition(project.link, project.title, (url) => router.push(url), { origin });
+          triggerPageTransition(project.link, project.transitionLabel ?? project.title, (url) => router.push(url), { origin });
         }}
       >
         <h1 className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold z-11 w-full text-center pointer-events-none">
