@@ -50,11 +50,11 @@ export function triggerPageTransition(
   const cx = options.origin?.x ?? window.innerWidth / 2;
   const cy = options.origin?.y ?? window.innerHeight / 2;
   const duration = options.duration ?? TRANSITION_CONFIG.duration;
-  const d = duration / 6;
+  const phaseDuration = duration / 6;
   const ease = TRANSITION_CONFIG.ease;
   const at = `${cx}px ${cy}px`;
 
-  if (labelEl) labelEl.textContent = text;
+  labelEl.textContent = text;
 
   gsap
     .timeline()
@@ -64,19 +64,19 @@ export function triggerPageTransition(
     // Expand circle from origin
     .to(bgEl, {
       clipPath: `circle(150% at ${at})`,
-      duration: d * 2,
+      duration: phaseDuration * 2,
       ease,
     })
     // Label fades in while circle is full
-    .to(labelEl, { opacity: 1, duration: d, ease: "power2.inOut" }, `-=${d * 0.5}`)
+    .to(labelEl, { opacity: 1, duration: phaseDuration, ease: "power2.inOut" }, `-=${phaseDuration * 0.5}`)
     .call(() => push(href))
     // Label fades out
-    .to(labelEl, { opacity: 0, duration: d, ease: "power2.inOut" })
+    .to(labelEl, { opacity: 0, duration: phaseDuration, ease: "power2.inOut" })
     // Circle collapses back to origin
     .to(bgEl, {
       clipPath: `circle(0% at ${at})`,
-      duration: d * 2,
+      duration: phaseDuration * 2,
       ease,
-    }, `-=${d * 0.5}`)
+    }, `-=${phaseDuration * 0.5}`)
     .set(containerEl, { pointerEvents: "none" });
 }
