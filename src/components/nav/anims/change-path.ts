@@ -13,10 +13,13 @@ function getNavColor(varName: string): string {
  * Uses CSS variables so colors respond to dark/light mode.
  */
 export function changePath(pathName: string) {
-  // Mobile nav has no background — skip to avoid overriding the transparent SCSS default
-  if (window.matchMedia("(max-width: 1023px)").matches) return;
-
   const selector = `.${styles.nav_content}`;
+
+  // Mobile nav has no background — clear any inline style left from a desktop session
+  if (window.matchMedia("(max-width: 1023px)").matches) {
+    gsap.set(selector, { clearProps: "backgroundColor" });
+    return;
+  }
   const duration = 0.5;
   const ease = "power2.inOut";
 

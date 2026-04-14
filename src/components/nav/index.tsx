@@ -57,7 +57,7 @@ export default function Nav() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useGSAP(() => { changePath(pathName); }, { dependencies: [pathName, mode] });
+  useGSAP(() => { changePath(pathName); }, { dependencies: [pathName, mode, isMobile] });
 
   const segment = pathName.split("/").filter(Boolean).pop();
 
