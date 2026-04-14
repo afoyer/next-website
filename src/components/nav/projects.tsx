@@ -150,6 +150,7 @@ function ProjectItem({
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover"
+            unoptimized={project.image.endsWith(".gif")}
             style={{
               opacity: showGif ? 0 : baseOpacity,
               transition: "opacity 0.3s ease",

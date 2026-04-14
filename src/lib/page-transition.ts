@@ -9,6 +9,25 @@ export const TRANSITION_CONFIG = {
   ease: "cubic-bezier(0.76, 0, 0.24, 1)",
 };
 
+/**
+ * Maps known hrefs to the CSS variable that holds their accent colour.
+ * Add an entry here whenever a page gets a dedicated colour.
+ * Falls back to --nav-bg for any unrecognised route.
+ */
+const PAGE_COLOR_VARS: Record<string, string> = {
+  "/about": "--nav-link-active-about",
+  "/projects/pantonify": "--nav-link-active-spotify",
+  "/work/amazon": "--nav-link-active-linkedin",
+};
+
+function getPageColor(href: string): string {
+  const varName = PAGE_COLOR_VARS[href] ?? "--nav-bg";
+  return (
+    getComputedStyle(document.documentElement).getPropertyValue(varName).trim() ||
+    "#292929"
+  );
+}
+
 let containerEl: HTMLElement | null = null;
 let bgEl: HTMLElement | null = null;
 let labelEl: HTMLElement | null = null;
@@ -53,15 +72,17 @@ export function triggerPageTransition(
   const phaseDuration = duration / 6;
   const ease = TRANSITION_CONFIG.ease;
   const at = `${cx}px ${cy}px`;
+  const screenCenter = `${window.innerWidth / 2}px ${window.innerHeight / 2}px`;
 
   labelEl.textContent = text;
+  bgEl.style.backgroundColor = getPageColor(href);
 
   gsap
     .timeline()
     .set(containerEl, { pointerEvents: "auto" })
     .set(bgEl, { clipPath: `circle(0% at ${at})`, opacity: TRANSITION_CONFIG.overlayOpacity })
     .set(labelEl, { opacity: 0 })
-    // Expand circle from origin
+    // Expand circle from click origin
     .to(bgEl, {
       clipPath: `circle(150% at ${at})`,
       duration: phaseDuration * 2,
@@ -72,9 +93,9 @@ export function triggerPageTransition(
     .call(() => push(href))
     // Label fades out
     .to(labelEl, { opacity: 0, duration: phaseDuration, ease: "power2.inOut" })
-    // Circle collapses back to origin
+    // Circle collapses out from screen center
     .to(bgEl, {
-      clipPath: `circle(0% at ${at})`,
+      clipPath: `circle(0% at ${screenCenter})`,
       duration: phaseDuration * 2,
       ease,
     }, `-=${phaseDuration * 0.5}`)
