@@ -16,8 +16,35 @@ interface UseStorageUrlResult {
   error: Error | null;
 }
 
+interface CacheEntry {
+  url: string;
+  expiresAt: number;
+}
+
+const EXPIRY_SECONDS = 3600;
+const EXPIRY_BUFFER_MS = 5 * 60 * 1000; // refresh 5 min before expiry
+const urlCache = new Map<string, CacheEntry>();
+
+function getCached(path: string): string | null {
+  const entry = urlCache.get(path);
+  if (!entry) return null;
+  if (Date.now() >= entry.expiresAt - EXPIRY_BUFFER_MS) {
+    urlCache.delete(path);
+    return null;
+  }
+  return entry.url;
+}
+
+function setCache(path: string, url: string) {
+  urlCache.set(path, {
+    url,
+    expiresAt: Date.now() + EXPIRY_SECONDS * 1000,
+  });
+}
+
 /**
  * Hook to fetch a presigned URL for a file stored in Amplify Storage.
+ * Results are cached in memory so re-mounts skip the network call.
  *
  * @param path - The storage path (e.g. "public/hero.jpg")
  * @param options - Optional access level configuration
@@ -30,18 +57,25 @@ interface UseStorageUrlResult {
  */
 export function useStorageUrl(
   path: string | null | undefined,
-  options?: UseStorageUrlOptions
+  options?: UseStorageUrlOptions,
 ): UseStorageUrlResult {
+  const cachedUrl = path ? getCached(path) : null;
+
   const [result, setResult] = useState<{
     url: string | null;
     error: Error | null;
     resolvedPath: string | null;
-  }>({ url: null, error: null, resolvedPath: null });
+  }>(() => {
+    if (cachedUrl && path) {
+      return { url: cachedUrl, error: null, resolvedPath: path };
+    }
+    return { url: null, error: null, resolvedPath: null };
+  });
 
   const accessLevel = options?.accessLevel ?? "guest";
 
   useEffect(() => {
-    if (!path) return;
+    if (!path || getCached(path)) return;
 
     let cancelled = false;
 
@@ -49,12 +83,14 @@ export function useStorageUrl(
       path,
       options: {
         validateObjectExistence: true,
-        expiresIn: 3600, // 1 hour
+        expiresIn: EXPIRY_SECONDS,
       },
     })
       .then((res) => {
         if (!cancelled) {
-          setResult({ url: res.url.toString(), error: null, resolvedPath: path });
+          const url = res.url.toString();
+          setCache(path, url);
+          setResult({ url, error: null, resolvedPath: path });
         }
       })
       .catch((err) => {
@@ -72,12 +108,10 @@ export function useStorageUrl(
     };
   }, [path, accessLevel]);
 
-  // No path — nothing to fetch
   if (!path) {
     return { url: null, isLoading: false, error: null };
   }
 
-  // Derive loading state: still loading if no result matches the current path
   const isLoading = result.resolvedPath !== path;
 
   return {
