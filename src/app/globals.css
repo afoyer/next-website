@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #e8e8e8;
   --foreground: #171717;
   --scrollbar-thumb: rgba(0, 0, 0, 0.3);
   --scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
 
   /* Navigation (Motion) */
   --nav-color: #ffffff;
-  --nav-bg: #1d1d1d;
+  --nav-bg: #292929;
   --nav-bg-hover: #1d1d1d;
   --nav-icon: #f1f1f1;
   --nav-icon-focused: #000000;
@@ -16,25 +16,29 @@
   --nav-link-hover: #ffffff;
   --nav-link-text: #000000;
   --nav-accent: #3b82f6;
-  --nav-link-active-about: #2a47ad;
+  --nav-link-active-about: #2a4cc7;
   --nav-link-active-spotify: #25be30;
   --nav-link-active-linkedin: #0077b5;
 }
 
 html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.5);
+
   /* Navigation (Motion) */
   --nav-color: #ededed;
-  --nav-bg: #818181;
+  --nav-bg: #212121;
   --nav-bg-hover: #2a2a2a;
-  --nav-color: #ededed;
   --nav-icon: #ededed;
   --nav-icon-focused: #ffffff;
   --nav-link-default: #171717;
   --nav-link-hover: #ededed;
   --nav-link-text: #ededed;
   --nav-accent: #60a5fa;
-  --nav-link-active-about: #3b5fd9;
-  --nav-link-active-spotify: #34d399;
+  --nav-link-active-about: #143292;
+  --nav-link-active-spotify: #257b12;
   --nav-link-active-linkedin: #0ea5e9;
 }
 
@@ -48,7 +52,7 @@ html.dark {
 }
 
 @theme light {
-  --color-background: #ffffff;
+  --color-background: #e8e8e8;
   --text-primary: #000000;
 }
 

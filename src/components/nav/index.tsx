@@ -3,92 +3,128 @@
 import { useGSAP } from "@gsap/react";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
+import { House } from "lucide-react";
 import Projects from "./projects";
 import styles from "./component.module.scss";
 import { changePath } from "./anims/change-path";
-import { useNavScrollHide } from "./hooks";
+import { useNavScrollHide, useMobileBreakpoint } from "./hooks";
 import { LeftContent } from "./LeftContent";
 import { NavLogo } from "./NavLogo";
 import { NavLinks } from "./NavLinks";
-import { MobileMenuButton } from "./MobileMenuButton";
+import { MobileMenu } from "./MobileMenu";
 import { projects } from "./data";
 import { useThemeStore } from "@/store/theme";
 
 export default function Nav() {
   const [isProjectsOpen, setIsProjectsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [menuOrigin, setMenuOrigin] = useState({ x: 0, y: 0 });
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   const mode = useThemeStore((s) => s.mode);
+  const isMobile = useMobileBreakpoint();
+  const pathName = usePathname();
 
   useNavScrollHide(navRef);
 
   const closeProjects = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsProjectsOpen(false);
-    }, 300);
+    timeoutRef.current = setTimeout(() => setIsProjectsOpen(false), 300);
   };
 
   const openProjects = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setIsProjectsOpen(true);
   };
 
-  const pathName = usePathname();
+  const handleLogoClick = () => {
+    if (logoRef.current) {
+      const rect = logoRef.current.getBoundingClientRect();
+      setMenuOrigin({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
+    }
+    setIsMobileMenuOpen((v) => !v);
+  };
 
-  useGSAP(
-    () => {
-      changePath(pathName);
-    },
-    {
-      dependencies: [pathName, mode],
-    },
-  );
+  useGSAP(() => { changePath(pathName); }, { dependencies: [pathName, mode] });
+
+  const segment = pathName.split("/").filter(Boolean).pop();
 
   return (
-    <nav
-      ref={navRef}
-      className="block z-[151] fixed w-full top-[10px] lg:top-auto bottom-auto lg:bottom-[33px] z-51"
-    >
-      <div className={styles.navbar}>
-        <motion.header
-          className={styles.nav_content}
-          onHoverStart={openProjects}
-          onHoverEnd={closeProjects}
-        >
-          <motion.div
-            key="home"
-            initial="closed"
-            animate="open"
-            exit="closed"
-            className={styles.left_content}
+    <>
+      {/* Rendered outside <nav> so it escapes the z-151 stacking context */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        origin={menuOrigin}
+        projects={projects}
+      />
+
+      <nav
+        ref={navRef}
+        className="block z-[151] fixed w-full top-[10px] lg:top-auto bottom-auto lg:bottom-[33px]"
+      >
+        <div className={styles.navbar}>
+          <motion.header
+            className={styles.nav_content}
+            onHoverStart={openProjects}
+            onHoverEnd={closeProjects}
           >
-            <LeftContent />
-          </motion.div>
+            {/* Desktop: left breadcrumb */}
+            <motion.div
+              key="home"
+              initial="closed"
+              animate="open"
+              exit="closed"
+              className={styles.left_content}
+            >
+              <LeftContent />
+            </motion.div>
 
-          <div className="h-full flex items-center justify-center overflow-hidden">
-            <NavLogo />
-          </div>
+            {/* Logo — center on desktop, left on mobile */}
+            <div ref={logoRef} className={styles.logo_wrapper}>
+              <NavLogo onClick={isMobile ? handleLogoClick : undefined} />
+            </div>
 
-          <ul className={styles.right_content}>
-            <NavLinks onLinkClick={() => setIsProjectsOpen(false)} />
-          </ul>
+            {/* Mobile breadcrumb: | [house] /segment */}
+            <AnimatePresence>
+              {isMobile && segment && (
+                <motion.div
+                  key={segment}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className={styles.mobile_breadcrumb}
+                >
+                  <Link href="/" aria-label="Home">
+                    <House size={14} className="opacity-70" />
+                  </Link>
+                  <span className="opacity-50">/</span>
+                  <span>{segment}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          <MobileMenuButton
-            isOpen={isProjectsOpen}
-            onClick={() => setIsProjectsOpen(!isProjectsOpen)}
-          />
+            {/* Desktop: right nav links */}
+            <ul className={styles.right_content}>
+              <NavLinks onLinkClick={() => setIsProjectsOpen(false)} />
+            </ul>
 
-          <Projects
-            isOpen={isProjectsOpen}
-            setIsOpen={setIsProjectsOpen}
-            position="top"
-            projects={projects}
-          />
-        </motion.header>
-      </div>
-    </nav>
+            <AnimatePresence>
+              {!isMobile && (
+                <Projects
+                  isOpen={isProjectsOpen}
+                  setIsOpen={setIsProjectsOpen}
+                  position="top"
+                  projects={projects}
+                />
+              )}
+            </AnimatePresence>
+          </motion.header>
+        </div>
+      </nav>
+    </>
   );
 }
