@@ -26,13 +26,12 @@ export function NavLinks({ onLinkClick }: NavLinksProps) {
           : () => {
               onLinkClick?.();
               const el = linkRefs.current[i];
-              const origin = el
-                ? (() => {
-                    const r = el.getBoundingClientRect();
-                    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-                  })()
-                : undefined;
-              triggerPageTransition(href, label, (url) => router.push(url), { origin });
+              let origin: { x: number; y: number } | undefined;
+              if (el) {
+                const r = el.getBoundingClientRect();
+                origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+              }
+              triggerPageTransition(href, label, router.push, { origin });
             };
 
         return (
