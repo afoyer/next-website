@@ -100,7 +100,7 @@ export default function Nav() {
             </div>
 
             {/* Mobile breadcrumb: | [house] /segment */}
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
               {isMobile && segment && (
                 <motion.div
                   key={segment}
