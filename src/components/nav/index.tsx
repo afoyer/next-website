@@ -61,9 +61,16 @@ export default function Nav() {
         projects={projects}
       />
 
-      <nav
+      <motion.nav
         ref={navRef}
         className="block z-[151] fixed w-full top-[10px] lg:top-auto bottom-auto lg:bottom-[33px]"
+        initial={{ y: isMobile ? -80 : 80, opacity: 0 }}
+        animate={
+          isMobile && pathName === "/"
+            ? { y: -80, opacity: 0 }
+            : { y: 0, opacity: 1 }
+        }
+        transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
       >
         <div className={styles.navbar}>
           <motion.header
@@ -124,7 +131,7 @@ export default function Nav() {
             </AnimatePresence>
           </motion.header>
         </div>
-      </nav>
+      </motion.nav>
     </>
   );
 }

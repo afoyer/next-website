@@ -15,13 +15,8 @@ export function NavLogo({ onClick }: NavLogoProps) {
   return (
     <motion.svg
       className={styles.logo}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{
-        opacity: [0, 0.2, 1],
-        y: 0,
-        fill: "var(--nav-icon)",
-      }}
-      transition={{ duration: 1, delay: 0.5 }}
+      animate={{ fill: "var(--nav-icon)" }}
+      transition={{ duration: 0.3 }}
       viewBox="0 0 271 158"
       xmlns="http://www.w3.org/2000/svg"
       onTap={handleTap}

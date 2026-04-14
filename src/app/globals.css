@@ -12,9 +12,9 @@
   --nav-bg-hover: #1d1d1d;
   --nav-icon: #f1f1f1;
   --nav-icon-focused: #000000;
-  --nav-link-default: #000000;
+  --nav-link-default: #f1f1f1;
   --nav-link-hover: #ffffff;
-  --nav-link-text: #000000;
+  --nav-link-text: #f1f1f1;
   --nav-accent: #3b82f6;
   --nav-link-active-about: #2a4cc7;
   --nav-link-active-spotify: #25be30;
