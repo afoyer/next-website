@@ -2,7 +2,7 @@ import gsap from "gsap";
 
 export const TRANSITION_CONFIG = {
   /** Total animation duration in seconds */
-  duration: 1,
+  duration: 1.5,
   /** Alpha of the dark circle overlay (0–1). Change to adjust darkness. */
   overlayOpacity: 0.92,
   /** GSAP easing for the circle expand/collapse */

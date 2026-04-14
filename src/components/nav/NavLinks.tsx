@@ -43,6 +43,8 @@ export function NavLinks({ onLinkClick }: NavLinksProps) {
               className={`p-2 ${styles.navLink}`}
               href={isExternal ? href : "#"}
               onClick={handleClick}
+              target={isExternal ? "_blank" : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
             >
               {label}
             </LinkHover>

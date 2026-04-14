@@ -1,9 +1,9 @@
 import { StorageImage } from "../StorageImage";
 import Image from "next/image";
-import Link from "next/link";
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { triggerPageTransition } from "@/lib/page-transition";
 
 export type Project = {
   title: string;
@@ -85,9 +85,11 @@ function ProjectItem({
   setIsOpen: (isOpen: boolean) => void;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [showGif, setShowGif] = useState(false);
   const [hoverKey, setHoverKey] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
   const isCurrentPage = pathname === project.link;
   const baseOpacity = isCurrentPage ? 1 : 0.6;
   const isVideo = !!project.gif && /\.(mp4|webm)$/i.test(project.gif);
@@ -119,10 +121,21 @@ function ProjectItem({
       onMouseLeave={handleMouseLeave}
       className={`relative project-item rounded-2xl overflow-clip w-full aspect-3/2 hover:cursor-pointer ${isCurrentPage ? "pointer-events-none" : "pointer-events-auto"} backdrop-blur-sm`}
     >
-      <Link
+      <a
+        ref={linkRef}
         href={project.link}
         className="relative block w-full h-full"
-        onClick={() => setIsOpen(false)}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsOpen(false);
+          const el = linkRef.current;
+          let origin: { x: number; y: number } | undefined;
+          if (el) {
+            const r = el.getBoundingClientRect();
+            origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+          }
+          triggerPageTransition(project.link, project.title, (url) => router.push(url), { origin });
+        }}
       >
         <h1 className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold z-11 w-full text-center pointer-events-none">
           {project.title}
@@ -187,7 +200,7 @@ function ProjectItem({
             }}
           />
         ))}
-      </Link>
+      </a>
     </motion.div>
   );
 }

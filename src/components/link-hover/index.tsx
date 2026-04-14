@@ -50,12 +50,16 @@ export default function LinkHover({
   casing,
   className,
   onClick,
+  target,
+  rel,
 }: {
   children: string;
   href: string;
   casing?: "uppercase" | "lowercase";
   className?: string;
   onClick?: () => void;
+  target?: string;
+  rel?: string;
 }) {
   const text = useMemo(() => children.split(/(?<=.)/), [children]);
   return (
@@ -66,7 +70,7 @@ export default function LinkHover({
           lineHeight: casing === "lowercase" ? 1.1 : 0.9,
         }}
       >
-        <Link href={href} onClick={onClick}>
+        <Link href={href} onClick={onClick} target={target} rel={rel}>
           <motion.div>
             {text.map((char, index) => (
               <motion.span
