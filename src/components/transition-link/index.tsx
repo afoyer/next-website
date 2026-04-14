@@ -27,7 +27,7 @@ export default function TransitionLink({
       const r = el.getBoundingClientRect();
       origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
     }
-    triggerPageTransition(href, label, router.push, { origin });
+    triggerPageTransition(href, label, (url) => router.push(url), { origin });
   }
 
   return (
