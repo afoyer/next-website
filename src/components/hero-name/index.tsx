@@ -114,6 +114,24 @@ export default function HeroName() {
     return () => clearInterval(glitchInterval);
   }, []);
 
+  useEffect(() => {
+    setHeroLogoVisible(true); // hero logo is in view on mount
+
+    const el = heroRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroLogoVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+      setHeroLogoVisible(false); // nav logo re-appears when leaving home page
+    };
+  }, [setHeroLogoVisible]);
+
   return (
     <div ref={heroRef} className="relative flex items-center justify-center">
       <div ref={textGroupRef} className="flex items-baseline text-2xl font-bold">
