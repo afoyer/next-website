@@ -36,6 +36,52 @@ export default function HeroName() {
   const charRefs = useRef<(HTMLSpanElement | null)[]>(CHARS.map(() => null));
   const setHeroLogoVisible = useHeroStore((s) => s.setHeroLogoVisible);
 
+  useGSAP(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion || sessionStorage.getItem(ANIM_PLAYED_KEY)) {
+      // Skip animation — show logo immediately
+      if (textGroupRef.current) gsap.set(textGroupRef.current, { opacity: 0 });
+      if (svgRef.current) gsap.set(svgRef.current, { opacity: 1 });
+      return;
+    }
+
+    // Phase 1: per-character glitch at ~15fps for 1.2s
+    const glitchInterval = setInterval(() => {
+      charRefs.current.forEach((span, i) => {
+        if (!span || CHARS[i] === " ") return;
+        glitchSpan(span, CHARS[i]);
+      });
+    }, 1000 / 15);
+
+    const tl = gsap.timeline();
+
+    // Stop glitch after 1.2s
+    tl.call(() => clearInterval(glitchInterval), [], 1.2);
+
+    // Phase 2: settle each character left-to-right
+    CHARS.forEach((char, i) => {
+      if (char === " ") return;
+      tl.call(
+        () => {
+          const span = charRefs.current[i];
+          if (!span) return;
+          span.style.fontFamily = "helvetica-neue-lt-pro, sans-serif";
+          span.textContent = char.toLowerCase();
+        },
+        [],
+        `>+=${i * 0.045}`
+      );
+    });
+
+    // Brief pause after all chars settled
+    tl.addLabel("settled", "+=0.2");
+
+    return () => clearInterval(glitchInterval);
+  }, []);
+
   return (
     <div ref={heroRef} className="relative flex items-center justify-center">
       <div ref={textGroupRef} className="flex items-baseline text-2xl font-bold">
