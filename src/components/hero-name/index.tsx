@@ -101,6 +101,16 @@ export default function HeroName() {
       "converge"
     );
 
+    // Phase 5: cross-fade text group out, SVG logo in (overlap by 0.1s)
+    tl.addLabel("crossfade", "-=0.1");
+    tl.to(textGroupRef.current, { opacity: 0, duration: 0.5 }, "crossfade");
+    tl.to(svgRef.current, { opacity: 1, duration: 0.5 }, "crossfade");
+
+    // Mark animation as played so it doesn't repeat this session
+    tl.call(() => {
+      sessionStorage.setItem(ANIM_PLAYED_KEY, "1");
+    });
+
     return () => clearInterval(glitchInterval);
   }, []);
 
