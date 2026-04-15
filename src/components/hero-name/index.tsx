@@ -59,11 +59,14 @@ export default function HeroName() {
     const tl = gsap.timeline();
 
     // Stop glitch after 1.2s
-    tl.call(() => clearInterval(glitchInterval), [], 1.2);
+    tl.addLabel("glitchDone", 1.2);
+    tl.call(() => clearInterval(glitchInterval), [], "glitchDone");
 
-    // Phase 2: settle each character left-to-right
+    // Phase 2: settle each character left-to-right — uniform 45ms stagger
+    let letterIdx = 0;
     CHARS.forEach((char, i) => {
       if (char === " ") return;
+      const idx = letterIdx;
       tl.call(
         () => {
           const span = charRefs.current[i];
@@ -72,11 +75,12 @@ export default function HeroName() {
           span.textContent = char.toLowerCase();
         },
         [],
-        `>+=${i * 0.045}`
+        `glitchDone+=${idx * 0.045}`
       );
+      letterIdx++;
     });
 
-    // Brief pause after all chars settled
+    // Brief pause after all chars settled (12 chars × 45ms = 540ms → settled at ~1.94s)
     tl.addLabel("settled", "+=0.2");
 
     return () => clearInterval(glitchInterval);
