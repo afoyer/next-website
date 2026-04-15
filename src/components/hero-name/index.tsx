@@ -83,6 +83,24 @@ export default function HeroName() {
     // Brief pause after all chars settled (12 chars × 45ms = 540ms → settled at ~1.94s)
     tl.addLabel("settled", "+=0.2");
 
+    // Phase 3: fade non-initials, drift "a" (index 0) and "f" (index 8) apart
+    const nonInitialIndices = [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12];
+    nonInitialIndices.forEach((i) => {
+      const span = charRefs.current[i];
+      if (span) tl.to(span, { opacity: 0, duration: 0.3 }, "settled");
+    });
+
+    tl.to(charRefs.current[0], { x: -40, duration: 0.4, ease: "power2.out" }, "settled");
+    tl.to(charRefs.current[8], { x: 40, duration: 0.4, ease: "power2.out" }, "settled");
+
+    // Phase 4: converge toward center and scale up
+    tl.addLabel("converge", "+=0.1");
+    tl.to(
+      [charRefs.current[0], charRefs.current[8]],
+      { x: 0, scale: 2.5, duration: 0.6, ease: "power2.inOut" },
+      "converge"
+    );
+
     return () => clearInterval(glitchInterval);
   }, []);
 
