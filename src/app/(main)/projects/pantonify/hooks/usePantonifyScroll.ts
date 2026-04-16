@@ -3,7 +3,8 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { RefObject } from 'react';
+import { useLenis } from 'lenis/react';
+import { RefObject, useEffect } from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,6 +23,24 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
     sectionRef, cardRef, cardSceneRef, cardInnerRef,
     backRef, sideTextRef, mobileSwatchRef,
   } = refs;
+
+  // Lenis smooth scroll intercepts native scroll events, so ScrollTrigger
+  // won't detect scroll on its own. We connect them by updating ScrollTrigger
+  // on every Lenis scroll tick.
+  const lenis = useLenis(({ scroll }) => {
+    void scroll; // suppress unused-var lint
+    ScrollTrigger.update();
+  });
+
+  // Also connect the GSAP ticker to Lenis so they share the same animation loop.
+  // Without this, Lenis and GSAP can fight over requestAnimationFrame timing.
+  useEffect(() => {
+    if (!lenis) return;
+    const handler = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(handler);
+    gsap.ticker.lagSmoothing(0);
+    return () => gsap.ticker.remove(handler);
+  }, [lenis]);
 
   useGSAP(
     () => {
@@ -71,7 +90,7 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
           trigger: section,
           start: 'top top',
           end: '+=100%',
-          pin: true,           // ← required for sequential chaining with ST2
+          // pin: true,           // ← required for sequential chaining with ST2
           scrub: 1,
           animation: tl1,
           invalidateOnRefresh: true,
@@ -141,6 +160,8 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
           invalidateOnRefresh: true,
         });
       });
+
+      return () => mm.revert(); // cleanup on unmount / Strict Mode re-run
     },
     { scope: sectionRef }
   );
