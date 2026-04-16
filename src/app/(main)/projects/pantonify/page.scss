@@ -1,0 +1,122 @@
+// --- Scroll section ---
+// This is the element ScrollTrigger pins. It must be full-viewport
+// so GSAP knows how much space to reserve for the scroll distance.
+.pantonify-section {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: #1e1e1e;
+  overflow: hidden;
+}
+
+// --- Side text ---
+// Starts invisible (GSAP fades it in). Positioned on the left half.
+.pantonify-side-text {
+  position: absolute;
+  left: 8%;
+  max-width: 30%;
+  color: white;
+  opacity: 0; // GSAP overrides this — starts hidden
+
+  h2 {
+    font-size: clamp(1.25rem, 2.5vw, 2rem);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+    font-weight: 400;
+    opacity: 0.6;
+    line-height: 1.6;
+  }
+}
+
+// --- Card scene (perspective wrapper) ---
+// `perspective` must live on the PARENT of the rotating element, not on
+// the element itself. This is what creates the 3D depth illusion.
+.card-scene {
+  perspective: 800px;
+  // Width matches the card content width
+  width: min(430px, 80vw);
+}
+
+// --- Card inner (the rotating element) ---
+// GSAP targets this for rotateY. `transform-style: preserve-3d` tells the
+// browser to render children in 3D space rather than flattening them.
+.card-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+}
+
+// --- Shared face rules ---
+// `backface-visibility: hidden` hides a face when it's rotated >90° away
+// from the viewer. Without this, you'd see the back face show through.
+.card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden; // required for Safari
+}
+
+// --- Front face (existing p-square markup) ---
+.card-front {
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #1ED760;
+  }
+}
+
+// --- Back face ---
+// Pre-rotated 180° so it's hidden on load. When .card-inner reaches
+// rotateY(180deg), the back face rotates into view as the front exits.
+// position: absolute + top/left/width so it doesn't affect container height
+// (height is managed by GSAP tween instead).
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform: rotateY(180deg);
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+}
+
+// --- Pantonify text label (front face bottom) ---
+.pantonify {
+  background-color: white;
+  color: black;
+  width: 100%;
+  padding: 8px 24px 16px 24px;
+  box-sizing: border-box;
+
+  span:first-child {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  span:last-child {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.5;
+    margin-top: 4px;
+  }
+}
+
+// --- Legacy p-square (for existing markup compatibility) ---
+.p-square {
+  &:before {
+    content: "";
+    width: 100%;
+    aspect-ratio: 1/1;
+    background-color: #1ED760;
+  }
+}
