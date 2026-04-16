@@ -2,76 +2,78 @@
 // This is the element ScrollTrigger pins. It must be full-viewport
 // so GSAP knows how much space to reserve for the scroll distance.
 .pantonify-section {
-  width: 100%;
-  height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background-color: #1e1e1e;
-  // overflow: hidden removed — it breaks CSS 3D context (forces flat rendering,
-  // which conflicts with transform-style: preserve-3d + backface-visibility: hidden)
+        width: 100%;
+        height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background-color: #1e1e1e;
+        overflow: hidden;
 }
 
 // --- Side text ---
 // Starts invisible (GSAP fades it in). Positioned on the left half.
 .pantonify-side-text {
-  position: absolute;
-  left: 8%;
-  max-width: 30%;
-  color: white;
-  opacity: 0; // GSAP overrides this — starts hidden
+        position: absolute;
+        left: 8%;
+        max-width: 30%;
+        color: white;
+        opacity: 0; // GSAP overrides this — starts hidden
 
-  h2 {
-    font-size: clamp(1.25rem, 2.5vw, 2rem);
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    line-height: 1.2;
-  }
+        h2 {
+                font-size: clamp(1.25rem, 2.5vw, 2rem);
+                font-weight: 700;
+                margin-bottom: 0.75rem;
+                line-height: 1.2;
+        }
 
-  p {
-    font-size: clamp(0.8rem, 1.2vw, 1rem);
-    font-weight: 400;
-    opacity: 0.6;
-    line-height: 1.6;
-  }
+        p {
+                font-size: clamp(0.8rem, 1.2vw, 1rem);
+                font-weight: 400;
+                opacity: 0.6;
+                line-height: 1.6;
+        }
 }
 
 // --- Card scene (perspective wrapper) ---
 // `perspective` must live on the PARENT of the rotating element, not on
 // the element itself. This is what creates the 3D depth illusion.
 .card-scene {
-  perspective: 800px;
-  // Width matches the card content width
-  width: min(430px, 80vw);
+        perspective: 800px;
+        // Width matches the card content width
+        width: min(430px, 80vw);
 }
 
 // --- Card inner (the rotating element) ---
 // GSAP targets this for rotateY. `transform-style: preserve-3d` tells the
 // browser to render children in 3D space rather than flattening them.
 .card-inner {
-  position: relative;
-  width: 100%;
-  transform-style: preserve-3d;
+        position: relative;
+        width: 100%;
+        transform-style: preserve-3d;
 }
 
 // --- Shared face rules ---
 // `backface-visibility: hidden` hides a face when it's rotated >90° away
 // from the viewer. Without this, you'd see the back face show through.
 .card-face {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden; // required for Safari
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden; // required for Safari
+
 }
 
 // --- Front face (existing p-square markup) ---
 .card-front {
-  &::before {
-    content: "";
-    display: block;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background-color: #1ED760;
-  }
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+        &::before {
+                content: "";
+                display: block;
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                background-color: #1ED760;
+        }
 }
 
 // --- Back face ---
@@ -80,47 +82,97 @@
 // position: absolute + top/left/width so it doesn't affect container height
 // (height is managed by GSAP tween instead).
 .card-back {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 200px; // LOAD-BEARING: usePantonifyScroll reads back.scrollHeight — must be non-zero
-  transform: rotateY(180deg);
-  background-color: #2a2a2a;
-  border: 1px solid #444;
+        position: absolute;
+        top: 0;
+        left: 0;
+        //   width: 100%;
+        min-height: 200px; // LOAD-BEARING: usePantonifyScroll reads back.scrollHeight — must be non-zero
+        transform: rotateY(180deg);
+        //   background-color: #2a2a2a;
+        //   border: 1px solid #444;
 }
 
 // --- Pantonify text label (front face bottom) ---
 .pantonify {
-  background-color: white;
-  color: black;
-  width: 100%;
-  padding: 8px 24px 16px 24px;
-  box-sizing: border-box;
+        background-color: white;
+        color: black;
+        width: 100%;
+        padding: 8px 24px 16px 24px;
+        box-sizing: border-box;
 
-  span:first-child {
-    display: block;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
+        span:first-child {
+                display: block;
+                font-size: 1rem;
+                font-weight: 700;
+                letter-spacing: 0.03em;
+        }
+
+        span:last-child {
+                display: block;
+                font-size: 0.75rem;
+                opacity: 0.5;
+                margin-top: 4px;
+        }
+}
+
+// --- Mobile swatch overlay ---
+// Hidden on desktop — only participates in the mobile scroll branch.
+// position: absolute + inset: 0 makes it a full-section overlay;
+// flexbox centers the swatch card within it.
+// translateY(100%) pushes it below the viewport before GSAP runs,
+// preventing any flash. GSAP then takes over the transform on init.
+.mobile-swatch-wrapper {
+  display: none; // desktop default
+
+  @media (max-width: 767px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+    transform: translateY(100%); // off-screen until GSAP takes over
+  }
+}
+
+// --- Mobile layout ---
+// The section keeps height: 100dvh so GSAP can pin it identically to
+// desktop. flex-direction: column + overflow: hidden means the card and
+// side text are visible in State 1, and the swatch overlay clips when
+// GSAP pushes it below the section.
+@media (max-width: 767px) {
+  .pantonify-section {
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.5rem;
+    // height: 100dvh inherited from base rule — keep it, GSAP needs it
+    // overflow: hidden inherited from base rule — keep it for clipping
   }
 
-  span:last-child {
-    display: block;
-    font-size: 0.75rem;
-    opacity: 0.5;
-    margin-top: 4px;
+  // Side text: flows below the card in the column, always visible.
+  // `position: static` overrides the desktop `position: absolute`.
+  // `opacity: 1` overrides the desktop initial hidden state — GSAP's
+  // mobile branch also sets this, but CSS ensures no flash.
+  .pantonify-side-text {
+    position: static;
+    max-width: 90%;
+    opacity: 1;
+    text-align: center;
+  }
+
+  // Card scene: match the swatch card width on mobile.
+  .card-scene {
+    width: min(340px, 90vw);
   }
 }
 
 // --- Legacy p-square (for existing markup compatibility) ---
 // TODO: remove after Task 5 replaces page.tsx
 .p-square {
-  &:before {
-    content: "";
-    display: block;
-    width: 100%;
-    aspect-ratio: 1/1;
-    background-color: #1ED760;
-  }
+        &:before {
+                content: "";
+                display: block;
+                width: 100%;
+                aspect-ratio: 1/1;
+                background-color: #1ED760;
+        }
 }
