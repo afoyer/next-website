@@ -83,6 +83,7 @@
   top: 0;
   left: 0;
   width: 100%;
+  min-height: 200px;
   transform: rotateY(180deg);
   background-color: #2a2a2a;
   border: 1px solid #444;
@@ -112,9 +113,11 @@
 }
 
 // --- Legacy p-square (for existing markup compatibility) ---
+// TODO: remove after Task 5 replaces page.tsx
 .p-square {
   &:before {
     content: "";
+    display: block;
     width: 100%;
     aspect-ratio: 1/1;
     background-color: #1ED760;
