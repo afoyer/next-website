@@ -86,16 +86,6 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
             '<'
           );
 
-        ScrollTrigger.create({
-          trigger: section,
-          start: 'top top',
-          end: '+=100%',
-          pin: true,           // required for sequential chaining with ST2
-          scrub: 1,
-          animation: tl1,
-          invalidateOnRefresh: true,
-        });
-
         // — Timeline 2: flip + expand + re-center —
         // `x: 0` reverses the tl1 offset so the swatch lands in screen center.
         gsap.set(cardScene, { height: () => cardScene.offsetHeight });
@@ -107,13 +97,19 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
           .to(cardScene, { height: () => back.scrollHeight, ease: 'power2.inOut', duration: 1 }, '<')
           .to(card,      { x: 0,         ease: 'power2.inOut', duration: 1 }, '<');
 
+        // Single ScrollTrigger drives both phases sequentially via a master timeline.
+        // Double-pinning the same element causes a black-screen rendering glitch,
+        // so we concatenate tl1 → tl2 and scrub them under one pin over 200vh.
+        const masterTl = gsap.timeline();
+        masterTl.add(tl1).add(tl2);
+
         ScrollTrigger.create({
           trigger: section,
           start: 'top top',
-          end: '+=100%',
+          end: '+=200%',       // 100vh for tl1, 100vh for tl2
           pin: true,
-          scrub: true,
-          animation: tl2,
+          scrub: 1,
+          animation: masterTl,
           invalidateOnRefresh: true,
         });
       });
