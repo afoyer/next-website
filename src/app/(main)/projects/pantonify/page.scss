@@ -9,7 +9,9 @@
         justify-content: center;
         position: relative;
         background-color: #1e1e1e;
-        overflow: hidden;
+        overflow: hidden; // Safe to restore: the mobile swatch overlay uses position:absolute
+                          // + translateY, so GSAP clipping works without affecting .card-inner's
+                          // preserve-3d context (3D transform is isolated in its own stacking context).
 }
 
 // --- Side text ---
@@ -85,7 +87,9 @@
         position: absolute;
         top: 0;
         left: 0;
-        //   width: 100%;
+        // width: 100%; — PantonifySwatch provides its own width (340px) so this is not needed.
+        //               The scrollHeight read by usePantonifyScroll still works because
+        //               PantonifySwatch has a fixed height via aspect-ratio.
         min-height: 200px; // LOAD-BEARING: usePantonifyScroll reads back.scrollHeight — must be non-zero
         transform: rotateY(180deg);
         //   background-color: #2a2a2a;
