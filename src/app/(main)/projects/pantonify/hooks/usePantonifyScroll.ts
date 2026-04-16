@@ -42,7 +42,7 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
       const tl1 = gsap.timeline();
 
       tl1
-        // Move card into the right half. `<=` means "with previous" —
+        // Move card into the right half. `'<'` means "with previous" —
         // both tweens run in parallel starting at position 0 of the timeline.
         .to(card, {
           x: () => section.offsetWidth * 0.25,
@@ -78,14 +78,9 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
       // We also tween cardScene's height from the front face's rendered height
       // to the back face's natural scrollHeight. This lets the back card be
       // any height without overflowing.
-      const frontHeight = cardScene.offsetHeight;
-      const backHeight = back.scrollHeight;
-
-      // Set the initial explicit height on cardScene BEFORE building tl2.
-      // GSAP captures the "from" value of a .to() tween at creation time,
-      // so this must happen first — otherwise tl2 would tween from "auto"
-      // (which GSAP can't interpolate) rather than a concrete pixel value.
-      gsap.set(cardScene, { height: frontHeight });
+      // Use function syntax so GSAP re-evaluates these on invalidateOnRefresh.
+      // Static numbers would be stale after a window resize.
+      gsap.set(cardScene, { height: () => cardScene.offsetHeight });
 
       const tl2 = gsap.timeline();
 
@@ -98,7 +93,7 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
         .to(
           cardScene,
           {
-            height: backHeight,
+            height: () => back.scrollHeight,
             ease: 'power2.inOut',
             duration: 1,
           },
