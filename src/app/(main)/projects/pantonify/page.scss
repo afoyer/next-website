@@ -9,7 +9,8 @@
   justify-content: center;
   position: relative;
   background-color: #1e1e1e;
-  overflow: hidden;
+  // overflow: hidden removed — it breaks CSS 3D context (forces flat rendering,
+  // which conflicts with transform-style: preserve-3d + backface-visibility: hidden)
 }
 
 // --- Side text ---

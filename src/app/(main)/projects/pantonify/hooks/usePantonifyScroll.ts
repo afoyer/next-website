@@ -3,7 +3,8 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { RefObject } from 'react';
+import { useLenis } from 'lenis/react';
+import { RefObject, useEffect } from 'react';
 
 // Register ScrollTrigger once. GSAP silently ignores duplicate registrations,
 // so this is safe to call in a hook (won't break if called multiple times).
@@ -20,6 +21,24 @@ export interface PantonifyScrollRefs {
 
 export function usePantonifyScroll(refs: PantonifyScrollRefs) {
   const { sectionRef, cardRef, cardSceneRef, cardInnerRef, backRef, sideTextRef } = refs;
+
+  // Lenis smooth scroll intercepts native scroll events, so ScrollTrigger
+  // won't detect scroll on its own. We connect them by updating ScrollTrigger
+  // on every Lenis scroll tick.
+  const lenis = useLenis(({ scroll }) => {
+    void scroll; // suppress unused-var lint
+    ScrollTrigger.update();
+  });
+
+  // Also connect the GSAP ticker to Lenis so they share the same animation loop.
+  // Without this, Lenis and GSAP can fight over requestAnimationFrame timing.
+  useEffect(() => {
+    if (!lenis) return;
+    const handler = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(handler);
+    gsap.ticker.lagSmoothing(0);
+    return () => gsap.ticker.remove(handler);
+  }, [lenis]);
 
   useGSAP(
     () => {
