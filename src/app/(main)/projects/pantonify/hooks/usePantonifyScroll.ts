@@ -90,7 +90,7 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
           trigger: section,
           start: 'top top',
           end: '+=100%',
-          // pin: true,           // ← required for sequential chaining with ST2
+          pin: true,           // required for sequential chaining with ST2
           scrub: 1,
           animation: tl1,
           invalidateOnRefresh: true,
