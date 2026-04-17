@@ -90,7 +90,9 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
 
         // — Timeline 2: flip + expand height + re-center —
         gsap.set(cardScene, { height: () => cardScene.offsetHeight });
-        gsap.set(cardScene, { width: () => cardScene.offsetWidth });
+        // Scale origin for tl3: card zooms from its top-center so the header
+        // stays anchored while the bottom expands downward into the clip region.
+        gsap.set(cardScene, { transformOrigin: 'top center' });
 
         const tl2 = gsap.timeline();
 
@@ -118,9 +120,10 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
 
         tl3
           .to(swatchText, { opacity: 0, y: -20, ease: 'power2.out', duration: 1 })
-          .to(cardScene, { width: '80vw', ease: 'power2.inOut', duration: 1 }, '<')
+          // Scale the entire cardScene uniformly so text and layout stay proportional.
+          // transformOrigin 'top center' keeps the header visible; section overflow:hidden clips the bottom.
           .to(cardScene, {
-            y: () => -(section.offsetHeight / 2 - cardScene.offsetHeight / 2) + 48,
+            scale: () => (section.offsetWidth * 0.8) / cardScene.offsetWidth,
             ease: 'power2.inOut',
             duration: 1,
           }, '<')
