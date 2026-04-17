@@ -181,6 +181,22 @@
   }
 }
 
+// --- Swatch subtext (crossfading p elements) ---
+// Two <p> elements stacked absolutely so GSAP can crossfade them without
+// layout shift. The wrapper holds the height so sibling elements don't jump.
+.swatch-subtext {
+  position: relative;
+  min-height: 4rem;
+
+  p {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+  }
+}
+
 // --- Mobile swatch info overlay ---
 // Dark gradient overlay that fades up over the swatch on mobile.
 // GSAP starts it at opacity:0 and tweens to opacity:1 in tlOverlay.

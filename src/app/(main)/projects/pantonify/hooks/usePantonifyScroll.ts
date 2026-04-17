@@ -112,9 +112,19 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
           .to(cardScene, { height: () => back.scrollHeight, ease: 'power2.inOut', duration: 1 }, '<')
           .to(card, { x: 0, ease: 'power2.inOut', duration: 1 }, '<');
 
+        // — Timeline 2b: crossfade swatchText sub-paragraphs —
+        // p[0] fades out, p[1] fades in while h2 stays visible.
+        const swatchPs = swatchText.querySelectorAll<HTMLElement>('.swatch-subtext p');
+        if (swatchPs.length >= 2) gsap.set(swatchPs[1], { opacity: 0 });
+
+        const tl2b = gsap.timeline();
+        if (swatchPs.length >= 2) {
+          tl2b
+            .to(swatchPs[0], { opacity: 0, ease: 'power2.out', duration: 0.5 })
+            .to(swatchPs[1], { opacity: 1, ease: 'power2.out', duration: 0.5 }, '<');
+        }
+
         // — Timeline 3: fade swatchText + expand card to 80vw, anchored at top —
-        // The y tween moves cardScene to the top of the section so the card
-        // grows downward and the bottom clips at the section boundary.
         gsap.set(back.querySelector('.swatch-steps'), { opacity: 0 });
         const tl3 = gsap.timeline();
 
@@ -135,7 +145,7 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
           );
 
         // Array-driven master timeline — end derived from length, no magic numbers.
-        const timelines = [tl1, tl2, tl3];
+        const timelines = [tl1, tl2, tl2b, tl3];
         const masterTl = gsap.timeline();
         timelines.forEach(tl => masterTl.add(tl));
 

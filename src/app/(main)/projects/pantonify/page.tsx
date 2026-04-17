@@ -46,7 +46,10 @@ export default function Pantonify() {
       </PantonifySideText>
       <PantonifySideText ref={swatchTextRef} className="pantonify-side-text--swatch">
         <h2>Swatch Card</h2>
-        <p>Something Else</p>
+        <div className="swatch-subtext">
+          <p>Each color swatch is generated from your album art&apos;s dominant hue.</p>
+          <p>Matched to the closest Pantone® shade for a shareable, print-ready card.</p>
+        </div>
       </PantonifySideText>
       <PantonifyCard refs={{ cardRef, cardSceneRef, cardInnerRef, backRef }} />
       <div ref={mobileSwatchRef} className="mobile-swatch-wrapper">
