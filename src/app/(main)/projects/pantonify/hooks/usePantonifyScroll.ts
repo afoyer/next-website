@@ -50,7 +50,7 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
       const sideText = sideTextRef.current;
       const swatchText = swatchTextRef.current;
 
-      if (!section || !card || !cardScene || !cardInner || !back || !sideText) return;
+      if (!section || !card || !cardScene || !cardInner || !back || !sideText || !swatchText) return;
 
       const mm = gsap.matchMedia();
 
@@ -110,8 +110,7 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
 
         tl3
           .to(swatchText, { opacity: 0, y: -20, ease: 'power2.out', duration: 1 })
-          .to(cardScene, { width: '80vw', ease: 'power2.inOut', duration: 1 }, '<')
-          .to(cardScene, { height: () => back.scrollHeight, ease: 'power2.inOut', duration: 1 }, '<');
+          .to(cardScene, { width: '80vw', ease: 'power2.inOut', duration: 1 }, '<');
 
         // Array-driven master timeline — end derived from length, no magic numbers.
         const timelines = [tl1, tl2, tl3];
