@@ -27,11 +27,16 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
     swatchInfoOverlayRef,
   } = refs;
 
+  // Lenis smooth scroll intercepts native scroll events, so ScrollTrigger
+  // won't detect scroll on its own. We connect them by updating ScrollTrigger
+  // on every Lenis scroll tick.
   const lenis = useLenis(({ scroll }) => {
-    void scroll;
+    void scroll; // suppress unused-var lint
     ScrollTrigger.update();
   });
 
+  // Also connect the GSAP ticker to Lenis so they share the same animation loop.
+  // Without this, Lenis and GSAP can fight over requestAnimationFrame timing.
   useEffect(() => {
     if (!lenis) return;
     const handler = (time: number) => lenis.raf(time * 1000);
@@ -106,11 +111,18 @@ export function usePantonifyScroll(refs: PantonifyScrollRefs) {
           .to(card, { x: 0, ease: 'power2.inOut', duration: 1 }, '<');
 
         // — Timeline 3: fade swatchText + expand card to 80vw —
+        gsap.set(back.querySelector('.swatch-steps'), { opacity: 0 });
         const tl3 = gsap.timeline();
 
         tl3
           .to(swatchText, { opacity: 0, y: -20, ease: 'power2.out', duration: 1 })
-          .to(cardScene, { width: '80vw', ease: 'power2.inOut', duration: 1 }, '<');
+          .to(cardScene, { width: '80vw', ease: 'power2.inOut', duration: 1 }, '<')
+          .fromTo(
+            back.querySelector('.swatch-steps'),
+            { opacity: 0 },
+            { opacity: 1, ease: 'power2.out', duration: 0.6 },
+            '-=0.3'
+          );
 
         // Array-driven master timeline — end derived from length, no magic numbers.
         const timelines = [tl1, tl2, tl3];
