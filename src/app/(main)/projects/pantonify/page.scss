@@ -178,3 +178,61 @@
                 background-color: #1ED760;
         }
 }
+
+// --- Mobile swatch info overlay ---
+// Dark gradient overlay that fades up over the swatch on mobile.
+// GSAP starts it at opacity:0 and tweens to opacity:1 in tlOverlay.
+// Hidden on desktop.
+.swatch-info-overlay {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 60%);
+    padding: 2rem 1.5rem;
+    color: white;
+    opacity: 0; // GSAP controls this
+    pointer-events: none;
+
+    &__steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    &__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      color: #111;
+      font-size: 0.7rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    &__label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    &__arrow {
+      opacity: 0.4;
+      font-size: 0.75rem;
+    }
+  }
+}
