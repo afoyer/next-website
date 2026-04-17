@@ -1,28 +1,29 @@
 import "./PantonifySwatch.scss";
 
-const PantonifySwatch = () => {
-  const songs = [
-    {
-      artist: "DAFT PUNK",
-      title: "Give Life Back To Music",
-      hex: "242525",
-      img: "https://upload.wikimedia.org/wikipedia/en/2/26/Daft_Punk_-_Random_Access_Memories.png"
-    },
-    {
-      artist: "DUA LIPA",
-      title: "Levitating",
-      hex: "4E4546",
-      img: "https://upload.wikimedia.org/wikipedia/en/f/f5/Dua_Lipa_-_Future_Nostalgia_%28Official_Album_Cover%29.png"
-    }
-  ];
+const songs = [
+  {
+    artist: "DAFT PUNK",
+    title: "Give Life Back To Music",
+    hex: "242525",
+    img: "https://upload.wikimedia.org/wikipedia/en/2/26/Daft_Punk_-_Random_Access_Memories.png"
+  },
+  {
+    artist: "DUA LIPA",
+    title: "Levitating",
+    hex: "4E4546",
+    img: "https://upload.wikimedia.org/wikipedia/en/f/f5/Dua_Lipa_-_Future_Nostalgia_%28Official_Album_Cover%29.png"
+  }
+];
 
-  const steps = [
-    "Connect Spotify",
-    "Pull your top tracks",
-    "Extract dominant color",
-    "Match to nearest Pantone",
-    "Get your swatch",
-  ];
+const steps = [
+  "Connect Spotify",
+  "Pull your top tracks",
+  "Extract dominant color",
+  "Match to nearest Pantone",
+  "Get your swatch",
+];
+
+const PantonifySwatch = () => {
 
   return (
     <div className="pantonify-container">
