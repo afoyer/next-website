@@ -161,6 +161,20 @@
     text-align: center;
   }
 
+  // Swatch side text: overlays the swatch on mobile, animated in by GSAP as
+  // Phase 2 of the mobile timeline. Starts hidden — GSAP takes over from here.
+  // position: absolute fills .pantonify-section (position: relative).
+  .pantonify-side-text--swatch {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 80%;
+    opacity: 0; // GSAP start state
+    z-index: 10;
+    text-align: center;
+  }
+
   // Card scene: match the swatch card width on mobile.
   .card-scene {
     width: min(340px, 90vw);

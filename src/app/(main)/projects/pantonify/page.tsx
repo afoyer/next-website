@@ -44,7 +44,7 @@ export default function Pantonify() {
           while giving showcasing one's uniqueness through color.
         </p>
       </PantonifySideText>
-      <PantonifySideText ref={swatchTextRef}>
+      <PantonifySideText ref={swatchTextRef} className="pantonify-side-text--swatch">
         <h2>Swatch Card</h2>
         <p>Something Else</p>
       </PantonifySideText>
