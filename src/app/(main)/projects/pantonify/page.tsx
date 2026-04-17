@@ -6,14 +6,7 @@ import PantonifyCard from './components/PantonifyCard';
 import PantonifySideText from './components/PantonifySideText';
 import PantonifySwatch from './components/PantonifySwatch';
 import { usePantonifyScroll } from './hooks/usePantonifyScroll';
-
-const steps = [
-  "Connect Spotify",
-  "Pull your top tracks",
-  "Extract dominant color",
-  "Match to nearest Pantone",
-  "Get your swatch",
-];
+import { PANTONIFY_STEPS } from './constants';
 
 export default function Pantonify() {
   const sectionRef           = useRef<HTMLElement>(null);
@@ -60,11 +53,11 @@ export default function Pantonify() {
         <PantonifySwatch />
         <div ref={swatchInfoOverlayRef} className="swatch-info-overlay">
           <div className="swatch-info-overlay__steps">
-            {steps.map((label, i) => (
+            {PANTONIFY_STEPS.map((label, i) => (
               <span key={i} className="swatch-info-overlay__item">
                 <span className="swatch-info-overlay__badge">{i + 1}</span>
                 <span className="swatch-info-overlay__label">{label}</span>
-                {i < steps.length - 1 && (
+                {i < PANTONIFY_STEPS.length - 1 && (
                   <span className="swatch-info-overlay__arrow">→</span>
                 )}
               </span>

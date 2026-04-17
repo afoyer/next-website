@@ -1,4 +1,5 @@
 import "./PantonifySwatch.scss";
+import { PANTONIFY_STEPS } from "../constants";
 
 const songs = [
   {
@@ -13,14 +14,6 @@ const songs = [
     hex: "4E4546",
     img: "https://upload.wikimedia.org/wikipedia/en/f/f5/Dua_Lipa_-_Future_Nostalgia_%28Official_Album_Cover%29.png"
   }
-];
-
-const steps = [
-  "Connect Spotify",
-  "Pull your top tracks",
-  "Extract dominant color",
-  "Match to nearest Pantone",
-  "Get your swatch",
 ];
 
 const PantonifySwatch = () => {
@@ -46,11 +39,11 @@ const PantonifySwatch = () => {
         </main>
 
         <div className="swatch-steps">
-          {steps.map((label, i) => (
+          {PANTONIFY_STEPS.map((label, i) => (
             <span key={i} className="swatch-steps__item">
               <span className="swatch-steps__badge">{i + 1}</span>
               <span className="swatch-steps__label">{label}</span>
-              {i < steps.length - 1 && (
+              {i < PANTONIFY_STEPS.length - 1 && (
                 <span className="swatch-steps__arrow">→</span>
               )}
             </span>
