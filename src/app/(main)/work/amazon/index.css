@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+.amazon-page {
+  font-family: "Open Sans", sans-serif;
+}
+
+.ember {
+  font-family: "Amazon Ember", sans-serif;
+  font-weight: bold;
+}
+
+/* CloudScape Design System Page Header Styles */
+.cloudscape-page-header {
+  font-family: "Amazon Ember", sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 2.5rem;
+  color: #16191f;
+}
+
+.dark .cloudscape-page-header {
+  color: #e9ebed;
+}

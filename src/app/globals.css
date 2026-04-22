@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
+  --background: #e8e8e8;
   --foreground: #171717;
+  --scrollbar-thumb: rgba(0, 0, 0, 0.3);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
+
+  /* Navigation (Motion) */
+  --nav-color: #ffffff;
+  --nav-bg: #292929;
+  --nav-bg-hover: #1d1d1d;
+  --nav-icon: #f1f1f1;
+  --nav-icon-focused: #000000;
+  --nav-link-default: #f1f1f1;
+  --nav-link-hover: #ffffff;
+  --nav-link-text: #f1f1f1;
+  --nav-accent: #3b82f6;
+  --nav-link-active-about: #2a4cc7;
+  --nav-link-active-spotify: #25be30;
+  --nav-link-active-linkedin: #0077b5;
+  --nav-link-active-amazon: #FB8C00;
+}
+
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.5);
+
+  /* Navigation (Motion) */
+  --nav-color: #ededed;
+  --nav-bg: #212121;
+  --nav-bg-hover: #2a2a2a;
+  --nav-icon: #ededed;
+  --nav-icon-focused: #ffffff;
+  --nav-link-default: #171717;
+  --nav-link-hover: #ededed;
+  --nav-link-text: #ededed;
+  --nav-accent: #60a5fa;
+  --nav-link-active-about: #143292;
+  --nav-link-active-spotify: #257b12;
+  --nav-link-active-linkedin: #0ea5e9;
+  --nav-link-active-amazon: #FB8C00;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-nav-accent: var(--nav-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-helvetica: "helvetica-neue-lt-pro", sans-serif;
+  --font-montserrat: "montserrat", sans-serif;
 }
+
+@theme light {
+  --color-background: #e8e8e8;
+  --text-primary: #000000;
+}
+
+@theme dark {
+  --color-background: #0a0a0a;
+  --text-primary: #ededed;
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.5);
   }
+}
+
+html {
+  scrollbar-gutter: stable; /* Reserve space from start - prevents layout shift */
+  scrollbar-width: thin; /* Firefox - thin scrollbar */
+  scrollbar-color: var(--scrollbar-thumb) transparent; /* Firefox - thumb + transparent track */
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
 }

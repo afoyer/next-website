@@ -2,6 +2,7 @@
 
 import { useStorageUrl } from "@/hooks/useStorageUrl";
 import Image, { type ImageProps } from "next/image";
+import { forwardRef, useState, useCallback } from "react";
 
 type StorageImageProps = Omit<ImageProps, "src"> & {
   /** The Amplify Storage path (e.g. "public/images/hero.jpg") */
@@ -28,32 +29,61 @@ type StorageImageProps = Omit<ImageProps, "src"> & {
  * />
  * ```
  */
-export function StorageImage({
-  storagePath,
-  fallback,
-  alt,
-  ...imageProps
-}: StorageImageProps) {
-  const { url, isLoading, error } = useStorageUrl(storagePath);
+export const StorageImage = forwardRef<HTMLImageElement, StorageImageProps>(
+  function StorageImage(
+    { storagePath, fallback, alt, onLoad, ...imageProps },
+    ref,
+  ) {
+    const { url, isLoading, error } = useStorageUrl(storagePath);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
-  if (isLoading) {
-    return (
-      fallback ?? (
-        <div
-          className="animate-pulse bg-neutral-200 dark:bg-neutral-800 rounded"
-          style={{
-            width: imageProps.width ?? "100%",
-            height: imageProps.height ?? "100%",
-          }}
-          aria-label="Loading image"
-        />
-      )
+    const handleLoad = useCallback(
+      (e: React.SyntheticEvent<HTMLImageElement>) => {
+        setImageLoaded(true);
+        onLoad?.(e);
+      },
+      [onLoad],
     );
-  }
 
-  if (error || !url) {
-    return null;
-  }
+    if (error || (!isLoading && !url)) {
+      return null;
+    }
 
-  return <Image src={url} alt={alt} loading="lazy" {...imageProps} />;
-}
+    const showSkeleton = isLoading || !imageLoaded;
+
+    const skeleton = fallback ?? (
+      <div
+        className={`animate-pulse bg-neutral-200 dark:bg-neutral-800 ${
+          imageProps.fill ? "absolute inset-0" : "rounded"
+        }`}
+        style={
+          imageProps.fill
+            ? undefined
+            : {
+                width: imageProps.width ?? "100%",
+                height: imageProps.height ?? "100%",
+              }
+        }
+        aria-label="Loading image"
+      />
+    );
+
+    return (
+      <>
+        {showSkeleton && skeleton}
+        {url && (
+          <Image
+            ref={ref}
+            src={url}
+            alt={alt}
+            onLoad={handleLoad}
+            {...imageProps}
+            className={`${imageProps.className ?? ""} ${
+              imageLoaded ? "" : "invisible"
+            }`}
+          />
+        )}
+      </>
+    );
+  },
+);
