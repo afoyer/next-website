@@ -1,6 +1,7 @@
 "use client";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+// @ts-ignore - GSAP Flip case sensitivity issue on macOS
 import { Flip } from "gsap/Flip";
 
 gsap.registerPlugin(Flip);

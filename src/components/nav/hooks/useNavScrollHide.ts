@@ -23,6 +23,7 @@ export function useNavScrollHide(navRef: React.RefObject<HTMLElement | null>) {
 
           const hideNav = () => {
             if (!navRef.current || isHidden.current) return;
+            if (isMobile) return; // nav always stays visible on mobile
             isHidden.current = true;
             gsap.to(navRef.current, {
               y: isMobile ? "-150%" : "150%",

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #e8e8e8;
   --foreground: #171717;
@@ -19,6 +21,7 @@
   --nav-link-active-about: #2a4cc7;
   --nav-link-active-spotify: #25be30;
   --nav-link-active-linkedin: #0077b5;
+  --nav-link-active-amazon: #FB8C00;
 }
 
 html.dark {
@@ -40,6 +43,7 @@ html.dark {
   --nav-link-active-about: #143292;
   --nav-link-active-spotify: #257b12;
   --nav-link-active-linkedin: #0ea5e9;
+  --nav-link-active-amazon: #FB8C00;
 }
 
 @theme inline {
@@ -49,6 +53,7 @@ html.dark {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-helvetica: "helvetica-neue-lt-pro", sans-serif;
+  --font-montserrat: "montserrat", sans-serif;
 }
 
 @theme light {
@@ -60,6 +65,7 @@ html.dark {
   --color-background: #0a0a0a;
   --text-primary: #ededed;
 }
+
 
 @media (prefers-color-scheme: dark) {
   :root {

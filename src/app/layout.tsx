@@ -7,7 +7,6 @@ import PageTransition from "@/components/page-transition";
 import Nav from "@/components/nav";
 import { ReactLenis } from "lenis/react";
 import { ThemeSync } from "@/components/theme-sync";
-// import Nav2 from "@/components/nav/nav2";
 
 export const metadata: Metadata = {
   title: "a.f",
@@ -19,6 +18,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
     <html lang="en">
       <head>

@@ -73,7 +73,7 @@ export default function Nav() {
 
       <motion.nav
         ref={navRef}
-        className="block z-[151] fixed w-full top-[10px] lg:top-auto bottom-auto lg:bottom-[33px]"
+        className="block z-200 fixed w-full top-2.5 lg:top-auto bottom-auto lg:bottom-8.25"
         initial={{ opacity: 0 }}
         animate={navControls}
       >
@@ -96,7 +96,7 @@ export default function Nav() {
 
             {/* Logo — center on desktop, left on mobile */}
             <div ref={logoRef} className={styles.logo_wrapper}>
-              <NavLogo onClick={isMobile ? handleLogoClick : undefined} />
+              <NavLogo onClick={isMobile ? handleLogoClick : undefined} isMobile={isMobile} />
             </div>
 
             {/* Mobile breadcrumb: | [house] /segment */}

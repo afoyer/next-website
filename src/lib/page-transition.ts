@@ -4,9 +4,9 @@ export const TRANSITION_CONFIG = {
   /** Total animation duration in seconds */
   duration: 1.5,
   /** Alpha of the dark circle overlay (0–1). Change to adjust darkness. */
-  overlayOpacity: 0.92,
+  overlayOpacity: 1,
   /** GSAP easing for the circle expand/collapse */
-  ease: "cubic-bezier(0.76, 0, 0.24, 1)",
+  ease: "power2.inOut",
 };
 
 /**
@@ -17,7 +17,7 @@ export const TRANSITION_CONFIG = {
 const PAGE_COLOR_VARS: Record<string, string> = {
   "/about": "--nav-link-active-about",
   "/projects/pantonify": "--nav-link-active-spotify",
-  "/work/amazon": "--nav-link-active-linkedin",
+  "/work/amazon": "--nav-link-active-amazon",
 };
 
 function getPageColor(href: string): string {
@@ -102,7 +102,7 @@ export function triggerPageTransition(
       ease,
     })
     // Label fades in while circle is full
-    .to(label, { opacity: 1, duration: phaseDuration, ease: "power2.inOut" }, `-=${phaseDuration * 0.5}`)
+    .to(label, { opacity: 1, duration: phaseDuration*0.8, ease: "power2.inOut" }, `-=${phaseDuration * 2}`)
     .call(() => push(href))
     // Label fades out
     .to(label, { opacity: 0, duration: phaseDuration, ease: "power2.inOut" })

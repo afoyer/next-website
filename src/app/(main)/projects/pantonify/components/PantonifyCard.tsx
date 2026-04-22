@@ -1,32 +1,14 @@
-'use client';
+import PantonifySwatch from './PantonifySwatch';
 
-import { RefObject } from 'react';
-
-// We pass refs in via a plain object rather than forwardRef because
-// we need to expose three distinct refs — forwardRef only forwards one.
-export interface PantonifyCardRefs {
-  cardRef: RefObject<HTMLDivElement | null>;      // outer wrapper (GSAP translates x here)
-  cardSceneRef: RefObject<HTMLDivElement | null>; // perspective wrapper (GSAP tweens height here)
-  cardInnerRef: RefObject<HTMLDivElement | null>; // rotating wrapper (GSAP tweens rotateY here)
-  backRef: RefObject<HTMLDivElement | null>;      // back face (hook reads scrollHeight for tween)
-}
-
-interface Props {
-  refs: PantonifyCardRefs;
-}
-
-export default function PantonifyCard({ refs }: Props) {
-  const { cardRef, cardSceneRef, cardInnerRef, backRef } = refs;
-
+export default function PantonifyCard() {
   return (
-    // cardRef: GSAP slides this along X during timeline 1
-    <div ref={cardRef}>
-      {/* cardSceneRef: GSAP tweens height here during timeline 2.
-          perspective lives on this element, not on card-inner. */}
-      <div ref={cardSceneRef} className="card-scene">
-        {/* cardInnerRef: GSAP rotates this from 0 → 180deg during timeline 2.
+    // pantonify-card-wrapper: GSAP finds this by class and slides it along X (tl1/tl2)
+    <div className="pantonify-card-wrapper">
+      {/* card-scene: perspective wrapper — GSAP tweens height here (tl2) */}
+      <div className="card-scene">
+        {/* card-inner: GSAP rotates this from 0 → 180deg (tl2).
             transform-style: preserve-3d is set in SCSS. */}
-        <div ref={cardInnerRef} className="card-inner">
+        <div className="card-inner">
 
           {/* FRONT FACE — existing p-square content */}
           <div className="card-face card-front">
@@ -36,11 +18,11 @@ export default function PantonifyCard({ refs }: Props) {
             </div>
           </div>
 
-          {/* BACK FACE — placeholder, content TBD.
-              backRef: hook reads .scrollHeight on mount to know
-              the natural height to tween to. */}
-          <div ref={backRef} className="card-face card-back">
-            {/* Back card content goes here later */}
+          {/* BACK FACE — PantonifySwatch.
+              GSAP reads .card-back scrollHeight on mount to know
+              the natural height to tween card-scene to in tl2. */}
+          <div className="card-face card-back">
+            <PantonifySwatch />
           </div>
 
         </div>

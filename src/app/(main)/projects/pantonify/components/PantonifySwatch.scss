@@ -1,119 +1,165 @@
 $card-white: #ffffff;
 $font-stack: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
+// ─── Card shell ────────────────────────────────────────────────────────────────
+// Width is 100% of .card-back (which inherits from .card-scene).
+// aspect-ratio 283/769 preserves the Figma 364-32 proportions at any card-scene width.
+// Content is shorter than the full card height — flex fills the gap so the
+// footer logo stays anchored at the bottom.
+// GSAP reads back.scrollHeight (= the full aspect-ratio height) in tl2
+// and tweens .card-scene to that value.
+
 .pantonify-container {
+  width: 100%;
+  font-family: $font-stack;
+  color: black;
+
+  .card {
+    background: $card-white;
+    width: 100%;
+    aspect-ratio: 283 / 769;
+    border-radius: 30px;
+    box-shadow: 0px 4px 24px 0px rgba(0, 0, 0, 0.18);
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
 
-    .card {
-        background: $card-white;
-        width: 100%;
-        min-height: 720px;
-        aspect-ratio: 1/2.3;
-        border-radius: 45px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
-        font-family: $font-stack;
-        color: black;
-        overflow: hidden;
+    &__header {
+      padding: 28px 0 20px;
+      text-align: center;
 
-        &__header {
-            padding: 45px 0 25px;
-            text-align: center;
-
-            h1 {
-                font-size: 1.8rem;
-                font-weight: 900;
-                letter-spacing: -0.5px;
-                margin: 0;
-            }
-        }
-
-        &__content {
-            flex: 1;
-        }
-
-        &__footer {
-            padding: 40px;
-            display: flex;
-            justify-content: flex-end;
-
-            .logo-badge {
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #b8b8b8 0%, #e0e0e0 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: rgba(255, 255, 255, 0.8);
-                font-weight: bold;
-                font-size: 1.1rem;
-                box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
-            }
-        }
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        margin: 0;
+      }
     }
+
+    &__content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__footer {
+      padding: 28px 24px;
+      display: flex;
+      justify-content: flex-end;
+
+      .logo-badge {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #b8b8b8 0%, #e0e0e0 100%);
+        box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+      }
+    }
+  }
 }
+
+// ─── Song block ────────────────────────────────────────────────────────────────
+// Each block = color swatch bar + info row.
+// The swatch bar carries:
+//   • background color
+//   • white text overlay (left) — small at natural size, readable at tl3 scale (364-9 match)
+//   • album art (right, 25% opacity)
 
 .song-block {
-    margin-bottom: 8px;
-
-    &__color {
-        height: 105px;
-        display: flex;
-        justify-content: flex-end;
-
-        img {
-            height: 100%;
-            width: 105px;
-            object-fit: cover;
-            filter: contrast(1.1);
-            mix-blend-mode: multiply; // Blends the art into the background hex color
-            opacity: 0.9;
-        }
-    }
-}
-
-.swatch-steps {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 16px 25px 20px;
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
+  &:not(:last-child) {
+    margin-bottom: 0;
   }
 
-  &__badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #111;
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 900;
-    letter-spacing: 0;
+  // Color swatch bar — aspect-ratio 283/86 mirrors the Figma swatch dimensions.
+  // Height = card width × (86/283) ≈ 30.4%, so it scales proportionally at any
+  // card-scene width and looks correct both before and after tl3 scale.
+  &__swatch {
+    position: relative;
+    aspect-ratio: 283 / 86;
+    overflow: hidden;
     flex-shrink: 0;
   }
 
-  &__label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #222;
+  // White text inside swatch — always present.
+  // At natural card size (~430px) these are ~11px and mostly decorative.
+  // When tl3 CSS-scales the card to 80vw, they scale to ~28px — matching 364-9.
+  &__inner-text {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__inner-artist {
+    font-size: 11px;
+    font-weight: 900;
+    color: white;
+    line-height: 1.2;
     letter-spacing: -0.01em;
   }
 
-  &__arrow {
-    font-size: 0.7rem;
-    opacity: 0.35;
-    margin-left: 0.1rem;
+  &__inner-title {
+    font-size: 10px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.3;
+  }
+
+  // Album art — right side, desaturated via opacity
+  &__art {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 31%; // ~88px out of 283px Figma card = ~31%
+    object-fit: cover;
+    opacity: 0.25;
+  }
+
+  // Info row below the swatch bar
+  &__info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 16px 18px;
+    gap: 12px;
+  }
+
+  // Left: artist name + hex stacked
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  &__artist {
+    font-size: 0.85rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  &__hex {
+    font-size: 0.72rem;
+    font-weight: 700;
+    opacity: 0.75;
+    letter-spacing: 0.02em;
+  }
+
+  // Right: song title — lighter weight, right-aligned
+  &__title {
+    font-size: 0.68rem;
+    font-weight: 300;
+    text-align: right;
+    line-height: 1.4;
+    opacity: 0.85;
+    flex: 1;
   }
 }

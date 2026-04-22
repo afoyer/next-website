@@ -1,0 +1,45 @@
+/* CloudScape Design System Container Styles */
+.cloudscape-container {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  font-family: "Amazon Ember", sans-serif;
+  color: #16191f;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.cloudscape-container-header {
+  margin: 0 0 16px 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 24px;
+  color: #16191f;
+}
+
+.cloudscape-container-content {
+  line-height: 20px;
+  color: #545b64;
+  flex: 1;
+}
+
+/* Dark mode support */
+.dark .cloudscape-container {
+  background: #161d26;
+  border-color: #3d4147;
+  color: #e9ebed;
+}
+
+.dark .cloudscape-container-header {
+  color: #e9ebed;
+  font-weight: bold;
+}
+
+.dark .cloudscape-container-content {
+  color: #ffffff;
+}

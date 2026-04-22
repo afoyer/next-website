@@ -2,12 +2,16 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
 
+export const preloaderTime = 3;
+
 export default function Preloader() {
+  const path = usePathname();
   const preloaderRef = useRef<HTMLDivElement>(null);
   const hasPlayed = useRef(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(path !== "/"); // Show preloader only on the first load (home page)
 
   useGSAP(() => {
     if (hasPlayed.current) {
@@ -22,11 +26,11 @@ export default function Preloader() {
         ".preloader-content",
         {
           opacity: 0,
-          duration: 0.5,
+          duration: preloaderTime/8,
         },
         {
           opacity: 1,
-          duration: 0.5,
+          duration: preloaderTime/8,
           ease: "power2.inOut",
         },
       );
@@ -37,7 +41,7 @@ export default function Preloader() {
           ease: "expo.out",
         },
         {
-          duration: 0.5,
+          duration: preloaderTime/8,
           clipPath: "inset(0% 0% 0% 0%)",
           ease: "power2.inOut",
         },
@@ -46,8 +50,8 @@ export default function Preloader() {
         tl.to(".preloader", {
           opacity: 0,
           height: 0,
-          duration: 1,
-          delay: 0.5,
+          duration: preloaderTime/8,
+          delay: preloaderTime/4,
           ease: "power2.inOut",
         });
       } else {
@@ -59,15 +63,15 @@ export default function Preloader() {
           },
           {
             clipPath: "inset(100% 100% 100% 100%)",
-            duration: 1,
-            delay: 0.5,
+            duration: preloaderTime/8,
+            delay: preloaderTime/4,
             ease: "power2.inOut",
           },
         );
       }
       tl.to(".preloader", {
         opacity: 0,
-        duration: 0.5,
+        duration: preloaderTime/8,
         ease: "power2.inOut",
         onComplete: () => setIsVisible(false),
       });

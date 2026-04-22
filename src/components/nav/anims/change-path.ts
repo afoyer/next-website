@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import styles from "../component.module.scss";
+import path from "path";
 
 function getNavColor(varName: string): string {
   return (
@@ -32,6 +33,12 @@ export function changePath(pathName: string) {
   } else if (pathName === "/about") {
     gsap.to(selector, {
       backgroundColor: getNavColor("--nav-link-active-about"),
+      duration,
+      ease,
+    });
+  } else if (pathName === "/work/amazon") {
+    gsap.to(selector, {
+      backgroundColor: getNavColor("--nav-link-active-amazon"),
       duration,
       ease,
     });

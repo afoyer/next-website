@@ -83,15 +83,14 @@
 // rotateY(180deg), the back face rotates into view as the front exits.
 // position: absolute + top/left/width so it doesn't affect container height
 // (height is managed by GSAP tween instead).
+// LOAD-BEARING: usePantonifyScroll reads back.scrollHeight — PantonifySwatch
+// must have non-zero content height for tl2 to expand correctly.
 .card-back {
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%; // fills card-scene so .pantonify-container's justify-content:center truly centers the swatch
-        min-height: 200px; // LOAD-BEARING: usePantonifyScroll reads back.scrollHeight — must be non-zero
+        width: 100%; // fills card-scene so the swatch is correctly centered
         transform: rotateY(180deg);
-        //   background-color: #2a2a2a;
-        //   border: 1px solid #444;
 }
 
 // --- Pantonify text label (front face bottom) ---
@@ -128,7 +127,9 @@
 
   @media (max-width: 767px) {
     display: flex;
-    align-items: center;
+    // flex-start so the card's top aligns with the wrapper's top (= the 30% mark
+    // set by GSAP y tween), letting the bottom extend off-screen naturally.
+    align-items: flex-start;
     justify-content: center;
     position: absolute;
     inset: 0;
@@ -137,47 +138,41 @@
 }
 
 // --- Mobile layout ---
-// The section keeps height: 100dvh so GSAP can pin it identically to
-// desktop. flex-direction: column + overflow: hidden means the card and
-// side text are visible in State 1, and the swatch overlay clips when
-// GSAP pushes it below the section.
 @media (max-width: 767px) {
   .pantonify-section {
+    // Card (.pantonify-card-wrapper) is the only in-flow flex child.
+    // Both text blocks are absolute so they don't push the card around.
     flex-direction: column;
     justify-content: center;
-    gap: 1.5rem;
-    // height: 100dvh inherited from base rule — keep it, GSAP needs it
-    // overflow: hidden inherited from base rule — keep it for clipping
+    gap: 0;
   }
 
-  // Side text: flows below the card in the column, always visible.
-  // `position: static` overrides the desktop `position: absolute`.
-  // `opacity: 1` overrides the desktop initial hidden state — GSAP's
-  // mobile branch also sets this, but CSS ensures no flash.
+  // Both text blocks share the top-20% zone and crossfade via GSAP.
+  // Start opacity:0 on mobile so there's no flash before GSAP initialises —
+  // GSAP reveals sideText in Phase 2, swatchText in Phase 3.
   .pantonify-side-text {
-    position: static;
-    max-width: 90%;
-    opacity: 1;
-    text-align: center;
-  }
-
-  // Swatch side text: overlays the swatch on mobile, animated in by GSAP as
-  // Phase 2 of the mobile timeline. Starts hidden — GSAP takes over from here.
-  // position: absolute fills .pantonify-section (position: relative).
-  .pantonify-side-text--swatch {
     position: absolute;
-    top: 50%;
+    top: 6%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 80%;
-    opacity: 0; // GSAP start state
-    z-index: 10;
+    transform: translateX(-50%);
+    width: 88%;
+    max-width: none;
+    opacity: 0; // GSAP reveals this in Phase 2
     text-align: center;
+    z-index: 5;
   }
 
-  // Card scene: match the swatch card width on mobile.
+  .pantonify-side-text--swatch {
+    top: 6%;
+    transform: translateX(-50%);
+    max-width: none;
+    width: 88%;
+    opacity: 0; // GSAP reveals this in Phase 3
+  }
+
+  // Card scene width on mobile.
   .card-scene {
-    width: min(340px, 90vw);
+    width: min(300px, 85vw);
   }
 }
 
@@ -198,8 +193,10 @@
 }
 
 // --- Mobile swatch info overlay ---
-// Dark gradient overlay that fades up over the swatch on mobile.
-// GSAP starts it at opacity:0 and tweens to opacity:1 in tlOverlay.
+// Gradient overlay anchored to the section bottom — NOT inside the swatch wrapper.
+// This prevents clipping: the wrapper gets GSAP-translated down so its bottom
+// goes off-screen, but the overlay (sibling, anchored to section) stays put.
+// GSAP fades it in during Phase 4.
 // Hidden on desktop.
 .swatch-info-overlay {
   display: none;
@@ -209,13 +206,15 @@
     flex-direction: column;
     justify-content: flex-end;
     position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 60%);
+    // Cover the bottom 80% of the section (matches the swatch's 20% entry point).
+    top: 20%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 55%);
     padding: 2rem 1.5rem;
     color: white;
-    // position: absolute fills .mobile-swatch-wrapper (also position: absolute).
-    // If wrapper layout changes, this overlay's stacking context changes too.
-    opacity: 0; // GSAP start state — prevents flash before hook runs
+    opacity: 0; // GSAP start state
     transform: translateY(30px); // matches gsap.set(swatchInfoOverlay, { y: 30 }) in hook
     pointer-events: none;
 

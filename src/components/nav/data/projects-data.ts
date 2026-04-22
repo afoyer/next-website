@@ -21,7 +21,8 @@ export const projects: Project[] = [
   },
   {
     title: "Radiosity",
-    image: "public/projects/radiosity/splash.png",
+    image: "/images/nav/radiosity.png",
+    gif: "/images/nav/radiosity-video.mp4",
     link: "/projects/radiosity",
   },
 ];

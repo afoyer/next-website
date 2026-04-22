@@ -70,9 +70,9 @@ export function MobileMenu({ isOpen, onClose, origin, projects }: MobileMenuProp
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1, transition: { delay: 0.4, duration: 0.2 } }}
             exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.1 } }}
-            onClick={onClose}
+            onTap={onClose}
             aria-label="Close menu"
-            className="absolute top-3 right-4 z-10 flex items-center justify-center w-9 h-9 rounded-full"
+            className="absolute top-3 right-4 z-[200] flex items-center justify-center w-9 h-9 rounded-full"
             style={{
               color: "var(--nav-icon)",
               backgroundColor: "color-mix(in srgb, var(--nav-icon) 10%, transparent)",
