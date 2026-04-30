@@ -8,6 +8,7 @@ interface TransitionLinkProps {
   label: string;
   children: React.ReactNode;
   className?: string;
+  callback?: () => void;
 }
 
 export default function TransitionLink({
@@ -15,6 +16,7 @@ export default function TransitionLink({
   label,
   children,
   className,
+  callback
 }: TransitionLinkProps) {
   const router = useRouter();
   const ref = useRef<HTMLAnchorElement>(null);
@@ -28,6 +30,7 @@ export default function TransitionLink({
       origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
     }
     triggerPageTransition(href, label, (url) => router.push(url), { origin });
+    if (callback) callback();
   }
 
   return (

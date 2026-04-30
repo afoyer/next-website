@@ -200,14 +200,14 @@ export default function AmazonWindowContent() {
   const activeImage = STEPS[activeStep].image;
 
   return (
-    <div className="amazon-page bg-white dark:bg-[#161d26]">
+    <div className="amazon-page bg-white dark:bg-[#161d26] px-2 sm:px-24">
       <AwsLogoHeader />
 
       {/* ── Desktop: scroll-driven pinned layout ────────────────────────────── */}
       <div className="hidden sm:block">
         {/* Tall container — 1 step = 100vh of scroll distance */}
         <div ref={scrollRef} style={{ height: `${STEPS.length * 100}vh` }}>
-          <div className="sticky top-0 h-screen grid grid-cols-[1fr_2fr] overflow-hidden">
+          <div className="sticky top-10 h-screen py-20 grid grid-cols-[1fr_2fr] overflow-hidden">
 
             {/* Left: step nav at top + crossfading content below */}
             <div className="flex flex-col overflow-hidden min-h-0">
@@ -243,7 +243,7 @@ export default function AmazonWindowContent() {
       </div>
 
       {/* ── Technologies — always visible ───────────────────────────────────── */}
-      <div className="px-6 sm:px-8 my-12">
+      <div className="px-6 sm:px-8 pb-12">
         <CloudscapeContainer header="Technologies">
           <p className="mb-4">This solution was built using the following tools:</p>
           <ul className="pt-2 pl-4 list-disc list-inside space-y-1">

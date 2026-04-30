@@ -18,8 +18,8 @@ const montserrat = Montserrat({ subsets: ['latin'] });
 
 export default function Home() {
   return (
-    <div className="page w-full relative flex-col min-h-screen bg-white dark:bg-background font-sans px-[10%] pt-4">
-      <main className="flex min-h-dvh w-full flex-col items-center text-black dark:text-white gap-4 sm:gap-6">
+    <div className="w-full flex flex-col h-dvh overflow-hidden font-sans px-[10%] py-8 bg-white/60 dark:bg-background">
+      <main className="flex flex-1 min-h-0 w-full flex-col items-center text-black dark:text-white gap-4 sm:gap-6">
         <div>
           <Logo className="sm:h-12 w-auto fill-black dark:fill-white" />
           <h1 className={`${montserrat.className} text-xs sm:text-lg font-bold mt-4 tracking-[1.5em]`}>aymeric foyer</h1>

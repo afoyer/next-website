@@ -26,6 +26,9 @@
       "@/*": [
         "./src/*"
       ],
+      "amplify/*": [
+        "./amplify/*"
+      ],
       "gsap/Flip": [
         "./src/gsap-flip"
       ]

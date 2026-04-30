@@ -1,16 +1,16 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import styles from './hero-navigator.module.scss';
 import TransitionLink from '@/components/transition-link';
 
 // ── constants ──────────────────────────────────────────────────────────────────
 
-const PANEL_WIDTH = 148; // used in Task 5 strip animation
+const PANEL_WIDTH = 148;
 const ROW_HEIGHT = 48;
 const NUB_HEIGHT = 20;
-const SPRING = { type: 'spring' as const, stiffness: 380, damping: 36 }; // used in Task 5 and 6
+const SPRING = { type: 'spring' as const, stiffness: 380, damping: 36 };
 const NUB_SPRING = { type: 'spring' as const, stiffness: 500, damping: 40 };
 
 // ── types ──────────────────────────────────────────────────────────────────────
@@ -46,6 +46,7 @@ const ITEMS: Record<Tab, NavItem[]> = {
 
 const TAB_LABELS: Record<Tab, string> = { main: 'me', projects: 'projects', work: 'work' };
 const TABS: Tab[] = ['main', 'projects', 'work'];
+const COMPACT_HEIGHT = TABS.length * ROW_HEIGHT;
 
 // ── component ─────────────────────────────────────────────────────────────────
 
@@ -53,14 +54,22 @@ type Props = { onPreview: (src: string | null) => void };
 
 export default function HeroNavigator({ onPreview }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('main');
-  // isExpanded drives strip translateX and shell height — wired in Task 5 and 6
   const [isExpanded, setIsExpanded] = useState(false);
+  const [shellHeight, setShellHeight] = useState(COMPACT_HEIGHT);
   const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
 
   const compactRef = useRef<HTMLDivElement>(null);
   const expandedRef = useRef<HTMLDivElement>(null);
   const rowsRef = useRef<HTMLUListElement>(null);
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!isExpanded) {
+      setShellHeight(COMPACT_HEIGHT);
+      return;
+    }
+    if (expandedRef.current) setShellHeight(expandedRef.current.offsetHeight);
+  }, [isExpanded, activeTab]);
 
   const handleTabClick = (tab: Tab) => {
     setActiveTab(tab);
@@ -98,7 +107,7 @@ export default function HeroNavigator({ onPreview }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <motion.div className={styles.shell}>
+      <motion.div className={styles.shell} animate={{ height: shellHeight }} transition={SPRING}>
         <motion.div
           className={styles.strip}
           animate={{ x: isExpanded ? -PANEL_WIDTH : 0 }}

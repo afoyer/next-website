@@ -1,4 +1,4 @@
-@reference "../../app/tailwind-base.css";
+@reference "../../app/globals.css";
 
 .nav_items {
   @apply font-bold uppercase m-2 w-full h-full flex flex-col justify-center;
@@ -19,7 +19,7 @@
       left: 0;
       right: 0;
       height: 110px;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 100%);
+      background: linear-gradient(to bottom, oklch(28.502% 0.00003 271.152 / 0.55) 0%, transparent 100%);
       pointer-events: none;
       z-index: -1;
     }
@@ -52,7 +52,7 @@
     @media (min-width: 1024px) {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
-      border-radius: 0.375rem;
+      border-radius: 500px;
       background-color: var(--nav-bg);
     }
   }

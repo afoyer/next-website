@@ -1,0 +1,323 @@
+@reference "../../app/globals.css";
+
+// ── nav wrapper ───────────────────────────────────────────────────────────────
+.nav {
+  @apply flex flex-row items-start justify-between w-full;
+  --size: 45px; // base size for logo and header height
+
+  // ── floating menu (left side) ───────────────────────────────────────────
+  .floating_menu {
+    position: relative;
+    width: 100%;
+
+    // header row: [logo] [tabs or breadcrumb]
+    .header {
+      display: flex;
+      align-items: flex-end; // tabs (35px) bottom-align against taller logo (45px)
+
+      // logo tile ─────────────────────────────────────────────────────────
+      .logo_tile, .home_tile {
+        width: var(--size);
+        height: var(--size);
+        flex-shrink: 0;
+        overflow: hidden;
+        // border-radius managed inline via motion.div
+        background: var(--logo-tile-bg);
+
+        .logo_btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          padding: 5px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-decoration: none;
+        }
+
+        .logo_svg {
+          width: 100%;
+          height: 100%;
+          fill: var(--logo-tile-fill);
+        }
+      }
+
+
+      // tab bar (projects + work) ─────────────────────────────────────────
+      .tab_bar {
+        display: flex;
+        height: 33px;
+        position: relative;
+
+        .tab_indicator {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.15);
+          pointer-events: none;
+          z-index: 2;
+          border-radius: 2px;
+        }
+
+        .tab {
+          height: 100%;
+          padding: 0 14px;
+          border: none;
+          cursor: pointer;
+          font-family: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-size: 15px;
+          color: rgba(255, 255, 255, 0.85);
+          position: relative;
+          z-index: 1;
+          white-space: nowrap;
+
+          // muted by default, full color on hover
+          transition: color 0.15s ease;
+          &:hover {
+            color: white;
+          }
+
+          // toned-down gradients (less saturated than Figma spec)
+          &.tab_projects {
+            width: 116px;
+            background: linear-gradient(62deg, #5c0819 7%, #030303 173%);
+          }
+
+          &.tab_work {
+            width: 115px;
+            background: linear-gradient(50deg, #050608 10%, #2c3d4f 169%);
+            border-radius: 0 10px 0 0;
+          }
+        }
+      }
+
+      // desktop breadcrumb pill – always 45px tall (same as logo) ─────────
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        height: var(--size);
+        min-width: 200px;
+        padding: 0 16px;
+        background: rgba(41, 41, 41, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 0 10px 10px 0;
+        color: var(--nav-icon);
+        font-size: 1rem;
+        font-weight: 500;
+        text-transform: lowercase;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
+
+    // ── mobile nav container (replaces header on mobile) ────────────────────
+    .mobile_nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      .mobile_open{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+      }
+
+      // logo small – minimal closed state
+      .logo_small {
+        width: var(--size);
+        height: var(--size);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: none;
+        border: none;
+
+        .logo_svg {
+          width: 100%;
+          height: 100%;
+          fill: var(--logo-tile-fill);
+        }
+      }
+
+      // logo tile – full tile in open state (reuses desktop style)
+      .logo_tile {
+        width: var(--size);
+        height: var(--size);
+        flex-shrink: 0;
+        overflow: hidden;
+        background: var(--logo-tile-bg);
+
+        .logo_btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          padding: 5px;
+          background: none;
+          border: none;
+          cursor: pointer;
+        }
+
+        .logo_svg {
+          width: 100%;
+          height: 100%;
+          fill: var(--logo-tile-fill);
+        }
+      }
+
+      // tab bar inside mobile nav (same as desktop tab_bar)
+      .tab_bar {
+        display: flex;
+        height: var(--size);
+        position: relative;
+
+        .tab_indicator {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.15);
+          pointer-events: none;
+          z-index: 2;
+          border-radius: 2px;
+        }
+
+        .tab {
+          height: 100%;
+          padding: 0 14px;
+          border: none;
+          cursor: pointer;
+          font-family: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-size: 15px;
+          color: rgba(255, 255, 255, 0.85);
+          position: relative;
+          z-index: 1;
+          white-space: nowrap;
+
+          &.tab_projects {
+            width: 116px;
+            background: linear-gradient(62deg, #5c0819 7%, #030303 173%);
+          }
+
+          &.tab_work {
+            width: 115px;
+            background: linear-gradient(50deg, #050608 10%, #2c3d4f 169%);
+            border-radius: 0 10px 0 0;
+          }
+        }
+      }
+
+      // spacer pushes toggle to the right when tabs hidden
+      .mobile_spacer {
+        flex: 1;
+      }
+
+      // theme toggle wrapper
+      .mobile_toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 33px;
+        padding: 0 10px;
+      }
+    }
+
+    // ── dropdown list ───────────────────────────────────────────────────────
+    .dropdown {
+      position: absolute;
+      top: var(--size);
+      left: 0;
+      width: 100%;
+      max-width: 314px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+
+      .dropdown_item {
+        height: 51px;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        background: #0a0a0a;
+        cursor: pointer;
+
+        @for $i from 1 through 10 {
+          &:nth-child(#{$i}) {
+            z-index: #{11 - $i};
+          }
+        }
+
+        &:first-child {
+          border-top-right-radius: 10px;
+        }
+
+        &:last-child {
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          margin-bottom: 0;
+        }
+
+        .item_bg {
+          position: absolute;
+          inset: 0;
+          mix-blend-mode: screen;
+        }
+
+        .item_link {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          padding: 13px 13px;
+          text-decoration: none;
+        }
+
+        .item_label {
+          font-family: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-size: 30px;
+          font-weight: 300;
+          color: white;
+          line-height: 1;
+        }
+
+        &.item_active .item_label {
+          opacity: 0.45;
+        }
+      }
+    }
+
+    // ── hover preview (desktop only) ────────────────────────────────────────
+    .preview {
+      position: absolute;
+      top: var(--size);
+      left: calc(314px + 18px);
+      width: 300px;
+      aspect-ratio: 16/9;
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 60;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+
+      .preview_img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+  }
+}
