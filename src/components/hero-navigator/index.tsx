@@ -98,11 +98,20 @@ export default function HeroNavigator({ onPreview }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.shell}>
-        <div className={styles.strip}>
+      <motion.div className={styles.shell}>
+        <motion.div
+          className={styles.strip}
+          animate={{ x: isExpanded ? -PANEL_WIDTH : 0 }}
+          transition={SPRING}
+        >
 
           {/* ── compact page ── */}
-          <div ref={compactRef} className={styles.page}>
+          <motion.div
+            ref={compactRef}
+            className={styles.page}
+            animate={{ opacity: isExpanded ? 0.38 : 1 }}
+            transition={SPRING}
+          >
             {TABS.map(tab => (
               <button
                 key={tab}
@@ -113,7 +122,7 @@ export default function HeroNavigator({ onPreview }: Props) {
                 <span className={styles.row_label}>{TAB_LABELS[tab]}</span>
               </button>
             ))}
-          </div>
+          </motion.div>
 
           {/* ── expanded page ── */}
           <div ref={expandedRef} className={styles.page}>
@@ -168,8 +177,8 @@ export default function HeroNavigator({ onPreview }: Props) {
             </ul>
           </div>
 
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
