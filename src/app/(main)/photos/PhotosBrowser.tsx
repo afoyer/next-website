@@ -11,7 +11,7 @@ import styles from './photos.module.scss';
 const client = generateClient<Schema>();
 
 type Album = NonNullable<Awaited<ReturnType<typeof client.queries.listAlbums>>['data']>[number];
-type Photo = NonNullable<Awaited<ReturnType<typeof client.queries.listPhotos>>['data']>[number];
+type Photo = NonNullable<NonNullable<Awaited<ReturnType<typeof client.queries.listPhotos>>['data']>[number]>;
 
 const PLACEHOLDER_RATIOS: [number, number][] = [
   [360, 418], [360, 385], [360, 233], [360, 252],
