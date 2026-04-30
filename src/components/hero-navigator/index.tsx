@@ -1,16 +1,16 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import styles from './hero-navigator.module.scss';
 import TransitionLink from '@/components/transition-link';
 
 // ── constants ──────────────────────────────────────────────────────────────────
 
-const PANEL_WIDTH = 148;
+const PANEL_WIDTH = 148; // used in Task 5 strip animation
 const ROW_HEIGHT = 48;
 const NUB_HEIGHT = 20;
-const SPRING = { type: 'spring' as const, stiffness: 380, damping: 36 };
+const SPRING = { type: 'spring' as const, stiffness: 380, damping: 36 }; // used in Task 5 and 6
 const NUB_SPRING = { type: 'spring' as const, stiffness: 500, damping: 40 };
 
 // ── types ──────────────────────────────────────────────────────────────────────
@@ -53,12 +53,14 @@ type Props = { onPreview: (src: string | null) => void };
 
 export default function HeroNavigator({ onPreview }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('main');
-  const [_isExpanded, setIsExpanded] = useState(false);
+  // isExpanded drives strip translateX and shell height — wired in Task 5 and 6
+  const [isExpanded, setIsExpanded] = useState(false);
   const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
 
   const compactRef = useRef<HTMLDivElement>(null);
   const expandedRef = useRef<HTMLDivElement>(null);
   const rowsRef = useRef<HTMLUListElement>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleTabClick = (tab: Tab) => {
     setActiveTab(tab);
@@ -73,6 +75,7 @@ export default function HeroNavigator({ onPreview }: Props) {
   };
 
   const handleRowEnter = (e: React.MouseEvent<HTMLLIElement>, item: NavItem) => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
     const container = rowsRef.current;
     if (!container) return;
     const cRect = container.getBoundingClientRect();
@@ -85,8 +88,10 @@ export default function HeroNavigator({ onPreview }: Props) {
   };
 
   const handleRowLeave = () => {
-    setNubPos(p => ({ ...p, opacity: 0 }));
-    onPreview(null);
+    leaveTimer.current = setTimeout(() => {
+      setNubPos(p => ({ ...p, opacity: 0 }));
+      onPreview(null);
+    }, 80);
   };
 
   const items = ITEMS[activeTab];
@@ -112,16 +117,19 @@ export default function HeroNavigator({ onPreview }: Props) {
 
           {/* ── expanded page ── */}
           <div ref={expandedRef} className={styles.page}>
-            <motion.button
-              key={`bc-${activeTab}`}
-              className={styles.breadcrumb}
-              onClick={handleBack}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-            >
-              ← /{TAB_LABELS[activeTab]}
-            </motion.button>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.button
+                key={`bc-${activeTab}`}
+                className={styles.breadcrumb}
+                onClick={handleBack}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -8 }}
+                transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+              >
+                ← /{TAB_LABELS[activeTab]}
+              </motion.button>
+            </AnimatePresence>
 
             <ul ref={rowsRef} className={styles.rows}>
               {items.map(item => (
