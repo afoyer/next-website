@@ -36,11 +36,11 @@ export function DarkModeToggle({ className }: DarkModeToggleProps) {
       <AnimatePresence mode="wait">
         {mode === "dark" ? (
           <motion.div key="sun" variants={iconVariants} initial="initial" animate="animate" exit="exit">
-            <Moon size={22} />
+            <Moon className="h-full aspect-square" />
           </motion.div>
         ) : (
           <motion.div key="moon" variants={iconVariants} initial="initial" animate="animate" exit="exit">
-            <Sun size={22} />
+            <Sun />
           </motion.div>
         )}
       </AnimatePresence>

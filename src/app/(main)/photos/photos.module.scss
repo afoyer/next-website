@@ -1,0 +1,335 @@
+@reference "../../globals.css";
+
+// ── page wrapper ───────────────────────────────────────────────────────────────
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(90deg, #131313 0%, #010101 12%, #010101 84%, #131313 100%);
+  color: white;
+}
+
+// ── mobile sticky header ───────────────────────────────────────────────────────
+
+.mobile_header {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 60px;
+    z-index: 40;
+    padding: 10px 28px;
+    height: 48px;
+    background: rgba(1, 1, 1, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+.mobile_label {
+  font-size: 16px;
+  font-weight: 400;
+  color: white;
+}
+
+.mobile_toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+// ── mobile overlay (fixed panel over photos) ───────────────────────────────────
+
+.overlay {
+  position: fixed;
+  // 60px global nav + 48px mobile header
+  top: 108px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  background: rgba(2, 2, 2, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 32px 28px;
+  overflow-y: auto;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+// ── main layout ────────────────────────────────────────────────────────────────
+
+.layout {
+  display: grid;
+  grid-template-columns: 151px 1fr;
+  gap: 12px;
+  padding: 140px 100px 80px;
+
+  @media (max-width: 1024px) {
+    padding: 140px 48px 80px;
+  }
+
+  @media (max-width: 767px) {
+    display: block;
+    padding: 24px 16px 60px;
+  }
+}
+
+// ── desktop sidebar ────────────────────────────────────────────────────────────
+
+.sidebar {
+  position: sticky;
+  top: 120px;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.icons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 4px;
+
+  a,
+  button {
+    color: rgba(255, 255, 255, 0.55);
+    display: flex;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+// ── album / category list ──────────────────────────────────────────────────────
+
+.album_list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.album_btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-helvetica);
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0;
+  text-align: left;
+  white-space: nowrap;
+  transition: color 0.15s;
+  line-height: 18px;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  &.active {
+    color: white;
+  }
+
+  // overlay size on mobile
+  @media (max-width: 767px) {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: white;
+  flex-shrink: 0;
+}
+
+.subitems {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 9px;
+  margin-top: 2px;
+}
+
+.subitem {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0;
+  text-align: left;
+  transition: color 0.15s;
+  letter-spacing: -0.05px;
+  line-height: 18px;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  &.active {
+    color: white;
+  }
+
+  @media (max-width: 767px) {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+}
+
+// ── album skeleton ─────────────────────────────────────────────────────────────
+
+@keyframes shimmer {
+  0%   { opacity: 0.18; }
+  50%  { opacity: 0.35; }
+  100% { opacity: 0.18; }
+}
+
+.album_skeleton {
+  height: 13px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.25);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+// ── lightbox ───────────────────────────────────────────────────────────────────
+
+.lightbox_backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.lightbox_frame {
+  position: relative;
+  max-width: min(90vw, 1200px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.lightbox_img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(90vh - 40px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.lightbox_caption {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+.lightbox_close {
+  position: fixed;
+  top: 24px;
+  right: 28px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+}
+
+// ── masonry grid ───────────────────────────────────────────────────────────────
+
+.masonry {
+  columns: 3;
+  column-gap: 12px;
+
+  @media (max-width: 1200px) {
+    columns: 2;
+  }
+
+  @media (max-width: 767px) {
+    columns: 1;
+  }
+}
+
+.tile {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: rgba(128, 128, 128, 0.18);
+  cursor: pointer;
+
+  &:hover .photo {
+    transform: scale(1.02);
+  }
+}
+
+.tile_placeholder {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  background: linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 300% 100%;
+  animation: tile_sweep 1.8s ease-in-out infinite;
+}
+
+@keyframes tile_sweep {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.photo {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.35s ease;
+}

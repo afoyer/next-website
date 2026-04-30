@@ -22,6 +22,8 @@
   --nav-link-active-spotify: #25be30;
   --nav-link-active-linkedin: #0077b5;
   --nav-link-active-amazon: #FB8C00;
+  --logo-tile-fill: #171717;
+  --logo-tile-bg: #f1f1f1;
 }
 
 html.dark {
@@ -44,6 +46,8 @@ html.dark {
   --nav-link-active-spotify: #257b12;
   --nav-link-active-linkedin: #0ea5e9;
   --nav-link-active-amazon: #FB8C00;
+  --logo-tile-fill: #ededed;
+  --logo-tile-bg: #171717;
 }
 
 @theme inline {
@@ -52,7 +56,7 @@ html.dark {
   --color-nav-accent: var(--nav-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-helvetica: "helvetica-neue-lt-pro", sans-serif;
+  --font-helvetica: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-montserrat: "montserrat", sans-serif;
 }
 
@@ -103,4 +107,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-style: normal;
+  overflow-x: hidden;
+}
+
+.page {
+  padding-left: clamp(16px, 10vw, 100px);
+  padding-right: clamp(16px, 10vw, 100px);
+
 }
