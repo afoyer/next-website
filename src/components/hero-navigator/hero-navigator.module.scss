@@ -1,0 +1,27 @@
+@reference "../../app/globals.css";
+
+// .wrapper positioning added in Task 3
+
+.shell {
+  width: 148px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(1deg, rgba(88, 88, 88, 0.18) 0%, rgba(0, 0, 0, 0.18) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  isolation: isolate;
+}
+
+.strip {
+  display: flex;
+  flex-direction: row;
+  width: calc(148px * 2);
+}
+
+.page {
+  width: 148px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
