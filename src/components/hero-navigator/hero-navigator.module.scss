@@ -1,6 +1,14 @@
 @reference "../../app/globals.css";
 
-.wrapper {} // positioning added in Task 3
+// ── wrapper positioning ────────────────────────────────────────────────────────
+
+.wrapper {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(-20%);
+}
 
 .shell {
   width: 148px;
@@ -24,4 +32,124 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+}
+
+// ── shared row atoms ──────────────────────────────────────────────────────────
+
+.row_bg {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.row_label {
+  font-size: 18px;
+  font-weight: 300;
+  color: white;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+  font-family: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+// ── compact page ──────────────────────────────────────────────────────────────
+
+.compact_row {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 13px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: #0a0a0a;
+  border: none;
+  border-bottom: 1px solid rgba(7, 9, 12, 0.25);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: filter 0.12s ease;
+
+  &:hover {
+    filter: brightness(1.25);
+  }
+
+  &:last-child {
+    border-bottom: none;
+    border-radius: 0 0 10px 10px;
+  }
+}
+
+// ── breadcrumb ────────────────────────────────────────────────────────────────
+
+.breadcrumb {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 5px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.38);
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(7, 9, 12, 0.2);
+  cursor: pointer;
+  width: 100%;
+  font-family: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.65);
+  }
+}
+
+// ── expanded rows ─────────────────────────────────────────────────────────────
+
+.rows {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.expanded_row {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: #0a0a0a;
+  border-bottom: 1px solid rgba(7, 9, 12, 0.25);
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .row_link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    padding: 0 13px;
+    text-decoration: none;
+  }
+}
+
+// ── nub ───────────────────────────────────────────────────────────────────────
+
+.nub {
+  position: absolute;
+  top: 0;
+  right: 11px;
+  width: 1.5px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 10;
 }

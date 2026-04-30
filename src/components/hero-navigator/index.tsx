@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import styles from './hero-navigator.module.scss';
 import TransitionLink from '@/components/transition-link';
@@ -52,16 +52,114 @@ const TABS: Tab[] = ['main', 'projects', 'work'];
 type Props = { onPreview: (src: string | null) => void };
 
 export default function HeroNavigator({ onPreview }: Props) {
+  const [activeTab, setActiveTab] = useState<Tab>('main');
+  const [_isExpanded, setIsExpanded] = useState(false);
+  const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
+
+  const compactRef = useRef<HTMLDivElement>(null);
+  const expandedRef = useRef<HTMLDivElement>(null);
+  const rowsRef = useRef<HTMLUListElement>(null);
+
+  const handleTabClick = (tab: Tab) => {
+    setActiveTab(tab);
+    setIsExpanded(true);
+    setNubPos(p => ({ ...p, opacity: 0 }));
+  };
+
+  const handleBack = () => {
+    setIsExpanded(false);
+    setNubPos(p => ({ ...p, opacity: 0 }));
+    onPreview(null);
+  };
+
+  const handleRowEnter = (e: React.MouseEvent<HTMLLIElement>, item: NavItem) => {
+    const container = rowsRef.current;
+    if (!container) return;
+    const cRect = container.getBoundingClientRect();
+    const rRect = e.currentTarget.getBoundingClientRect();
+    setNubPos({
+      y: rRect.top - cRect.top + (ROW_HEIGHT - NUB_HEIGHT) / 2,
+      opacity: 1,
+    });
+    if (item.preview) onPreview(item.preview);
+  };
+
+  const handleRowLeave = () => {
+    setNubPos(p => ({ ...p, opacity: 0 }));
+    onPreview(null);
+  };
+
+  const items = ITEMS[activeTab];
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.shell}>
         <div className={styles.strip}>
-          <div className={styles.page}>
-            {/* compact page — Task 3 */}
+
+          {/* ── compact page ── */}
+          <div ref={compactRef} className={styles.page}>
+            {TABS.map(tab => (
+              <button
+                key={tab}
+                className={styles.compact_row}
+                onClick={() => handleTabClick(tab)}
+              >
+                <div className={styles.row_bg} style={{ backgroundColor: 'rgba(50,50,50,0.38)' }} />
+                <span className={styles.row_label}>{TAB_LABELS[tab]}</span>
+              </button>
+            ))}
           </div>
-          <div className={styles.page}>
-            {/* expanded page — Task 4 */}
+
+          {/* ── expanded page ── */}
+          <div ref={expandedRef} className={styles.page}>
+            <motion.button
+              key={`bc-${activeTab}`}
+              className={styles.breadcrumb}
+              onClick={handleBack}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+            >
+              ← /{TAB_LABELS[activeTab]}
+            </motion.button>
+
+            <ul ref={rowsRef} className={styles.rows}>
+              {items.map(item => (
+                <motion.li
+                  key={item.label}
+                  className={styles.expanded_row}
+                  whileHover={{ filter: 'brightness(1.25)' }}
+                  onMouseEnter={e => handleRowEnter(e, item)}
+                  onMouseLeave={handleRowLeave}
+                >
+                  <div className={styles.row_bg} style={{ backgroundColor: item.gradient }} />
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.row_link}
+                    >
+                      <span className={styles.row_label}>{item.label}</span>
+                    </a>
+                  ) : (
+                    <TransitionLink href={item.href} label={item.label} className={styles.row_link}>
+                      <span className={styles.row_label}>{item.label}</span>
+                    </TransitionLink>
+                  )}
+                </motion.li>
+              ))}
+
+              {/* nub — always mounted, same key */}
+              <motion.div
+                key="nub"
+                className={styles.nub}
+                animate={{ y: nubPos.y, opacity: nubPos.opacity }}
+                transition={NUB_SPRING}
+              />
+            </ul>
           </div>
+
         </div>
       </div>
     </div>
