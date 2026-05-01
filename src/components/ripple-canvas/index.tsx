@@ -70,7 +70,7 @@ function RippleCanvasInner() {
           if (distFromRingCenter < -RING_BEFORE || distFromRingCenter > RING_AFTER) continue
 
           // Opacity peaks at ring center, fades to 0 at both edges
-          const opacity = 1 
+          const opacity = 1 - Math.abs(distFromRingCenter) / (distFromRingCenter < 0 ? RING_BEFORE : RING_AFTER)
           const char = cellChars[row * cols + col]
 
           ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`
