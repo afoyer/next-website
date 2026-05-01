@@ -1,12 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useMotionValue } from 'motion/react';
 import Link from 'next/link';
 import Logo from '@/app/logo';
-import { DarkModeToggle } from '../nav/DarkModeToggle';
-import { useMobileBreakpoint } from '../nav/hooks';
+import { DarkModeToggle } from './DarkModeToggle';
+import { useMobileBreakpoint } from './hooks';
 import styles from './navigation.module.scss';
 import TransitionLink from '../transition-link';
 import { ExternalLink, Home } from 'lucide-react';
@@ -60,6 +60,8 @@ export default function Navigation() {
     const containerRef = useRef<HTMLUListElement | null>(null);
     const [position, setPosition] = useState({ top: 0, height: 0, opacity: 0 });
     const isLanding = pathname === '/';
+
+    useEffect(() => { setIsOpen(false); }, [pathname]);
     const segment = pathname
     const currentItems = ITEMS[activeTab];
 

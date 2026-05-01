@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import styles from './hero-navigator.module.scss';
 import TransitionLink from '@/components/transition-link';
+import LinkHover from '../link-hover';
 
 // ── constants ──────────────────────────────────────────────────────────────────
 
@@ -170,7 +171,8 @@ export default function HeroNavigator({ onPreview }: Props) {
                     </a>
                   ) : (
                     <TransitionLink href={item.href} label={item.label} className={styles.row_link}>
-                      <span className={styles.row_label}>{item.label}</span>
+                      
+                      <span className={styles.row_label}><LinkHover>{item.label}</LinkHover></span>
                     </TransitionLink>
                   )}
                 </motion.li>

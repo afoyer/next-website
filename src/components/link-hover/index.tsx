@@ -46,7 +46,6 @@ const bottomLinkHoverVariants = {
 
 export default function LinkHover({
   children,
-  href,
   casing,
   className,
   onClick,
@@ -54,7 +53,6 @@ export default function LinkHover({
   rel,
 }: {
   children: string;
-  href: string;
   casing?: "uppercase" | "lowercase";
   className?: string;
   onClick?: () => void;
@@ -70,8 +68,7 @@ export default function LinkHover({
           lineHeight: casing === "lowercase" ? 1.1 : 0.9,
         }}
       >
-        <Link href={href} onClick={onClick} target={target} rel={rel}>
-          <motion.div>
+                <motion.div>
             {text.map((char, index) => (
               <motion.span
                 key={`top-${index}`}
@@ -99,7 +96,6 @@ export default function LinkHover({
               </motion.span>
             ))}
           </div>
-        </Link>
       </motion.div>
     </motion.div>
   );

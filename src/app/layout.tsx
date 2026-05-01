@@ -8,7 +8,7 @@ import PageTransition from "@/components/page-transition";
 // import Nav from "@/components/nav";
 import { ReactLenis } from "lenis/react";
 import { ThemeSync } from "@/components/theme-sync";
-import Navigation from "@/components/navigation";
+import Navigation from "@/components/nav";
 
 export const metadata: Metadata = {
   title: "a.f",

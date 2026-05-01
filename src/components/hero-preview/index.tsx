@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { AnimatePresence, motion } from 'motion/react';
 import HeroNavigator from '@/components/hero-navigator';
 
-const DEFAULT_SRC = '/images/gifs/photos-ascii.gif';
+const DEFAULT_SRC = '/images/gifs/af-ascii.gif';
 
 type Props = { className?: string };
 
