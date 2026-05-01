@@ -13,7 +13,7 @@ function easeInOut(t: number): number {
   return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
 }
 
-export default function RippleCanvas() {
+function RippleCanvasInner() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const updateRippleRadius = useTransitionStore(s => s.updateRippleRadius)
   const onRippleComplete = useTransitionStore(s => s.onRippleComplete)
@@ -101,4 +101,10 @@ export default function RippleCanvas() {
       aria-hidden
     />
   )
+}
+
+export default function RippleCanvas() {
+  const phase = useTransitionStore(s => s.phase)
+  if (phase !== 'rippling') return null
+  return <RippleCanvasInner />
 }

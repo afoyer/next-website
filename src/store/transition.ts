@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type TransitionPhase = 'idle' | 'expanding' | 'holding' | 'rippling'
+export type TransitionPhase = 'idle' | 'expanding' | 'holding' | 'rippling'
 
 function computeScreenDiagonal(): number {
   return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2)
