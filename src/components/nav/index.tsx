@@ -11,6 +11,7 @@ import styles from './navigation.module.scss';
 import TransitionLink from '../transition-link';
 import { ExternalLink, Home } from 'lucide-react';
 import Image from 'next/image';
+import { useTransitionStore } from '@/store/transition';
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -59,6 +60,10 @@ export default function Navigation() {
     const isMobile = useMobileBreakpoint();
     const containerRef = useRef<HTMLUListElement | null>(null);
     const [position, setPosition] = useState({ top: 0, height: 0, opacity: 0 });
+    const phase = useTransitionStore(s => s.phase);
+    const registerPreviewEl = useTransitionStore(s => s.registerPreviewEl);
+    const updatePreview = useTransitionStore(s => s.updatePreview);
+    const previewImgContainerRef = useRef<HTMLDivElement>(null);
     const isLanding = pathname === '/';
 
     useEffect(() => { setIsOpen(false); }, [pathname]);
@@ -106,6 +111,7 @@ export default function Navigation() {
 
     // AnimatePresence at the top level transitions between /landing-page and the real nav
     return (
+        <motion.div animate={{ opacity: phase === 'idle' ? 1 : 0 }} transition={{ duration: 0.25 }}>
         <AnimatePresence mode="wait" initial={false}>
             {isLanding ? (
                 /* // ── /landing-page label ────────────────────────────────────────── */
@@ -312,6 +318,9 @@ export default function Navigation() {
                                                 item={item}
                                                 pathname={pathname}
                                                 onPreview={setPreviewSrc}
+                                                onStorePreview={updatePreview}
+                                                onRegisterEl={registerPreviewEl}
+                                                previewContainerRef={previewImgContainerRef}
                                                 onClose={scheduleClose}
                                                 onMouseEnter={handleMouseEnter}
                                             />
@@ -324,6 +333,7 @@ export default function Navigation() {
                             <AnimatePresence>
                                 {isOpen && previewSrc && !isMobile && (
                                     <motion.div
+                                        ref={previewImgContainerRef}
                                         key={"preview"}
                                         className={styles.preview}
                                         initial={{ opacity: 0, scale: 0.92, y: position.top + 8 }}
@@ -347,6 +357,7 @@ export default function Navigation() {
                 </motion.div>
             )}
         </AnimatePresence>
+        </motion.div>
     );
 }
 
@@ -372,11 +383,14 @@ type DropdownItemProps = {
     item: NavItem;
     pathname: string;
     onPreview: (src: string | null) => void;
+    onStorePreview: (src: string) => void;
+    onRegisterEl: (el: HTMLElement | null) => void;
+    previewContainerRef: React.RefObject<HTMLDivElement | null>;
     onClose?: () => void;
     onMouseEnter: (e: React.MouseEvent<HTMLLIElement>) => void;
 };
 
-function DropdownItem({ item, pathname, onPreview, onClose, onMouseEnter }: DropdownItemProps) {
+function DropdownItem({ item, pathname, onPreview, onStorePreview, onRegisterEl, previewContainerRef, onClose, onMouseEnter }: DropdownItemProps) {
     const isActive = pathname === item.href;
 
     return (
@@ -388,10 +402,17 @@ function DropdownItem({ item, pathname, onPreview, onClose, onMouseEnter }: Drop
             }}
             whileHover={{ filter: 'brightness(1.3)' }}
             onMouseEnter={(e) => {
-                item.preview && onPreview(item.preview)
+                if (item.preview) {
+                    onPreview(item.preview)
+                    onStorePreview(item.preview)
+                    onRegisterEl(previewContainerRef.current)
+                }
                 onMouseEnter(e)
             }}
-            onMouseLeave={() => onPreview(null)}
+            onMouseLeave={() => {
+                onPreview(null)
+                onRegisterEl(null)
+            }}
         >
             <div className={styles.item_bg} style={{ backgroundColor: item.gradient }} />
             {item.external ? (
