@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useMotionValue } from 'motion/react';
 import Link from 'next/link';
@@ -63,7 +63,10 @@ export default function Navigation() {
     const phase = useTransitionStore(s => s.phase);
     const registerPreviewEl = useTransitionStore(s => s.registerPreviewEl);
     const updatePreview = useTransitionStore(s => s.updatePreview);
-    const previewImgContainerRef = useRef<HTMLDivElement>(null);
+    // Callback ref: auto-registers the preview element with the store as it mounts/unmounts
+    const previewImgContainerRef = useCallback((el: HTMLDivElement | null) => {
+        registerPreviewEl(el);
+    }, [registerPreviewEl]);
     const isLanding = pathname === '/';
 
     useEffect(() => { setIsOpen(false); }, [pathname]);
@@ -319,8 +322,6 @@ export default function Navigation() {
                                                 pathname={pathname}
                                                 onPreview={setPreviewSrc}
                                                 onStorePreview={updatePreview}
-                                                onRegisterEl={registerPreviewEl}
-                                                previewContainerRef={previewImgContainerRef}
                                                 onClose={scheduleClose}
                                                 onMouseEnter={handleMouseEnter}
                                             />
@@ -384,13 +385,11 @@ type DropdownItemProps = {
     pathname: string;
     onPreview: (src: string | null) => void;
     onStorePreview: (src: string) => void;
-    onRegisterEl: (el: HTMLElement | null) => void;
-    previewContainerRef: React.RefObject<HTMLDivElement | null>;
     onClose?: () => void;
     onMouseEnter: (e: React.MouseEvent<HTMLLIElement>) => void;
 };
 
-function DropdownItem({ item, pathname, onPreview, onStorePreview, onRegisterEl, previewContainerRef, onClose, onMouseEnter }: DropdownItemProps) {
+function DropdownItem({ item, pathname, onPreview, onStorePreview, onClose, onMouseEnter }: DropdownItemProps) {
     const isActive = pathname === item.href;
 
     return (
@@ -405,13 +404,11 @@ function DropdownItem({ item, pathname, onPreview, onStorePreview, onRegisterEl,
                 if (item.preview) {
                     onPreview(item.preview)
                     onStorePreview(item.preview)
-                    onRegisterEl(previewContainerRef.current)
                 }
                 onMouseEnter(e)
             }}
             onMouseLeave={() => {
                 onPreview(null)
-                onRegisterEl(null)
             }}
         >
             <div className={styles.item_bg} style={{ backgroundColor: item.gradient }} />

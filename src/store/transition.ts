@@ -10,7 +10,8 @@ interface TransitionStore {
   phase: TransitionPhase
   previewSrc: string | null
   previewRect: DOMRect | null
-  rippleRadius: number
+  rippleRadius: number      // animated 0 → maxRippleRadius, driven by RippleCanvas
+  maxRippleRadius: number   // screen diagonal, set when rippling starts
   isMobile: boolean
   _previewEl: HTMLElement | null
 
@@ -29,10 +30,13 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   previewSrc: null,
   previewRect: null,
   rippleRadius: 0,
+  maxRippleRadius: 0,
   isMobile: false,
   _previewEl: null,
 
   updatePreview: (src: string) => {
+    // Lock preview once a transition starts — no hover hijacking mid-transition
+    if (get().phase !== 'idle') return
     set({ previewSrc: src })
   },
 
@@ -41,7 +45,6 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   },
 
   triggerTransition: () => {
-    // Check for prefers-reduced-motion
     if (
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -50,19 +53,14 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
     }
 
     const state = get()
-
-    // Guard against double-trigger
     if (state.phase !== 'idle') return
 
-    // Mobile or no preview element path: skip expand, go straight to rippling
     if (state.isMobile || state._previewEl === null) {
       if (typeof window === 'undefined') return
-      const screenDiagonal = computeScreenDiagonal()
-      set({ phase: 'rippling', rippleRadius: screenDiagonal })
+      set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
       return
     }
 
-    // Desktop path: snapshot preview rect and start expand
     const previewRect = state._previewEl.getBoundingClientRect()
     set({ phase: 'expanding', previewRect })
   },
@@ -73,8 +71,7 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
 
   onRouteReady: () => {
     if (typeof window === 'undefined') return
-    const screenDiagonal = computeScreenDiagonal()
-    set({ phase: 'rippling', rippleRadius: screenDiagonal })
+    set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
   },
 
   updateRippleRadius: (r: number) => {
@@ -82,7 +79,7 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   },
 
   onRippleComplete: () => {
-    set({ phase: 'idle', previewSrc: null, previewRect: null, rippleRadius: 0 })
+    set({ phase: 'idle', previewSrc: null, previewRect: null, rippleRadius: 0, maxRippleRadius: 0 })
   },
 
   initMobile: () => {

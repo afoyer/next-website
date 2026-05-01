@@ -4,10 +4,11 @@ import { useEffect, useRef } from 'react'
 import { useTransitionStore } from '@/store/transition'
 
 const CHARS = '!@#$%*+=-~^&?ABCDEFabcdef0123456789'
-const CELL = 14      // grid cell size in px
-const RING_INNER = 56 // px before frontier where chars start fading in
-const RING_OUTER = 28 // px after frontier where chars fade out
-const DURATION = 1000 // ms
+const CELL = 14        // grid cell size in px
+const RING_BEFORE = 28 // px behind the ring center where chars fade in (toward center)
+const RING_AFTER = 56  // px ahead of the ring center where chars fade out (away from center)
+const AHEAD_OF_MASK = 30 // chars lead the mask edge by this many px so they're visible against preview
+const DURATION = 1000  // ms — matches overlay mask animation
 
 function easeInOut(t: number): number {
   return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
@@ -17,7 +18,7 @@ function RippleCanvasInner() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const updateRippleRadius = useTransitionStore(s => s.updateRippleRadius)
   const onRippleComplete = useTransitionStore(s => s.onRippleComplete)
-  const initialRadius = useTransitionStore(s => s.rippleRadius)
+  const maxRadius = useTransitionStore(s => s.maxRippleRadius)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -32,14 +33,13 @@ function RippleCanvasInner() {
 
     const cx = W / 2
     const cy = H / 2
-    const maxRadius = initialRadius // screen diagonal — set by store before mounting
 
     ctx.font = `12px 'Courier New', monospace`
 
     const startTime = performance.now()
     let rafId: number
 
-    // Pre-generate one random char per cell to avoid per-frame randomness (stable grid)
+    // Pre-generate one char per cell — stable grid, no per-frame flicker
     const cols = Math.ceil(W / CELL)
     const rows = Math.ceil(H / CELL)
     const cellChars: string[] = Array.from({ length: cols * rows }, () =>
@@ -49,12 +49,16 @@ function RippleCanvasInner() {
     const draw = (now: number) => {
       const elapsed = now - startTime
       const t = Math.min(elapsed / DURATION, 1)
-      const currentRadius = maxRadius * (1 - easeInOut(t))
+      // Ripple expands outward: 0 → maxRadius
+      const currentRadius = maxRadius * easeInOut(t)
 
-      // Sync with TransitionOverlay mask
+      // Sync mask in TransitionOverlay
       updateRippleRadius(currentRadius)
 
       ctx.clearRect(0, 0, W, H)
+
+      // Ring center leads the mask edge so chars are visible in the still-covered preview area
+      const ringCenter = currentRadius + AHEAD_OF_MASK
 
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
@@ -62,12 +66,11 @@ function RippleCanvasInner() {
           const y = row * CELL + CELL / 2
           const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2)
 
-          // Only draw in the ring around the frontier
-          const distFromFrontier = dist - currentRadius
-          if (distFromFrontier < -RING_INNER || distFromFrontier > RING_OUTER) continue
+          const distFromRingCenter = dist - ringCenter
+          if (distFromRingCenter < -RING_BEFORE || distFromRingCenter > RING_AFTER) continue
 
-          // Opacity: 1 at frontier, 0 at ring edges
-          const opacity = 1 - Math.abs(distFromFrontier) / (distFromFrontier < 0 ? RING_INNER : RING_OUTER)
+          // Opacity peaks at ring center, fades to 0 at both edges
+          const opacity = 1 
           const char = cellChars[row * cols + col]
 
           ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`
@@ -78,9 +81,8 @@ function RippleCanvasInner() {
       if (t < 1) {
         rafId = requestAnimationFrame(draw)
       } else {
-        // Final frame: clear and complete
         ctx.clearRect(0, 0, W, H)
-        updateRippleRadius(0)
+        updateRippleRadius(maxRadius)
         onRippleComplete()
       }
     }

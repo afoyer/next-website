@@ -11,22 +11,13 @@ export default function TransitionOverlay() {
   const rippleRadius = useTransitionStore(s => s.rippleRadius)
   const onExpandComplete = useTransitionStore(s => s.onExpandComplete)
 
-  const initialRippleRadiusRef = useRef(0)
   const maskDivRef = useRef<HTMLDivElement>(null)
-
-  // Record the starting radius when rippling begins
-  useEffect(() => {
-    if (phase === 'rippling') {
-      initialRippleRadiusRef.current = rippleRadius
-    }
-  }, [phase])
 
   // Imperatively update mask each frame during rippling (avoids React re-renders at 60fps)
   useEffect(() => {
     if (!maskDivRef.current || phase !== 'rippling') return
-    // holeRadius grows from 0 to initialRippleRadius as rippleRadius shrinks from initialRippleRadius to 0
-    const holeRadius = initialRippleRadiusRef.current - rippleRadius
-    const mask = `radial-gradient(circle at 50% 50%, transparent ${holeRadius}px, black ${holeRadius}px)`
+    // Hole expands outward from center as rippleRadius grows 0 → maxRippleRadius
+    const mask = `radial-gradient(circle at 50% 50%, transparent ${rippleRadius}px, black ${rippleRadius}px)`
     maskDivRef.current.style.maskImage = mask
     maskDivRef.current.style.webkitMaskImage = mask
   }, [rippleRadius, phase])

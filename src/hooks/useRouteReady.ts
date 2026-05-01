@@ -17,7 +17,7 @@ export function useRouteReady() {
   const scheduleRouteReady = () => {
     if (timerRef.current) clearTimeout(timerRef.current)
     const holdStart = holdStartRef.current ?? Date.now()
-    const delay = Math.max(0, 400 - (Date.now() - holdStart))
+    const delay = Math.max(0, 1000 - (Date.now() - holdStart))
     timerRef.current = setTimeout(onRouteReady, delay)
   }
 
