@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import styles from './hero-navigator.module.scss';
 import TransitionLink from '@/components/transition-link';
 import LinkHover from '../link-hover';
+import { useTransitionStore } from '@/store/transition';
 
 // ── constants ──────────────────────────────────────────────────────────────────
 
@@ -58,6 +59,7 @@ export default function HeroNavigator({ onPreview }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [shellHeight, setShellHeight] = useState(COMPACT_HEIGHT);
   const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
+  const updatePreview = useTransitionStore(s => s.updatePreview);
 
   const compactRef = useRef<HTMLDivElement>(null);
   const expandedRef = useRef<HTMLDivElement>(null);
@@ -94,7 +96,10 @@ export default function HeroNavigator({ onPreview }: Props) {
       y: rRect.top - cRect.top + (ROW_HEIGHT - NUB_HEIGHT) / 2,
       opacity: 1,
     });
-    if (item.preview) onPreview(item.preview);
+    if (item.preview) {
+      onPreview(item.preview);
+      updatePreview(item.preview);
+    }
   };
 
   const handleRowLeave = () => {
