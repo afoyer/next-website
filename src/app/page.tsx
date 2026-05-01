@@ -27,7 +27,7 @@ export default function Home() {
 
         <div id="preview-mobile" className="sm:hidden flex flex-col grow w-full justify-center gap-4">
           {links.map((link) => (
-            <TransitionLink key={link.href} href={link.href} label={link.label}>
+            <TransitionLink key={link.href} href={link.href}>
               <span className="text-sm">{link.label}</span>
             </TransitionLink>
           ))}

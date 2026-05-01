@@ -170,7 +170,7 @@ export default function HeroNavigator({ onPreview }: Props) {
                       <span className={styles.row_label}>{item.label}</span>
                     </a>
                   ) : (
-                    <TransitionLink href={item.href} label={item.label} className={styles.row_link}>
+                    <TransitionLink href={item.href} className={styles.row_link}>
                       
                       <span className={styles.row_label}><LinkHover>{item.label}</LinkHover></span>
                     </TransitionLink>

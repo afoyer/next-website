@@ -405,7 +405,7 @@ function DropdownItem({ item, pathname, onPreview, onClose, onMouseEnter }: Drop
                         <span className={styles.item_label}>{item.label}</span>
                     </span>
                 ) :
-                    <TransitionLink label={item.label} href={item.href} className={styles.item_link} callback={onClose}>
+                    <TransitionLink href={item.href} className={styles.item_link} callback={onClose}>
                         <span className={styles.item_label}>{item.label}</span>
                     </TransitionLink>
             )}
