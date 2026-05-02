@@ -17,7 +17,7 @@ export default function AnimatedHeader() {
             initial="initial"
             animate="animate"
             variants={variants}
-            className={`${montserrat.className} text-xs sm:text-lg font-bold  tracking-[1em]`}
+            className={`${montserrat.className} text-xs sm:text-lg font-bold tracking-[0.5em] sm:tracking-[1em]`}
         >
             aymeric foyer
         </motion.h1>
