@@ -73,6 +73,9 @@ export default function PhotosBrowser() {
 
   return (
     <>
+      {/* ── nav backdrop: gives the global transparent nav a glass bg matching the header ── */}
+      <div className={styles.nav_backdrop} />
+
       {/* ── mobile sticky header ───────────────────────────────────────── */}
       <div className={styles.mobile_header}>
         <span className={styles.mobile_label}>{activeLabel}</span>

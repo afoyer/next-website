@@ -114,7 +114,7 @@ export default function Navigation() {
 
     // AnimatePresence at the top level transitions between /landing-page and the real nav
     return (
-        <motion.div animate={{ opacity: phase === 'idle' ? 1 : 0 }} transition={{ duration: 0.25 }}>
+        <motion.div animate={{ opacity: 1 }}>
         <AnimatePresence mode="wait" initial={false}>
             {isLanding ? (
                 /* // ── /landing-page label ────────────────────────────────────────── */
@@ -129,7 +129,7 @@ export default function Navigation() {
                 >
                     /landing-page
                 </motion.div>
-                <DarkModeToggle className="fill-black/50 dark:fill-white/35" />
+                <DarkModeToggle className="text-black/50 dark:text-white/35" />
                 </div>
 
             ) : (
@@ -294,7 +294,7 @@ export default function Navigation() {
                                     {/* spacer pushes toggle to far right */}
                                     <div className={styles.mobile_spacer} />
                                     <div className={styles.mobile_toggle}>
-                                        <DarkModeToggle className="fill-white w-5 h-5" />
+                                        <DarkModeToggle className="text-black dark:text-white w-5 h-5" />
                                     </div>
                                 </div>
                             )}
@@ -351,7 +351,7 @@ export default function Navigation() {
                         {/* theme toggle (desktop only — right side of full-width nav) */}
                         {!isMobile && (
                             <div className='h-full grid content-center aspect-square'>
-                                <DarkModeToggle className="fill-white sm:fill-black sm:dark:fill-white" />
+                                <DarkModeToggle className="text-white sm:text-black sm:dark:text-white" />
                             </div>
                         )}
                     </nav>

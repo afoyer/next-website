@@ -42,8 +42,8 @@ export default function TransitionOverlay() {
     : targetDims
 
   return (
-    <div
-      style={{ position: 'fixed', inset: 0, zIndex: 50, pointerEvents: 'none' }}
+    <motion.div
+      style={{ position: 'fixed', inset: 0, zIndex: 200, pointerEvents: 'none' }}
       aria-hidden
     >
       <motion.div
@@ -60,10 +60,10 @@ export default function TransitionOverlay() {
         <img
           src={previewSrc}
           alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover'}}
           className="rounded-xl invert grayscale-100 dark:grayscale-0 dark:invert-0"
         />
       </motion.div>
-    </div>
+    </motion.div>
   )
 }
