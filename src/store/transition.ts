@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type TransitionPhase = 'idle' | 'expanding' | 'rippling' | 'navigating'
+export type TransitionPhase = 'idle' | 'expanding' | 'holding' | 'rippling'
 
 function computeScreenDiagonal(): number {
   return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2)
@@ -14,16 +14,14 @@ interface TransitionStore {
   maxRippleRadius: number   // screen diagonal, set when rippling starts
   isMobile: boolean
   _previewEl: HTMLElement | null
-  visitedPaths: Set<string>
-  pendingHref: string | null
 
   updatePreview(src: string): void
   registerPreviewEl(el: HTMLElement | null): void
-  triggerTransition(href: string): boolean  // returns false when animation is skipped
+  triggerTransition(): void
   onExpandComplete(): void
+  onRouteReady(): void
   updateRippleRadius(r: number): void
   onRippleComplete(): void
-  clearNavigation(): void
   initMobile(): void
 }
 
@@ -35,8 +33,6 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   maxRippleRadius: 0,
   isMobile: false,
   _previewEl: null,
-  visitedPaths: new Set<string>(),
-  pendingHref: null,
 
   updatePreview: (src: string) => {
     // Lock preview once a transition starts — no hover hijacking mid-transition
@@ -48,26 +44,32 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
     set({ _previewEl: el })
   },
 
-  triggerTransition: (href: string) => {
+  triggerTransition: () => {
     if (
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     ) {
-      return false
+      return
     }
 
     const state = get()
-    if (state.phase !== 'idle') return false
-    if (state.visitedPaths.has(href)) return false
+    if (state.phase !== 'idle') return
 
-    if (state.isMobile || state._previewEl === null) return false
+    if (state.isMobile || state._previewEl === null) {
+      if (typeof window === 'undefined') return
+      set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
+      return
+    }
 
     const previewRect = state._previewEl.getBoundingClientRect()
-    set({ phase: 'expanding', previewRect, pendingHref: href })
-    return true
+    set({ phase: 'expanding', previewRect })
   },
 
   onExpandComplete: () => {
+    set({ phase: 'holding' })
+  },
+
+  onRouteReady: () => {
     if (typeof window === 'undefined') return
     set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
   },
@@ -77,15 +79,7 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   },
 
   onRippleComplete: () => {
-    // Keep previewSrc + pendingHref alive so NavigationTrigger can fire + overlay covers the page
-    set({ phase: 'navigating', rippleRadius: 0 })
-  },
-
-  clearNavigation: () => {
-    const { pendingHref, visitedPaths } = get()
-    const nextVisited = new Set(visitedPaths)
-    if (pendingHref) nextVisited.add(pendingHref)
-    set({ phase: 'idle', previewSrc: null, previewRect: null, maxRippleRadius: 0, pendingHref: null, visitedPaths: nextVisited })
+    set({ phase: 'idle', previewSrc: null, previewRect: null, rippleRadius: 0, maxRippleRadius: 0 })
   },
 
   initMobile: () => {
