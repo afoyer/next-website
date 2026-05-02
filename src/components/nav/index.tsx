@@ -1,16 +1,17 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useMotionValue } from 'motion/react';
 import Link from 'next/link';
 import Logo from '@/app/logo';
-import { DarkModeToggle } from '../nav/DarkModeToggle';
-import { useMobileBreakpoint } from '../nav/hooks';
+import { DarkModeToggle } from './DarkModeToggle';
+import { useMobileBreakpoint } from './hooks';
 import styles from './navigation.module.scss';
 import TransitionLink from '../transition-link';
 import { ExternalLink, Home } from 'lucide-react';
 import Image from 'next/image';
+import { useTransitionStore } from '@/store/transition';
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -59,7 +60,16 @@ export default function Navigation() {
     const isMobile = useMobileBreakpoint();
     const containerRef = useRef<HTMLUListElement | null>(null);
     const [position, setPosition] = useState({ top: 0, height: 0, opacity: 0 });
+    const phase = useTransitionStore(s => s.phase);
+    const registerPreviewEl = useTransitionStore(s => s.registerPreviewEl);
+    const updatePreview = useTransitionStore(s => s.updatePreview);
+    // Callback ref: auto-registers the preview element with the store as it mounts/unmounts
+    const previewImgContainerRef = useCallback((el: HTMLDivElement | null) => {
+        registerPreviewEl(el);
+    }, [registerPreviewEl]);
     const isLanding = pathname === '/';
+
+    useEffect(() => { setIsOpen(false); }, [pathname]);
     const segment = pathname
     const currentItems = ITEMS[activeTab];
 
@@ -104,6 +114,7 @@ export default function Navigation() {
 
     // AnimatePresence at the top level transitions between /landing-page and the real nav
     return (
+        <motion.div animate={{ opacity: 1 }}>
         <AnimatePresence mode="wait" initial={false}>
             {isLanding ? (
                 /* // ── /landing-page label ────────────────────────────────────────── */
@@ -118,7 +129,7 @@ export default function Navigation() {
                 >
                     /landing-page
                 </motion.div>
-                <DarkModeToggle className="fill-black/50 dark:fill-white/35" />
+                <DarkModeToggle className="text-black/50 dark:text-white/35" />
                 </div>
 
             ) : (
@@ -283,7 +294,7 @@ export default function Navigation() {
                                     {/* spacer pushes toggle to far right */}
                                     <div className={styles.mobile_spacer} />
                                     <div className={styles.mobile_toggle}>
-                                        <DarkModeToggle className="fill-white w-5 h-5" />
+                                        <DarkModeToggle className="text-black dark:text-white w-5 h-5" />
                                     </div>
                                 </div>
                             )}
@@ -310,6 +321,7 @@ export default function Navigation() {
                                                 item={item}
                                                 pathname={pathname}
                                                 onPreview={setPreviewSrc}
+                                                onStorePreview={updatePreview}
                                                 onClose={scheduleClose}
                                                 onMouseEnter={handleMouseEnter}
                                             />
@@ -322,6 +334,7 @@ export default function Navigation() {
                             <AnimatePresence>
                                 {isOpen && previewSrc && !isMobile && (
                                     <motion.div
+                                        ref={previewImgContainerRef}
                                         key={"preview"}
                                         className={styles.preview}
                                         initial={{ opacity: 0, scale: 0.92, y: position.top + 8 }}
@@ -338,13 +351,14 @@ export default function Navigation() {
                         {/* theme toggle (desktop only — right side of full-width nav) */}
                         {!isMobile && (
                             <div className='h-full grid content-center aspect-square'>
-                                <DarkModeToggle className="fill-white sm:fill-black sm:dark:fill-white" />
+                                <DarkModeToggle className="text-white sm:text-black sm:dark:text-white" />
                             </div>
                         )}
                     </nav>
                 </motion.div>
             )}
         </AnimatePresence>
+        </motion.div>
     );
 }
 
@@ -370,11 +384,12 @@ type DropdownItemProps = {
     item: NavItem;
     pathname: string;
     onPreview: (src: string | null) => void;
+    onStorePreview: (src: string) => void;
     onClose?: () => void;
     onMouseEnter: (e: React.MouseEvent<HTMLLIElement>) => void;
 };
 
-function DropdownItem({ item, pathname, onPreview, onClose, onMouseEnter }: DropdownItemProps) {
+function DropdownItem({ item, pathname, onPreview, onStorePreview, onClose, onMouseEnter }: DropdownItemProps) {
     const isActive = pathname === item.href;
 
     return (
@@ -386,10 +401,15 @@ function DropdownItem({ item, pathname, onPreview, onClose, onMouseEnter }: Drop
             }}
             whileHover={{ filter: 'brightness(1.3)' }}
             onMouseEnter={(e) => {
-                item.preview && onPreview(item.preview)
+                if (item.preview) {
+                    onPreview(item.preview)
+                    onStorePreview(item.preview)
+                }
                 onMouseEnter(e)
             }}
-            onMouseLeave={() => onPreview(null)}
+            onMouseLeave={() => {
+                onPreview(null)
+            }}
         >
             <div className={styles.item_bg} style={{ backgroundColor: item.gradient }} />
             {item.external ? (
@@ -403,7 +423,7 @@ function DropdownItem({ item, pathname, onPreview, onClose, onMouseEnter }: Drop
                         <span className={styles.item_label}>{item.label}</span>
                     </span>
                 ) :
-                    <TransitionLink label={item.label} href={item.href} className={styles.item_link} callback={onClose}>
+                    <TransitionLink href={item.href} className={styles.item_link} callback={onClose}>
                         <span className={styles.item_label}>{item.label}</span>
                     </TransitionLink>
             )}

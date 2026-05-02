@@ -1,7 +1,6 @@
 import TransitionLink from "@/components/transition-link";
-import { Montserrat } from 'next/font/google';
-import Logo from "./logo";
 import HeroPreview from "@/components/hero-preview";
+import AnimatedHeader from "./animated-header";
 
 const links: { href: string; label: string; external?: boolean }[] = [
   { href: "/about", label: "About" },
@@ -14,22 +13,21 @@ const links: { href: string; label: string; external?: boolean }[] = [
   { href: "/work/amazon", label: "AWS" },
 ];
 
-const montserrat = Montserrat({ subsets: ['latin'] });
 
 export default function Home() {
   return (
     <div className="w-full flex flex-col h-dvh overflow-hidden font-sans px-[10%] py-8 bg-white/60 dark:bg-background">
       <main className="flex flex-1 min-h-0 w-full flex-col items-center text-black dark:text-white gap-4 sm:gap-6">
         <div>
-          <Logo className="sm:h-12 w-auto fill-black dark:fill-white" />
-          <h1 className={`${montserrat.className} text-xs sm:text-lg font-bold mt-4 tracking-[1.5em]`}>aymeric foyer</h1>
-        </div>
+          {/* <Logo className="sm:h-12 w-auto fill-black dark:fill-white" /> */}
+          <AnimatedHeader />
+          </div>
 
         <HeroPreview />
 
         <div id="preview-mobile" className="sm:hidden flex flex-col grow w-full justify-center gap-4">
           {links.map((link) => (
-            <TransitionLink key={link.href} href={link.href} label={link.label}>
+            <TransitionLink key={link.href} href={link.href}>
               <span className="text-sm">{link.label}</span>
             </TransitionLink>
           ))}
