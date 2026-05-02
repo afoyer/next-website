@@ -43,7 +43,7 @@ export default function TransitionOverlay() {
 
   return (
     <motion.div
-      style={{ position: 'fixed', inset: 0, zIndex: 200, pointerEvents: 'none' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 202, pointerEvents: 'none' }}
       aria-hidden
     >
       <motion.div

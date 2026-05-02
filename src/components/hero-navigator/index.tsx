@@ -39,7 +39,7 @@ const ITEMS: Record<Tab, NavItem[]> = {
   projects: [
     { label: 'pantonify', href: '/projects/pantonify', gradient: '#307050', preview: '/images/gifs/pantonify-ascii.gif' },
     { label: 'radiosity', href: '/projects/radiosity', gradient: '#904030', preview: '/images/gifs/radiosity-ascii.gif' },
-    { label: 'light',     href: '/projects/light',     gradient: '#6050a0', preview: '/images/gifs/presence-ascii.gif' },
+    { label: 'presence of light',     href: '/projects/light',     gradient: '#6050a0', preview: '/images/gifs/presence-ascii.gif' },
   ],
   work: [
     { label: 'amazon', href: '/work/amazon', gradient: '#906020', preview: '/images/gifs/aws-ascii.gif' },

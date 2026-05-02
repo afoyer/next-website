@@ -26,6 +26,7 @@ type DarkModeToggleProps = {
 
 export function DarkModeToggle({ className }: DarkModeToggleProps) {
   const { mode, toggle } = useThemeStore();
+  const fill = mode === "dark" ? "white" : "black";
 
   return (
     <button
@@ -36,11 +37,11 @@ export function DarkModeToggle({ className }: DarkModeToggleProps) {
       <AnimatePresence mode="wait">
         {mode === "dark" ? (
           <motion.div key="moon" variants={iconVariants} initial="initial" animate="animate" exit="exit">
-            <Sun className="h-full aspect-square" />
+            <Moon className="h-full aspect-square" stroke={fill} />
           </motion.div>
         ) : (
           <motion.div key="sun" variants={iconVariants} initial="initial" animate="animate" exit="exit">
-            <Moon />
+            <Sun className="h-full aspect-square" stroke={fill} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -10,7 +10,6 @@ import Navigation from "@/components/nav";
 import TransitionOverlay from "@/components/transition-overlay";
 import RippleCanvas from "@/components/ripple-canvas";
 import RouteReadyListener from "@/components/route-ready-listener";
-import NavigationTrigger from "@/components/navigation-trigger";
 
 export const metadata: Metadata = {
   title: "a.f",
@@ -33,7 +32,6 @@ export default function RootLayout({
         <TransitionOverlay />
         <RippleCanvas />
         <RouteReadyListener />
-        <NavigationTrigger />
         <ThemeSync />
         <div className="z-60 fixed w-screen top-4 px-4 sm:px-20 sm:pt-6">
           <Navigation />

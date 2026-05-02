@@ -38,7 +38,7 @@ const ITEMS: Record<Tab, NavItem[]> = {
     projects: [
         { label: 'pantonify', href: '/projects/pantonify', gradient: '#307050', preview: '/images/gifs/pantonify-ascii.gif' },
         { label: 'radiosity', href: '/projects/radiosity', gradient: '#904030', preview: '/images/gifs/radiosity-ascii.gif' },
-        { label: 'light', href: '/projects/light', gradient: '#6050a0', preview: '/images/gifs/presence-ascii.gif' },
+        { label: 'presence of light', href: '/projects/light', gradient: '#6050a0', preview: '/images/gifs/presence-ascii.gif' },
     ],
     work: [
         { label: 'amazon', href: '/work/amazon', gradient: '#906020', preview: '/images/gifs/aws-ascii.gif' },
@@ -294,7 +294,7 @@ export default function Navigation() {
                                     {/* spacer pushes toggle to far right */}
                                     <div className={styles.mobile_spacer} />
                                     <div className={styles.mobile_toggle}>
-                                        <DarkModeToggle className="text-black dark:text-white w-5 h-5" />
+                                        <DarkModeToggle className="fill-white w-5 h-5" />
                                     </div>
                                 </div>
                             )}
@@ -351,7 +351,7 @@ export default function Navigation() {
                         {/* theme toggle (desktop only — right side of full-width nav) */}
                         {!isMobile && (
                             <div className='h-full grid content-center aspect-square'>
-                                <DarkModeToggle className="text-white sm:text-black sm:dark:text-white" />
+                                <DarkModeToggle className="fill-white sm:fill-black sm:dark:fill-white" />
                             </div>
                         )}
                     </nav>

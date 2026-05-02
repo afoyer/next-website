@@ -14,12 +14,8 @@ export default function TransitionLink({ href, children, className, callback }: 
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault()
-    const willAnimate = useTransitionStore.getState().triggerTransition(href)
-    if (willAnimate) {
-      router.prefetch(href)
-    } else {
-      router.push(href)
-    }
+    useTransitionStore.getState().triggerTransition()
+    router.push(href)
     if (callback) callback()
   }
 
