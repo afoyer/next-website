@@ -1,12 +1,12 @@
 import { create } from 'zustand'
 
-export type TransitionPhase = 'idle' | 'expanding' | 'rippling'
+export type TransitionPhase = 'idle' | 'expanding' | 'holding' | 'rippling'
 
 function computeScreenDiagonal(): number {
   return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2)
 }
 
-interface TransitionStore {
+export interface TransitionStore {
   phase: TransitionPhase
   previewSrc: string | null
   previewRect: DOMRect | null
@@ -20,6 +20,7 @@ interface TransitionStore {
   registerPreviewEl(el: HTMLElement | null): void
   triggerTransition(navigateFn?: () => void): void
   onExpandComplete(): void
+  onRouteReady(): void
   updateRippleRadius(r: number): void
   onRippleComplete(): void
   initMobile(): void
@@ -67,13 +68,15 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   },
 
   onExpandComplete: () => {
-    setTimeout(() => {
-      if (get().phase !== 'expanding') return
-      const { pendingNavigate } = get()
-      // Clear pendingNavigate before calling to prevent double-invocation if this fires twice
-      set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal(), pendingNavigate: null })
-      pendingNavigate?.()
-    }, 150)
+    if (get().phase !== 'expanding') return
+    const { pendingNavigate } = get()
+    set({ phase: 'holding', pendingNavigate: null })
+    pendingNavigate?.()
+  },
+
+  onRouteReady: () => {
+    if (typeof window === 'undefined') return
+    set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
   },
 
   updateRippleRadius: (r: number) => {
