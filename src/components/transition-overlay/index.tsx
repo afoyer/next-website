@@ -39,6 +39,7 @@ export default function TransitionOverlay() {
     >
       <motion.div
         ref={maskDivRef}
+        // overflow: hidden clips the scale(1.1) blur layer — do not remove
         style={{ position: 'absolute', overflow: 'hidden' }}
         initial={initialPos}
         animate={targetDims}
@@ -60,6 +61,7 @@ export default function TransitionOverlay() {
             objectFit: 'cover',
             filter: 'blur(12px) brightness(0.4)',
             transform: 'scale(1.1)',
+            zIndex: 0,
           }}
           className="invert grayscale-100 dark:grayscale-0 dark:invert-0"
         />
@@ -68,7 +70,7 @@ export default function TransitionOverlay() {
         <img
           src={previewSrc}
           alt=""
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 1 }}
           className="invert grayscale-100 dark:grayscale-0 dark:invert-0"
         />
       </motion.div>
