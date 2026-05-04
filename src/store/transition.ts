@@ -67,9 +67,9 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   },
 
   onExpandComplete: () => {
-    if (typeof window === 'undefined') return
-    const { pendingNavigate } = get()
     setTimeout(() => {
+      if (get().phase !== 'expanding') return
+      const { pendingNavigate } = get()
       pendingNavigate?.()
       set({
         phase: 'rippling',
@@ -85,7 +85,7 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   },
 
   onRippleComplete: () => {
-    set({ phase: 'idle', previewSrc: null, previewRect: null, rippleRadius: 0, maxRippleRadius: 0 })
+    set({ phase: 'idle', previewSrc: null, previewRect: null, rippleRadius: 0, maxRippleRadius: 0, pendingNavigate: null })
   },
 
   initMobile: () => {
