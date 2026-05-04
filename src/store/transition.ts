@@ -70,13 +70,9 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
     setTimeout(() => {
       if (get().phase !== 'expanding') return
       const { pendingNavigate } = get()
+      // Clear pendingNavigate before calling to prevent double-invocation if this fires twice
+      set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal(), pendingNavigate: null })
       pendingNavigate?.()
-      set({
-        phase: 'rippling',
-        rippleRadius: 0,
-        maxRippleRadius: computeScreenDiagonal(),
-        pendingNavigate: null,
-      })
     }, 150)
   },
 
