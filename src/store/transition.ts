@@ -10,6 +10,8 @@ export interface TransitionStore {
   phase: TransitionPhase
   previewSrc: string | null
   previewRect: DOMRect | null
+  transitionVW: number
+  transitionVH: number
   rippleRadius: number
   maxRippleRadius: number
   isMobile: boolean
@@ -30,6 +32,8 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   phase: 'idle',
   previewSrc: null,
   previewRect: null,
+  transitionVW: 0,
+  transitionVH: 0,
   rippleRadius: 0,
   maxRippleRadius: 0,
   isMobile: false,
@@ -56,15 +60,17 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
     const state = get()
     if (state.phase !== 'idle') return
 
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+
     if (state.isMobile || state._previewEl === null) {
-      if (typeof window === 'undefined') return
       navigateFn?.()
-      set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
+      set({ phase: 'rippling', transitionVW: vw, transitionVH: vh, rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
       return
     }
 
     const previewRect = state._previewEl.getBoundingClientRect()
-    set({ phase: 'expanding', previewRect, pendingNavigate: navigateFn ?? null })
+    set({ phase: 'expanding', previewRect, transitionVW: vw, transitionVH: vh, pendingNavigate: navigateFn ?? null })
   },
 
   onExpandComplete: () => {
@@ -84,7 +90,7 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   },
 
   onRippleComplete: () => {
-    set({ phase: 'idle', previewSrc: null, previewRect: null, rippleRadius: 0, maxRippleRadius: 0, pendingNavigate: null })
+    set({ phase: 'idle', previewSrc: null, previewRect: null, transitionVW: 0, transitionVH: 0, rippleRadius: 0, maxRippleRadius: 0, pendingNavigate: null })
   },
 
   initMobile: () => {

@@ -8,6 +8,8 @@ export default function TransitionOverlay() {
   const phase = useTransitionStore(s => s.phase)
   const previewSrc = useTransitionStore(s => s.previewSrc)
   const previewRect = useTransitionStore(s => s.previewRect)
+  const transitionVW = useTransitionStore(s => s.transitionVW)
+  const transitionVH = useTransitionStore(s => s.transitionVH)
   const rippleRadius = useTransitionStore(s => s.rippleRadius)
   const onExpandComplete = useTransitionStore(s => s.onExpandComplete)
 
@@ -23,14 +25,11 @@ export default function TransitionOverlay() {
 
   if (phase === 'idle' || !previewSrc) return null
 
-  const vw = typeof window !== 'undefined' ? window.innerWidth : 1440
-  const vh = typeof window !== 'undefined' ? window.innerHeight : 900
-
   const initialPos = previewRect
     ? { top: previewRect.top, left: previewRect.left, width: previewRect.width, height: previewRect.height }
-    : { top: 0, left: 0, width: vw, height: vh }
+    : { top: 0, left: 0, width: transitionVW, height: transitionVH }
 
-  const targetDims = { top: 0, left: 0, width: vw, height: vh }
+  const targetDims = { top: 0, left: 0, width: transitionVW, height: transitionVH }
 
   return (
     <motion.div
