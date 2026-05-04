@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type TransitionPhase = 'idle' | 'expanding' | 'holding' | 'rippling'
+export type TransitionPhase = 'idle' | 'expanding' | 'rippling'
 
 function computeScreenDiagonal(): number {
   return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2)
@@ -10,16 +10,16 @@ interface TransitionStore {
   phase: TransitionPhase
   previewSrc: string | null
   previewRect: DOMRect | null
-  rippleRadius: number      // animated 0 → maxRippleRadius, driven by RippleCanvas
-  maxRippleRadius: number   // screen diagonal, set when rippling starts
+  rippleRadius: number
+  maxRippleRadius: number
   isMobile: boolean
   _previewEl: HTMLElement | null
+  pendingNavigate: (() => void) | null
 
   updatePreview(src: string): void
   registerPreviewEl(el: HTMLElement | null): void
-  triggerTransition(): void
+  triggerTransition(navigateFn?: () => void): void
   onExpandComplete(): void
-  onRouteReady(): void
   updateRippleRadius(r: number): void
   onRippleComplete(): void
   initMobile(): void
@@ -33,9 +33,9 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
   maxRippleRadius: 0,
   isMobile: false,
   _previewEl: null,
+  pendingNavigate: null,
 
   updatePreview: (src: string) => {
-    // Lock preview once a transition starts — no hover hijacking mid-transition
     if (get().phase !== 'idle') return
     set({ previewSrc: src })
   },
@@ -44,7 +44,7 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
     set({ _previewEl: el })
   },
 
-  triggerTransition: () => {
+  triggerTransition: (navigateFn?: () => void) => {
     if (
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -57,21 +57,27 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
 
     if (state.isMobile || state._previewEl === null) {
       if (typeof window === 'undefined') return
+      navigateFn?.()
       set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
       return
     }
 
     const previewRect = state._previewEl.getBoundingClientRect()
-    set({ phase: 'expanding', previewRect })
+    set({ phase: 'expanding', previewRect, pendingNavigate: navigateFn ?? null })
   },
 
   onExpandComplete: () => {
-    set({ phase: 'holding' })
-  },
-
-  onRouteReady: () => {
     if (typeof window === 'undefined') return
-    set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
+    const { pendingNavigate } = get()
+    setTimeout(() => {
+      pendingNavigate?.()
+      set({
+        phase: 'rippling',
+        rippleRadius: 0,
+        maxRippleRadius: computeScreenDiagonal(),
+        pendingNavigate: null,
+      })
+    }, 150)
   },
 
   updateRippleRadius: (r: number) => {
