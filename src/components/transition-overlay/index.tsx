@@ -16,7 +16,6 @@ export default function TransitionOverlay() {
   // Imperatively update mask each frame during rippling (avoids React re-renders at 60fps)
   useEffect(() => {
     if (!maskDivRef.current || phase !== 'rippling') return
-    // Hole expands outward from center as rippleRadius grows 0 → maxRippleRadius
     const mask = `radial-gradient(circle at 50% 50%, transparent ${rippleRadius}px, black ${rippleRadius}px)`
     maskDivRef.current.style.maskImage = mask
     maskDivRef.current.style.webkitMaskImage = mask
@@ -24,22 +23,14 @@ export default function TransitionOverlay() {
 
   if (phase === 'idle' || !previewSrc) return null
 
-  // Compute target dimensions: viewport-height, aspect-ratio preserved, centered
   const vw = typeof window !== 'undefined' ? window.innerWidth : 1440
   const vh = typeof window !== 'undefined' ? window.innerHeight : 900
-  const aspectRatio = previewRect ? previewRect.width / previewRect.height : 16 / 9
-  const targetH = vh
-  const targetW = targetH * aspectRatio
-  const targetDims = {
-    top: 0,
-    left: (vw - targetW) / 2,
-    width: targetW,
-    height: targetH,
-  }
 
   const initialPos = previewRect
     ? { top: previewRect.top, left: previewRect.left, width: previewRect.width, height: previewRect.height }
-    : targetDims
+    : { top: 0, left: 0, width: vw, height: vh }
+
+  const targetDims = { top: 0, left: 0, width: vw, height: vh }
 
   return (
     <motion.div
@@ -56,12 +47,29 @@ export default function TransitionOverlay() {
           if (phase === 'expanding') onExpandComplete()
         }}
       >
+        {/* Blurred fill visible in letterbox bars when image ratio ≠ viewport ratio */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={previewSrc}
           alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover'}}
-          className="rounded-xl invert grayscale-100 dark:grayscale-0 dark:invert-0"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            filter: 'blur(12px) brightness(0.4)',
+            transform: 'scale(1.1)',
+          }}
+          className="invert grayscale-100 dark:grayscale-0 dark:invert-0"
+        />
+        {/* Main preview image — letterboxed with contain */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={previewSrc}
+          alt=""
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
+          className="invert grayscale-100 dark:grayscale-0 dark:invert-0"
         />
       </motion.div>
     </motion.div>
