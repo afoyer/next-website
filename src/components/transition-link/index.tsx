@@ -14,9 +14,10 @@ export default function TransitionLink({ href, children, className, callback }: 
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault()
-    useTransitionStore.getState().triggerTransition()
-    router.push(href)
-    if (callback) callback()
+    useTransitionStore.getState().triggerTransition(() => {
+      router.push(href)
+      if (callback) callback()
+    })
   }
 
   return (
