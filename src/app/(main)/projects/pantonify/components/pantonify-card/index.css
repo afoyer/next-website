@@ -1,0 +1,66 @@
+.card-scene {
+  perspective: 800px;
+  width: min(430px, 80vw);
+
+  -webkit-box-shadow: 4px 5px 2px -1px rgba(0, 0, 0, 0.6);
+  box-shadow: 4px 5px 2px -1px rgba(0, 0, 0, 0.6);
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+}
+
+.card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.pantone-back-card {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: rotateY(deg);
+}
+
+.card-front {
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #1ED760;
+  }
+}
+
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform: rotateY(180deg);
+}
+
+.pantonify {
+  background-color: white;
+  color: black;
+  width: 100%;
+  padding: 8px 24px 16px 24px;
+  box-sizing: border-box;
+
+  span:first-child {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  span:last-child {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.5;
+    margin-top: 4px;
+  }
+}

@@ -65,7 +65,7 @@ export default function LinkHover({
       <motion.div
         className={`overflow-hidden relative whitespace-nowrap block ${casing ?? ""}`}
         style={{
-          lineHeight: casing === "lowercase" ? 1.1 : 0.9,
+          lineHeight: 1.1,
         }}
       >
                 <motion.div>

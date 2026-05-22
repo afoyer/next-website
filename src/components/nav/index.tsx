@@ -13,37 +13,11 @@ import { ExternalLink, Home } from 'lucide-react';
 import Image from 'next/image';
 import { useTransitionStore } from '@/store/transition';
 
-// ─── types ────────────────────────────────────────────────────────────────────
-
-type Tab = 'main' | 'projects' | 'work';
-
-type NavItem = {
-    label: string;
-    href: string;
-    gradient: string;
-    preview?: string;
-    external?: boolean;
-};
+import { type Tab, type NavItem, NAV_ITEMS } from '@/lib/nav-links';
 
 // ─── data ─────────────────────────────────────────────────────────────────────
-// mid-tone right-side colors — screen blend over #0a0a0a stays subtle
 
-const ITEMS: Record<Tab, NavItem[]> = {
-    main: [
-        { label: 'about', href: '/about', gradient: '#888', preview: '/images/gifs/about-ascii.gif' },
-        { label: 'linkedin', href: 'https://www.linkedin.com/in/aymeric-foyer/', gradient: '#778', external: true, preview: '/images/gifs/linkedin-ascii.gif' },
-        { label: 'photos', href: '/photos', gradient: '#4a72a0', preview: '/images/gifs/photos-ascii.gif' },
-        { label: 'resume', href: '/resume', gradient: '#4a72a0', preview: '/images/gifs/resume-ascii.gif' },
-    ],
-    projects: [
-        { label: 'pantonify', href: '/projects/pantonify', gradient: '#307050', preview: '/images/gifs/pantonify-ascii.gif' },
-        { label: 'radiosity', href: '/projects/radiosity', gradient: '#904030', preview: '/images/gifs/radiosity-ascii.gif' },
-        { label: 'presence of light', href: '/projects/light', gradient: '#6050a0', preview: '/images/gifs/presence-ascii.gif' },
-    ],
-    work: [
-        { label: 'amazon', href: '/work/amazon', gradient: '#906020', preview: '/images/gifs/aws-ascii.gif' },
-    ],
-};
+const ITEMS = NAV_ITEMS;
 
 const EASE_SPRING = [0.34, 1.56, 0.64, 1] as [number, number, number, number];
 
@@ -100,7 +74,6 @@ export default function Navigation() {
         if (ref !== null) {
             const container = ref.getBoundingClientRect();
             const target = element.getBoundingClientRect();
-            console.log(target.top, container.top)
             setPosition({
                 // Calculate position relative to the parent container
                 top: (target.top - container.top) / 2,

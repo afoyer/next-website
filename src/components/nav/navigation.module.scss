@@ -232,6 +232,8 @@
         height: 33px;
         padding: 0 10px;
       }
+      
+
     }
 
     // ── dropdown list ───────────────────────────────────────────────────────
@@ -247,6 +249,10 @@
       display: flex;
       flex-direction: column;
       z-index: 50;
+       @media screen and (max-width: 768px)  {
+          
+        max-width: unset;
+        }
 
       .dropdown_item {
         height: 51px;

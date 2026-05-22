@@ -15,39 +15,11 @@ const NUB_HEIGHT = 20;
 const SPRING = { type: 'spring' as const, stiffness: 380, damping: 36 };
 const NUB_SPRING = { type: 'spring' as const, stiffness: 500, damping: 40 };
 
-// ── types ──────────────────────────────────────────────────────────────────────
-
-type Tab = 'main' | 'projects' | 'work';
-
-type NavItem = {
-  label: string;
-  href: string;
-  gradient: string;
-  preview?: string;
-  external?: boolean;
-};
+import { type Tab, type NavItem, NAV_ITEMS, TAB_LABELS, TABS } from '@/lib/nav-links';
 
 // ── data ───────────────────────────────────────────────────────────────────────
 
-const ITEMS: Record<Tab, NavItem[]> = {
-  main: [
-    { label: 'about',    href: '/about',                                     gradient: '#888',    preview: '/images/gifs/about-ascii.gif'    },
-    { label: 'linkedin', href: 'https://www.linkedin.com/in/aymeric-foyer/', gradient: '#778',    preview: '/images/gifs/linkedin-ascii.gif', external: true },
-    { label: 'photos',   href: '/photos',                                    gradient: '#4a72a0', preview: '/images/gifs/photos-ascii.gif'   },
-    { label: 'resume',   href: '/resume',                                    gradient: '#4a72a0', preview: '/images/gifs/resume-ascii.gif'   },
-  ],
-  projects: [
-    { label: 'pantonify', href: '/projects/pantonify', gradient: '#307050', preview: '/images/gifs/pantonify-ascii.gif' },
-    { label: 'radiosity', href: '/projects/radiosity', gradient: '#904030', preview: '/images/gifs/radiosity-ascii.gif' },
-    { label: 'presence of light',     href: '/projects/light',     gradient: '#6050a0', preview: '/images/gifs/presence-ascii.gif' },
-  ],
-  work: [
-    { label: 'amazon', href: '/work/amazon', gradient: '#906020', preview: '/images/gifs/aws-ascii.gif' },
-  ],
-};
-
-const TAB_LABELS: Record<Tab, string> = { main: 'me', projects: 'projects', work: 'work' };
-const TABS: Tab[] = ['main', 'projects', 'work'];
+const ITEMS = NAV_ITEMS;
 const COMPACT_HEIGHT = TABS.length * ROW_HEIGHT;
 
 // ── component ─────────────────────────────────────────────────────────────────

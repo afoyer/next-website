@@ -23,7 +23,7 @@ export default function HeroPreview({ className }: Props) {
 
   return (
     <motion.div
-      className={`hidden sm:flex w-full flex-1 min-h-0${className ? ` ${className}` : ''}`}
+      className={`hidden sm:flex w-full flex-1 aspect-video pb-10 min-h-0${className ? ` ${className}` : ''}`}
       animate={{ opacity: phase === 'idle' ? 1 : 0 }}
       transition={{ duration: 0.25 }}
     >
@@ -43,7 +43,7 @@ export default function HeroPreview({ className }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: phase === 'idle' ? 1 : 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 1 }}
             className="absolute inset-0 m-4"
           >
             <Image
