@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import styles from './hero-navigator.module.scss';
-import TransitionLink from '@/components/transition-link';
-import LinkHover from '../link-hover';
-import { useTransitionStore } from '@/store/transition';
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import TransitionLink from "@/components/transition-link";
+import { useTransitionStore } from "@/store/transition";
+import LinkHover from "../link-hover";
+import styles from "./hero-navigator.module.scss";
 
 // ── constants ──────────────────────────────────────────────────────────────────
 
 const PANEL_WIDTH = 148;
 const ROW_HEIGHT = 48;
 const NUB_HEIGHT = 20;
-const SPRING = { type: 'spring' as const, stiffness: 380, damping: 36 };
-const NUB_SPRING = { type: 'spring' as const, stiffness: 500, damping: 40 };
+const SPRING = { type: "spring" as const, stiffness: 380, damping: 36 };
+const NUB_SPRING = { type: "spring" as const, stiffness: 500, damping: 40 };
 
-import { type Tab, type NavItem, NAV_ITEMS, TAB_LABELS, TABS } from '@/lib/nav-links';
+import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/lib/nav-links";
 
 // ── data ───────────────────────────────────────────────────────────────────────
 
@@ -27,146 +27,141 @@ const COMPACT_HEIGHT = TABS.length * ROW_HEIGHT;
 type Props = { onPreview: (src: string | null) => void };
 
 export default function HeroNavigator({ onPreview }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>('main');
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [shellHeight, setShellHeight] = useState(COMPACT_HEIGHT);
-  const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
-  const updatePreview = useTransitionStore(s => s.updatePreview);
+	const [activeTab, setActiveTab] = useState<Tab>("main");
+	const [isExpanded, setIsExpanded] = useState(false);
+	const [shellHeight, setShellHeight] = useState(COMPACT_HEIGHT);
+	const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
+	const updatePreview = useTransitionStore((s) => s.updatePreview);
 
-  const compactRef = useRef<HTMLDivElement>(null);
-  const expandedRef = useRef<HTMLDivElement>(null);
-  const rowsRef = useRef<HTMLUListElement>(null);
-  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const compactRef = useRef<HTMLDivElement>(null);
+	const expandedRef = useRef<HTMLDivElement>(null);
+	const rowsRef = useRef<HTMLUListElement>(null);
+	const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (!isExpanded) {
-      setShellHeight(COMPACT_HEIGHT);
-      return;
-    }
-    if (expandedRef.current) setShellHeight(expandedRef.current.offsetHeight);
-  }, [isExpanded, activeTab]);
+	useEffect(() => {
+		if (!isExpanded) {
+			setShellHeight(COMPACT_HEIGHT);
+			return;
+		}
+		if (expandedRef.current) setShellHeight(expandedRef.current.offsetHeight);
+	}, [isExpanded, activeTab]);
 
-  const handleTabClick = (tab: Tab) => {
-    setActiveTab(tab);
-    setIsExpanded(true);
-    setNubPos(p => ({ ...p, opacity: 0 }));
-  };
+	const handleTabClick = (tab: Tab) => {
+		setActiveTab(tab);
+		setIsExpanded(true);
+		setNubPos((p) => ({ ...p, opacity: 0 }));
+	};
 
-  const handleBack = () => {
-    setIsExpanded(false);
-    setNubPos(p => ({ ...p, opacity: 0 }));
-    onPreview(null);
-  };
+	const handleBack = () => {
+		setIsExpanded(false);
+		setNubPos((p) => ({ ...p, opacity: 0 }));
+		onPreview(null);
+	};
 
-  const handleRowEnter = (e: React.MouseEvent<HTMLLIElement>, item: NavItem) => {
-    if (leaveTimer.current) clearTimeout(leaveTimer.current);
-    const container = rowsRef.current;
-    if (!container) return;
-    const cRect = container.getBoundingClientRect();
-    const rRect = e.currentTarget.getBoundingClientRect();
-    setNubPos({
-      y: rRect.top - cRect.top + (ROW_HEIGHT - NUB_HEIGHT) / 2,
-      opacity: 1,
-    });
-    if (item.preview) {
-      onPreview(item.preview);
-      updatePreview(item.preview);
-    }
-  };
+	const handleRowEnter = (e: React.MouseEvent<HTMLLIElement>, item: NavItem) => {
+		if (leaveTimer.current) clearTimeout(leaveTimer.current);
+		const container = rowsRef.current;
+		if (!container) return;
+		const cRect = container.getBoundingClientRect();
+		const rRect = e.currentTarget.getBoundingClientRect();
+		setNubPos({
+			y: rRect.top - cRect.top + (ROW_HEIGHT - NUB_HEIGHT) / 2,
+			opacity: 1,
+		});
+		if (item.preview) {
+			onPreview(item.preview);
+			updatePreview(item.preview);
+		}
+	};
 
-  const handleRowLeave = () => {
-    leaveTimer.current = setTimeout(() => {
-      setNubPos(p => ({ ...p, opacity: 0 }));
-      onPreview(null);
-    }, 80);
-  };
+	const handleRowLeave = () => {
+		leaveTimer.current = setTimeout(() => {
+			setNubPos((p) => ({ ...p, opacity: 0 }));
+			onPreview(null);
+		}, 80);
+	};
 
-  const items = ITEMS[activeTab];
+	const items = ITEMS[activeTab];
 
-  return (
-    <div className={styles.wrapper}>
-      <motion.div className={styles.shell} animate={{ height: shellHeight }} transition={SPRING}>
-        <motion.div
-          className={styles.strip}
-          animate={{ x: isExpanded ? -PANEL_WIDTH : 0 }}
-          transition={SPRING}
-        >
+	return (
+		<div className={styles.wrapper}>
+			<motion.div className={styles.shell} animate={{ height: shellHeight }} transition={SPRING}>
+				<motion.div
+					className={styles.strip}
+					animate={{ x: isExpanded ? -PANEL_WIDTH : 0 }}
+					transition={SPRING}
+				>
+					{/* ── compact page ── */}
+					<motion.div
+						ref={compactRef}
+						className={styles.page}
+						animate={{ opacity: isExpanded ? 0.38 : 1 }}
+						transition={SPRING}
+					>
+						{TABS.map((tab) => (
+							<button key={tab} className={styles.compact_row} onClick={() => handleTabClick(tab)}>
+								<div className={styles.row_bg} style={{ backgroundColor: "rgba(50,50,50,0.38)" }} />
+								<span className={styles.row_label}>{TAB_LABELS[tab]}</span>
+							</button>
+						))}
+					</motion.div>
 
-          {/* ── compact page ── */}
-          <motion.div
-            ref={compactRef}
-            className={styles.page}
-            animate={{ opacity: isExpanded ? 0.38 : 1 }}
-            transition={SPRING}
-          >
-            {TABS.map(tab => (
-              <button
-                key={tab}
-                className={styles.compact_row}
-                onClick={() => handleTabClick(tab)}
-              >
-                <div className={styles.row_bg} style={{ backgroundColor: 'rgba(50,50,50,0.38)' }} />
-                <span className={styles.row_label}>{TAB_LABELS[tab]}</span>
-              </button>
-            ))}
-          </motion.div>
+					{/* ── expanded page ── */}
+					<div ref={expandedRef} className={styles.page}>
+						<AnimatePresence mode="wait" initial={false}>
+							<motion.button
+								key={`bc-${activeTab}`}
+								className={styles.breadcrumb}
+								onClick={handleBack}
+								initial={{ opacity: 0, x: -8 }}
+								animate={{ opacity: 1, x: 0 }}
+								exit={{ opacity: 0, x: -8 }}
+								transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+							>
+								← /{TAB_LABELS[activeTab]}
+							</motion.button>
+						</AnimatePresence>
 
-          {/* ── expanded page ── */}
-          <div ref={expandedRef} className={styles.page}>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.button
-                key={`bc-${activeTab}`}
-                className={styles.breadcrumb}
-                onClick={handleBack}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-              >
-                ← /{TAB_LABELS[activeTab]}
-              </motion.button>
-            </AnimatePresence>
+						<ul ref={rowsRef} className={styles.rows}>
+							{items.map((item) => (
+								<motion.li
+									key={item.label}
+									className={styles.expanded_row}
+									whileHover={{ filter: "brightness(1.25)" }}
+									onMouseEnter={(e) => handleRowEnter(e, item)}
+									onMouseLeave={handleRowLeave}
+								>
+									<div className={styles.row_bg} style={{ backgroundColor: item.gradient }} />
+									{item.external ? (
+										<a
+											href={item.href}
+											target="_blank"
+											rel="noopener noreferrer"
+											className={styles.row_link}
+										>
+											<span className={styles.row_label}>{item.label}</span>
+										</a>
+									) : (
+										<TransitionLink href={item.href} className={styles.row_link}>
+											<span className={styles.row_label}>
+												<LinkHover>{item.label}</LinkHover>
+											</span>
+										</TransitionLink>
+									)}
+								</motion.li>
+							))}
 
-            <ul ref={rowsRef} className={styles.rows}>
-              {items.map(item => (
-                <motion.li
-                  key={item.label}
-                  className={styles.expanded_row}
-                  whileHover={{ filter: 'brightness(1.25)' }}
-                  onMouseEnter={e => handleRowEnter(e, item)}
-                  onMouseLeave={handleRowLeave}
-                >
-                  <div className={styles.row_bg} style={{ backgroundColor: item.gradient }} />
-                  {item.external ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.row_link}
-                    >
-                      <span className={styles.row_label}>{item.label}</span>
-                    </a>
-                  ) : (
-                    <TransitionLink href={item.href} className={styles.row_link}>
-                      
-                      <span className={styles.row_label}><LinkHover>{item.label}</LinkHover></span>
-                    </TransitionLink>
-                  )}
-                </motion.li>
-              ))}
-
-              {/* nub — always mounted, same key */}
-              <motion.div
-                key="nub"
-                className={styles.nub}
-                animate={{ y: nubPos.y, opacity: nubPos.opacity }}
-                transition={NUB_SPRING}
-              />
-            </ul>
-          </div>
-
-        </motion.div>
-      </motion.div>
-    </div>
-  );
+							{/* nub — always mounted, same key */}
+							<motion.div
+								key="nub"
+								className={styles.nub}
+								animate={{ y: nubPos.y, opacity: nubPos.opacity }}
+								transition={NUB_SPRING}
+							/>
+						</ul>
+					</div>
+				</motion.div>
+			</motion.div>
+		</div>
+	);
 }

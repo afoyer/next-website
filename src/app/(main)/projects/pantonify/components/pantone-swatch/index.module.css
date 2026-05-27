@@ -1,62 +1,61 @@
-.swatch{
-    display: flex;
-    flex-direction: column;
-    border-radius: 30px;
-    align-items: center;
-    gap: 15px;
-    padding: 20px 0px;
-    background: white;
-    aspect-ratio: 280/760;
-    max-height: 100dvh;
-    .title{
-        color: black;
-        font-weight: bold;
-        padding: 10px 0;
-        width: 100%;
-        text-align: center;
-        font-size: 1.5rem;
-    }
-    .color-pattern{
-        width: 100%;
-        aspect-ratio: 3/1;
-        display: flex;
-        flex-direction: row-reverse;
-        
-        .swatch_image{
-            height: 100%;
-            aspect-ratio: 1/1;
-            position: relative;
-        }
-    }
-    .song-info{
-        width: 100%;
-        padding: 0 20px;
-        display: flex;
-        justify-content: space-between;
-        color: black;
-        .artist-hex{
-            flex: 1;
-            font-weight: 600;
-        }
-        .song-name{
-            flex:1 
-        }
-    }
-    
-    .swatch-end{
-        flex:1;
-        display: flex;
-        flex-direction: column-reverse;
-        align-items: end;
-        width: 100%;
-        padding: 0 20px;
-        &::after{
-            content: "";
-            background-color: rgb(205, 205, 205);
-            border-radius: 1000;
-            width: 10%;
-            aspect-ratio: 1/1;
-        } 
-    }   
-    
+.swatch {
+	display: flex;
+	flex-direction: column;
+	border-radius: 30px;
+	align-items: center;
+	gap: 15px;
+	padding: 20px 0px;
+	background: white;
+	aspect-ratio: 280 / 760;
+	max-height: 100dvh;
+	.title {
+		color: black;
+		font-weight: bold;
+		padding: 10px 0;
+		width: 100%;
+		text-align: center;
+		font-size: 1.5rem;
+	}
+	.color-pattern {
+		width: 100%;
+		aspect-ratio: 3 / 1;
+		display: flex;
+		flex-direction: row-reverse;
+
+		.swatch_image {
+			height: 100%;
+			aspect-ratio: 1 / 1;
+			position: relative;
+		}
+	}
+	.song-info {
+		width: 100%;
+		padding: 0 20px;
+		display: flex;
+		justify-content: space-between;
+		color: black;
+		.artist-hex {
+			flex: 1;
+			font-weight: 600;
+		}
+		.song-name {
+			flex: 1;
+		}
+	}
+
+	.swatch-end {
+		flex: 1;
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: end;
+		width: 100%;
+		padding: 0 20px;
+		&::after {
+			content: "";
+			background-color: rgb(205, 205, 205);
+			border-radius: 1000;
+			width: 10%;
+			aspect-ratio: 1 / 1;
+		}
+	}
 }

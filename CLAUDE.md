@@ -5,6 +5,7 @@ A personal portfolio with many ASCII style transitions, showcasing my photos, pr
 ## Code Style
 
 - TypeScript strict mode, no `any` types
+- This project uses bun.
 - Use named exports, not default exports
 - CSS: Tailwind utility classes, no custom CSS files
 - Use common design tokens for color, be mindful of mobile/desktop as well as light/dark layouts

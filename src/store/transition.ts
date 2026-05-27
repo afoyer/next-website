@@ -1,102 +1,123 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
-export type TransitionPhase = 'idle' | 'expanding' | 'holding' | 'rippling'
+export type TransitionPhase = "idle" | "expanding" | "holding" | "rippling";
 
 function computeScreenDiagonal(): number {
-  return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2)
+	return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2);
 }
 
 export interface TransitionStore {
-  phase: TransitionPhase
-  previewSrc: string | null
-  previewRect: DOMRect | null
-  transitionVW: number
-  transitionVH: number
-  rippleRadius: number
-  maxRippleRadius: number
-  isMobile: boolean
-  _previewEl: HTMLElement | null
-  pendingNavigate: (() => void) | null
+	phase: TransitionPhase;
+	previewSrc: string | null;
+	previewRect: DOMRect | null;
+	transitionVW: number;
+	transitionVH: number;
+	rippleRadius: number;
+	maxRippleRadius: number;
+	isMobile: boolean;
+	_previewEl: HTMLElement | null;
+	pendingNavigate: (() => void) | null;
 
-  updatePreview(src: string): void
-  registerPreviewEl(el: HTMLElement | null): void
-  triggerTransition(navigateFn?: () => void): void
-  onExpandComplete(): void
-  onRouteReady(): void
-  updateRippleRadius(r: number): void
-  onRippleComplete(): void
-  initMobile(): void
+	updatePreview(src: string): void;
+	registerPreviewEl(el: HTMLElement | null): void;
+	triggerTransition(navigateFn?: () => void): void;
+	onExpandComplete(): void;
+	onRouteReady(): void;
+	updateRippleRadius(r: number): void;
+	onRippleComplete(): void;
+	initMobile(): void;
 }
 
 export const useTransitionStore = create<TransitionStore>((set, get) => ({
-  phase: 'idle',
-  previewSrc: null,
-  previewRect: null,
-  transitionVW: 0,
-  transitionVH: 0,
-  rippleRadius: 0,
-  maxRippleRadius: 0,
-  isMobile: false,
-  _previewEl: null,
-  pendingNavigate: null,
+	phase: "idle",
+	previewSrc: null,
+	previewRect: null,
+	transitionVW: 0,
+	transitionVH: 0,
+	rippleRadius: 0,
+	maxRippleRadius: 0,
+	isMobile: false,
+	_previewEl: null,
+	pendingNavigate: null,
 
-  updatePreview: (src: string) => {
-    if (get().phase !== 'idle') return
-    set({ previewSrc: src })
-  },
+	updatePreview: (src: string) => {
+		if (get().phase !== "idle") return;
+		set({ previewSrc: src });
+	},
 
-  registerPreviewEl: (el: HTMLElement | null) => {
-    set({ _previewEl: el })
-  },
+	registerPreviewEl: (el: HTMLElement | null) => {
+		set({ _previewEl: el });
+	},
 
-  triggerTransition: (navigateFn?: () => void) => {
-    if (
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      return
-    }
+	triggerTransition: (navigateFn?: () => void) => {
+		if (
+			typeof window !== "undefined" &&
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches
+		) {
+			return;
+		}
 
-    const state = get()
-    if (state.phase !== 'idle') return
+		const state = get();
+		if (state.phase !== "idle") return;
 
-    const vw = window.innerWidth
-    const vh = window.innerHeight
+		const vw = window.innerWidth;
+		const vh = window.innerHeight;
 
-    if (state.isMobile || state._previewEl === null) {
-      navigateFn?.()
-      set({ phase: 'rippling', transitionVW: vw, transitionVH: vh, rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
-      return
-    }
+		if (state.isMobile || state._previewEl === null) {
+			navigateFn?.();
+			set({
+				phase: "rippling",
+				transitionVW: vw,
+				transitionVH: vh,
+				rippleRadius: 0,
+				maxRippleRadius: computeScreenDiagonal(),
+			});
+			return;
+		}
 
-    const previewRect = state._previewEl.getBoundingClientRect()
-    set({ phase: 'expanding', previewRect, transitionVW: vw, transitionVH: vh, pendingNavigate: navigateFn ?? null })
-  },
+		const previewRect = state._previewEl.getBoundingClientRect();
+		set({
+			phase: "expanding",
+			previewRect,
+			transitionVW: vw,
+			transitionVH: vh,
+			pendingNavigate: navigateFn ?? null,
+		});
+	},
 
-  onExpandComplete: () => {
-    if (get().phase !== 'expanding') return
-    const { pendingNavigate } = get()
-    set({ phase: 'holding', pendingNavigate: null })
-    pendingNavigate?.()
-  },
+	onExpandComplete: () => {
+		if (get().phase !== "expanding") return;
+		const { pendingNavigate } = get();
+		set({ phase: "holding", pendingNavigate: null });
+		pendingNavigate?.();
+	},
 
-  onRouteReady: () => {
-    if (typeof window === 'undefined') return
-    set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
-  },
+	onRouteReady: () => {
+		if (typeof window === "undefined") return;
+		set({ phase: "rippling", rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() });
+	},
 
-  updateRippleRadius: (r: number) => {
-    set({ rippleRadius: r })
-  },
+	updateRippleRadius: (r: number) => {
+		set({ rippleRadius: r });
+	},
 
-  onRippleComplete: () => {
-    set({ phase: 'idle', previewSrc: null, previewRect: null, transitionVW: 0, transitionVH: 0, rippleRadius: 0, maxRippleRadius: 0, pendingNavigate: null })
-  },
+	onRippleComplete: () => {
+		set({
+			phase: "idle",
+			previewSrc: null,
+			previewRect: null,
+			transitionVW: 0,
+			transitionVH: 0,
+			rippleRadius: 0,
+			maxRippleRadius: 0,
+			pendingNavigate: null,
+		});
+	},
 
-  initMobile: () => {
-    if (typeof window !== 'undefined') {
-      const isMobile = window.matchMedia('(max-width: 639px)').matches
-      set({ isMobile })
-    }
-  },
-}))
+	initMobile: () => {
+		if (typeof window !== "undefined") {
+			const isMobile = window.matchMedia("(max-width: 639px)").matches;
+			set({ isMobile });
+		}
+	},
+}));
