@@ -1,3 +1,5 @@
+import type { Theme } from '@/store/theme'
+
 type ColorMapping = { light: string; dark: string }
 type ColorTokens = Record<string, ColorMapping>
 
@@ -27,6 +29,6 @@ export const colors = {
 } satisfies ColorTokens
 
 export type ColorKey = keyof typeof colors
-export type ThemeMode = 'light' | 'dark'
+export type ThemeMode = Theme
 
 export const getColor = (key: ColorKey, mode: ThemeMode): string => colors[key][mode]
