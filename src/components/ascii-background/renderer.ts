@@ -229,6 +229,7 @@ export class AsciiRenderer {
 		const img = new Image();
 		img.src = src;
 		await img.decode();
+		if (this.destroyed) throw new Error(`renderer destroyed during load: ${src}`);
 		if (!img.naturalWidth || !img.naturalHeight) throw new Error(`empty image: ${src}`);
 		const gl = this.gl;
 		const tex = gl.createTexture();
