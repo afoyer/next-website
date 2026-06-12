@@ -13,6 +13,7 @@ export function HeroPreview() {
 	const [previewSrc, setPreviewSrc] = useState(DEFAULT_SRC);
 	const phase = useTransitionStore((s) => s.phase);
 	const registerPreviewEl = useTransitionStore((s) => s.registerPreviewEl);
+	const isMobile = useTransitionStore((s) => s.isMobile);
 	const bgRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -42,8 +43,9 @@ export function HeroPreview() {
 				</div>
 			</div>
 
-			{/* mobile: two-axis pager */}
-			<MobilePager onPreview={handlePreview} />
+			{/* mobile: two-axis pager — mounted only on mobile so its preview effect
+			    can't override the desktop default */}
+			{isMobile && <MobilePager onPreview={handlePreview} />}
 		</>
 	);
 }
