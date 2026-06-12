@@ -54,6 +54,7 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
 			typeof window !== "undefined" &&
 			window.matchMedia("(prefers-reduced-motion: reduce)").matches
 		) {
+			navigateFn?.();
 			return;
 		}
 
