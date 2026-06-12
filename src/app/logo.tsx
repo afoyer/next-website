@@ -1,7 +1,10 @@
 "use client";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-// @ts-expect-error - GSAP Flip case sensitivity issue on macOS
+// gsap ships Flip.js (runtime) but flip.d.ts (types); suppressing the program-level
+// TS1149 casing collision needs ts-ignore — the expect-error variant is reported unused.
+// biome-ignore lint/suspicious/noTsIgnore: see above
+// @ts-ignore
 import { Flip } from "gsap/Flip";
 
 gsap.registerPlugin(Flip);
