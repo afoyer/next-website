@@ -1,61 +1,49 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { AsciiBackground } from "@/components/ascii-background";
 import HeroNavigator from "@/components/hero-navigator";
+import { MobilePager } from "@/components/mobile-pager";
 import { useTransitionStore } from "@/store/transition";
 
 const DEFAULT_SRC = "/images/gifs/af-ascii.gif";
 
-type Props = { className?: string };
-
-export default function HeroPreview({ className }: Props) {
+export function HeroPreview() {
 	const [previewSrc, setPreviewSrc] = useState(DEFAULT_SRC);
 	const phase = useTransitionStore((s) => s.phase);
 	const registerPreviewEl = useTransitionStore((s) => s.registerPreviewEl);
-	const previewContainerRef = useRef<HTMLDivElement>(null);
+	const bgRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		registerPreviewEl(previewContainerRef.current);
+		registerPreviewEl(bgRef.current);
 		return () => registerPreviewEl(null);
 	}, [registerPreviewEl]);
 
+	const handlePreview = (src: string | null) => setPreviewSrc(src ?? DEFAULT_SRC);
+
 	return (
-		<motion.div
-			className={`hidden sm:flex w-full flex-1 aspect-video pb-10 min-h-0${className ? ` ${className}` : ""}`}
-			animate={{ opacity: phase === "idle" ? 1 : 0 }}
-			transition={{ duration: 0.25 }}
-		>
-			{/* Navigator: top-aligned, overlaps preview's left edge via negative margin */}
-			<div className="self-center shrink-0 relative z-10 mt-6" style={{ marginRight: "-8rem" }}>
-				<HeroNavigator onPreview={(src) => setPreviewSrc(src ?? DEFAULT_SRC)} />
+		<>
+			{/* full-viewport ascii background — registered as the ripple transition origin */}
+			<motion.div
+				ref={bgRef}
+				className="pointer-events-none fixed inset-0 z-0"
+				animate={{ opacity: phase === "idle" ? 1 : 0 }}
+				transition={{ duration: 0.25 }}
+				aria-hidden
+			>
+				<AsciiBackground src={previewSrc} />
+			</motion.div>
+
+			{/* desktop: navigator floats over the background */}
+			<div className="relative z-10 hidden w-full flex-1 min-h-0 sm:flex">
+				<div className="mt-6 shrink-0 self-center">
+					<HeroNavigator onPreview={handlePreview} />
+				</div>
 			</div>
 
-			{/* Preview container — ref registered with store for TransitionOverlay origin */}
-			<div
-				ref={previewContainerRef}
-				className="flex-1 min-h-0 relative overflow-hidden border-black/80 dark:border-white bg-linear-to-br/oklch from-zinc-300 to-zinc-100 dark:bg-linear-to-br/oklch dark:from-zinc-500 dark:to-slate-900 rounded-[20px] inset-2.5"
-			>
-				<AnimatePresence>
-					<motion.div
-						key={previewSrc}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: phase === "idle" ? 1 : 0 }}
-						exit={{ opacity: 0 }}
-						transition={{ duration: 1 }}
-						className="absolute inset-0 m-2"
-					>
-						<Image
-							fill
-							src={previewSrc}
-							alt=""
-							className="object-cover opacity-100 rounded-xl invert grayscale-100 dark:grayscale-0 dark:invert-0"
-							unoptimized
-						/>
-					</motion.div>
-				</AnimatePresence>
-			</div>
-		</motion.div>
+			{/* mobile: two-axis pager */}
+			<MobilePager onPreview={handlePreview} />
+		</>
 	);
 }
