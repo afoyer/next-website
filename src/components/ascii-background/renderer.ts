@@ -141,11 +141,12 @@ function parseHex(hex: string): Rgb {
 					.map((c) => c + c)
 					.join("")
 			: h;
-	return [
+	const rgb: Rgb = [
 		Number.parseInt(full.slice(0, 2), 16) / 255,
 		Number.parseInt(full.slice(2, 4), 16) / 255,
 		Number.parseInt(full.slice(4, 6), 16) / 255,
 	];
+	return rgb.some(Number.isNaN) ? [0.5, 0.5, 0.5] : rgb;
 }
 
 export class AsciiRenderer {
@@ -228,17 +229,23 @@ export class AsciiRenderer {
 		const img = new Image();
 		img.src = src;
 		await img.decode();
+		if (!img.naturalWidth || !img.naturalHeight) throw new Error(`empty image: ${src}`);
 		const gl = this.gl;
 		const tex = gl.createTexture();
 		if (!tex) throw new Error("texture allocation failed");
-		gl.bindTexture(gl.TEXTURE_2D, tex);
-		// animated gifs upload their first frame only — fine per spec
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-		gl.generateMipmap(gl.TEXTURE_2D);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		try {
+			gl.bindTexture(gl.TEXTURE_2D, tex);
+			// animated gifs upload their first frame only — fine per spec
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+			gl.generateMipmap(gl.TEXTURE_2D);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		} catch (err) {
+			gl.deleteTexture(tex);
+			throw err;
+		}
 		const entry = { tex, width: img.naturalWidth, height: img.naturalHeight };
 		this.textures.set(src, entry);
 		return entry;
