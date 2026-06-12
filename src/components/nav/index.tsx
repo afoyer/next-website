@@ -12,13 +12,14 @@ import { useTransitionStore } from "@/store/transition";
 import TransitionLink from "../transition-link";
 import { DarkModeToggle } from "./DarkModeToggle";
 import { useMobileBreakpoint } from "./hooks";
+import LandingNavHeader from "./landing-nav-header";
 import styles from "./navigation.module.scss";
 
 // ─── data ─────────────────────────────────────────────────────────────────────
 
 const ITEMS = NAV_ITEMS;
 
-const EASE_SPRING = [0.34, 1.56, 0.64, 1] as [number, number, number, number];
+export const EASE_SPRING = [0.34, 1.56, 0.64, 1] as [number, number, number, number];
 
 const SHIMMER_URL = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAwIiBoZWlnaHQ9IjQ3NSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZyI+CiAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiNlZWUiIG9mZnNldD0iMjAlIiAvPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjZGRkIiBvZmZzZXQ9IjUwJSIgLz4KICAgICAgPHN0b3AtY29sb3I9IiNlZWUiIG9mZnNldD0iNzAlIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjcwMCIgaGVpZ2h0PSI0NzUiIGZpbGw9IiNlZWUiIC8+CiAgPHJlY3QgaWQ9InIiIHdpZHRoPSI3MDAiIGhlaWdodD0iNDc1IiBmaWxsPSJ1cmwoI2cpIiAvPgogIDxhbmltYXRlIHhsaW5rOmhyZWY9IiNyIiBhdHRyaWJ1dGVOYW1lPSJ4IiBmcm9tPSItNzAwIiB0bz0iNzAwIiBkdXI9IjFzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4KPC9zdmc+`;
 
@@ -92,22 +93,10 @@ export default function Navigation() {
 	// AnimatePresence at the top level transitions between /landing-page and the real nav
 	return (
 		<motion.div animate={{ opacity: 1 }}>
-			<AnimatePresence mode="wait" initial={false}>
+			<AnimatePresence mode="wait" initial={true}>
 				{isLanding ? (
 					/* // ── /landing-page label ────────────────────────────────────────── */
-					<div className="flex items-center justify-between">
-						<motion.div
-							key="landing"
-							className="text-black/50 dark:text-white/35 text-xs font-medium"
-							initial={{ opacity: 0, x: -8 }}
-							animate={{ opacity: 1, x: 0 }}
-							exit={{ opacity: 0, x: -8 }}
-							transition={{ duration: 0.25, ease: EASE_SPRING }}
-						>
-							/landing-page
-						</motion.div>
-						<DarkModeToggle className="text-black/50 dark:text-white/35" />
-					</div>
+					<LandingNavHeader key="landing-header" />
 				) : (
 					// ── main nav ─────────────────────────────────────────────────────
 					<motion.div

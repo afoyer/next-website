@@ -8,7 +8,11 @@
   // ── floating menu (left side) ───────────────────────────────────────────
   .floating_menu {
     position: relative;
-    width: 100%;
+    width: 100%; // mobile: full width for mobile_nav + dropdown
+
+    @media screen and (min-width: 769px) {
+      width: fit-content; // desktop: shrink to header content only
+    }
 
     // header row: [logo] [tabs or breadcrumb]
     .header {
@@ -23,10 +27,34 @@
         flex-shrink: 0;
         overflow: hidden;
         // border-radius managed inline via motion.div
-        background: var(--logo-tile-bg);
+        background: rgba(10, 10, 15, 0.6);
+        backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+        -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-right: none;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+        :global([data-theme="light"]) & {
+          background: rgba(255, 255, 255, 0.62);
+          backdrop-filter: blur(28px) brightness(1.05) saturate(150%);
+          -webkit-backdrop-filter: blur(28px) brightness(1.05) saturate(150%);
+          border-color: rgba(0, 0, 0, 0.09);
+          border-right: none;
+          box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
 
         &.logo_tile_blend {
           background: transparent;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-right: none;
+          box-shadow: none;
+
+          :global([data-theme="light"]) & {
+            border-color: rgba(0, 0, 0, 0.09);
+            border-right: none;
+          }
         }
 
         .logo_btn {
@@ -45,12 +73,21 @@
         .logo_svg {
           width: 100%;
           height: 100%;
-          color: var(--logo-tile-fill);
+          color: contrast-color(rgba(10, 10, 15, 0.6));
+
+          :global([data-theme="light"]) & {
+            color: contrast-color(rgba(255, 255, 255, 0.62));
+          }
         }
 
         .logo_svg_blend {
           color: white;
           mix-blend-mode: difference;
+
+          :global([data-theme="light"]) & {
+            color: rgba(30, 30, 30, 0.85);
+            mix-blend-mode: normal;
+          }
         }
       }
 
@@ -94,12 +131,16 @@
           // toned-down gradients (less saturated than Figma spec)
           &.tab_projects {
             width: 116px;
-            background: linear-gradient(62deg, #5c0819 7%, #030303 173%);
+            background: linear-gradient(62deg, rgba(92, 8, 25, 0.55) 7%, rgba(3, 3, 3, 0.3) 173%);
+            backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+            -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
           }
 
           &.tab_work {
             width: 115px;
-            background: linear-gradient(50deg, #050608 10%, #2c3d4f 169%);
+            background: linear-gradient(50deg, rgba(5, 6, 8, 0.3) 10%, rgba(44, 61, 79, 0.55) 169%);
+            backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+            -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
             border-radius: 0 10px 0 0;
           }
         }
@@ -112,11 +153,24 @@
         height: var(--size);
         min-width: 200px;
         padding: 0 16px;
-        background: rgba(41, 41, 41, 0.4);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: rgba(10, 10, 15, 0.6);
+        backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+        -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-left: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
         border-radius: 0 10px 10px 0;
         color: var(--nav-icon);
+
+        :global([data-theme="light"]) & {
+          background: rgba(255, 255, 255, 0.62);
+          backdrop-filter: blur(28px) brightness(1.05) saturate(150%);
+          -webkit-backdrop-filter: blur(28px) brightness(1.05) saturate(150%);
+          border-color: rgba(0, 0, 0, 0.09);
+          border-left: 1px solid rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+          color: rgba(30, 30, 30, 0.75);
+        }
         font-size: 1rem;
         font-weight: 500;
         text-transform: lowercase;
@@ -166,7 +220,19 @@
         height: var(--size);
         flex-shrink: 0;
         overflow: hidden;
-        background: var(--logo-tile-bg);
+        background: rgba(10, 10, 15, 0.6);
+        backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+        -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+        :global([data-theme="light"]) & {
+          background: rgba(255, 255, 255, 0.62);
+          backdrop-filter: blur(28px) brightness(1.05) saturate(150%);
+          -webkit-backdrop-filter: blur(28px) brightness(1.05) saturate(150%);
+          border-color: rgba(0, 0, 0, 0.09);
+          box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
 
         .logo_btn {
           display: flex;
@@ -183,7 +249,11 @@
         .logo_svg {
           width: 100%;
           height: 100%;
-          color: var(--logo-tile-fill);
+          color: contrast-color(rgba(10, 10, 15, 0.6));
+
+          :global([data-theme="light"]) & {
+            color: contrast-color(rgba(255, 255, 255, 0.62));
+          }
         }
       }
 
@@ -218,12 +288,16 @@
 
           &.tab_projects {
             width: 116px;
-            background: linear-gradient(62deg, #5c0819 7%, #030303 173%);
+            background: linear-gradient(62deg, rgba(92, 8, 25, 0.55) 7%, rgba(3, 3, 3, 0.3) 173%);
+            backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+            -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
           }
 
           &.tab_work {
             width: 115px;
-            background: linear-gradient(50deg, #050608 10%, #2c3d4f 169%);
+            background: linear-gradient(50deg, rgba(5, 6, 8, 0.3) 10%, rgba(44, 61, 79, 0.55) 169%);
+            backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
+            -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
             border-radius: 0 10px 0 0;
           }
         }
@@ -269,7 +343,9 @@
         position: relative;
         overflow: hidden;
         isolation: isolate;
-        background: #0a0a0a;
+        background: rgba(10, 10, 15, 0.5);
+        backdrop-filter: blur(24px) brightness(0.8) saturate(130%);
+        -webkit-backdrop-filter: blur(24px) brightness(0.8) saturate(130%);
         cursor: pointer;
 
         @for $i from 1 through 10 {
@@ -292,6 +368,7 @@
           position: absolute;
           inset: 0;
           mix-blend-mode: screen;
+          opacity: 0.45;
         }
 
         .item_link {
@@ -338,7 +415,7 @@
         display: block;
         filter: grayscale(1) invert(1);
 
-        :global(html.dark) & {
+        :global([data-theme="dark"]) & {
           filter: grayscale(1);
         }
       }

@@ -25,7 +25,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
 				<link rel="stylesheet" href="https://use.typekit.net/utt3wav.css" />
