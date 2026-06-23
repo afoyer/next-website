@@ -7,7 +7,7 @@ import HeroNavigator from "@/components/hero-navigator";
 import { MobilePager } from "@/components/mobile-pager";
 import { useTransitionStore } from "@/store/transition";
 
-const DEFAULT_SRC = "/images/gifs/af-ascii.gif";
+const DEFAULT_SRC = "/images/nav2/main.jpg";
 
 export function HeroPreview() {
 	const [previewSrc, setPreviewSrc] = useState(DEFAULT_SRC);

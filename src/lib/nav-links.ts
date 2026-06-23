@@ -2,7 +2,8 @@ export type NavItem = {
 	label: string;
 	href: string;
 	gradient: string;
-	preview?: string;
+	preview?: string; // animated ascii gif — navbar & ripple transition
+	frame?: string; // raw photo for the ascii-background renderer; falls back to default
 	external?: boolean;
 };
 
@@ -23,6 +24,7 @@ export const NAV_SECTIONS: NavSection[] = [
 				href: "https://www.linkedin.com/in/aymeric-foyer/",
 				gradient: "#778",
 				preview: "/images/gifs/linkedin-ascii.gif",
+				frame: "/images/nav2/linkedin.jpg",
 				external: true,
 			},
 			{
@@ -30,12 +32,14 @@ export const NAV_SECTIONS: NavSection[] = [
 				href: "/photos",
 				gradient: "#4a72a0",
 				preview: "/images/gifs/photos-ascii.gif",
+				frame: "/images/nav2/photos.jpg",
 			},
 			{
 				label: "resume",
 				href: "/resume",
 				gradient: "#4a72a0",
 				preview: "/images/gifs/resume-ascii.gif",
+				frame: "/images/nav2/resume.jpg",
 			},
 		],
 	},
@@ -48,12 +52,14 @@ export const NAV_SECTIONS: NavSection[] = [
 				href: "/projects/pantonify",
 				gradient: "#307050",
 				preview: "/images/gifs/pantonify-ascii.gif",
+				frame: "/images/nav2/pantonify.jpg",
 			},
 			{
 				label: "radiosity",
 				href: "/projects/radiosity",
 				gradient: "#904030",
 				preview: "/images/gifs/radiosity-ascii.gif",
+				frame: "/images/nav2/radiosity.jpg",
 			},
 			{
 				label: "presence of light",
@@ -72,6 +78,7 @@ export const NAV_SECTIONS: NavSection[] = [
 				href: "/work/amazon",
 				gradient: "#906020",
 				preview: "/images/gifs/aws-ascii.gif",
+				frame: "/images/nav2/aws.png",
 			},
 		],
 	},

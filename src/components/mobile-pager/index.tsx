@@ -38,9 +38,10 @@ export function MobilePager({ onPreview }: Props) {
 	const { section, items } = pos;
 	const itemIndex = items[section];
 
-	// the active slide's preview drives the background (including the first slide on mount)
+	// the active slide's raw photo (frame) drives the renderer (incl. first slide on mount);
+	// items without a dedicated frame fall back to the default background
 	useEffect(() => {
-		onPreview(NAV_SECTIONS[section].items[items[section]].preview ?? null);
+		onPreview(NAV_SECTIONS[section].items[items[section]].frame ?? null);
 	}, [section, items, onPreview]);
 
 	const goToSection = (target: number) =>

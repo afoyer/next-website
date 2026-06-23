@@ -68,10 +68,9 @@ export default function HeroNavigator({ onPreview }: Props) {
 			y: rRect.top - cRect.top + (ROW_HEIGHT - NUB_HEIGHT) / 2,
 			opacity: 1,
 		});
-		if (item.preview) {
-			onPreview(item.preview);
-			updatePreview(item.preview);
-		}
+		// renderer gets the raw photo (frame); navbar/ripple keep the gif (preview)
+		onPreview(item.frame ?? null);
+		if (item.preview) updatePreview(item.preview);
 	};
 
 	const handleRowLeave = () => {

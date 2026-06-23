@@ -1,7 +1,8 @@
-const CELL_PX = 12; // on-screen character cell size in CSS px
+const CELL_PX = 8; // on-screen character cell size in CSS px
 const MAX_DPR = 2;
 const FADE_MS = 400;
-const GLYPH_RAMP = " .:-=+*#%@";
+const GLYPH_RAMP = " .'`:;+=cox*O#%@"; // 16 levels, density-ordered
+const DIR_GLYPHS = "|\\-/"; // edge glyphs, indexed by gradient bin 0..3
 const GLYPH_SIZE = 64; // atlas cell size in px
 const GLYPH_INTENSITY = 0.85; // max fg mix so overlaid UI stays readable
 
@@ -14,6 +15,8 @@ void main() {
 const FRAG = `#version 300 es
 precision highp float;
 
+#define PI 3.14159265
+
 uniform sampler2D uImageA; // current
 uniform sampler2D uImageB; // previous (during crossfade)
 uniform sampler2D uAtlas;
@@ -22,11 +25,20 @@ uniform vec2 uResolution; // canvas device px
 uniform float uCell; // cell size in device px
 uniform vec3 uFg;
 uniform vec3 uBg;
-uniform float uGlyphCount;
+uniform float uGlyphCount; // brightness ramp length (quantization steps)
+uniform float uAtlasCols; // total glyph columns (ramp + directional)
+uniform float uInvert; // 1 in light mode: quantize on 1 - l
 uniform vec2 uSizeA;
 uniform vec2 uSizeB;
 
 out vec4 outColor;
+
+const float GAMMA = 0.9;
+const float CONTRAST = 1.25;
+const float EDGE_LO = 0.10;
+const float EDGE_HI = 0.30;
+const float COLOR_SAT = 0.55; // fraction of source saturation kept (rest muted to grey)
+const float COLOR_MIX = 0.55; // how far the muted source color tints the glyph ink
 
 float luma(vec3 c) {
 	return dot(c, vec3(0.2126, 0.7152, 0.0722));
@@ -39,29 +51,91 @@ vec2 coverUv(vec2 uv, vec2 imgSize) {
 	return (uv - 0.5) * scale + 0.5;
 }
 
-float sampleLuma(sampler2D img, vec2 uv, vec2 imgSize) {
+vec3 sampleColor(sampler2D img, vec2 uv, vec2 imgSize) {
 	// pick the mip whose texel density matches one cell, so each cell
 	// reads a stable local average instead of a noisy point sample
 	float texelsPerCell = imgSize.y * uCell / uResolution.y;
 	float lod = max(log2(texelsPerCell), 0.0);
-	return luma(textureLod(img, uv, lod).rgb);
+	return textureLod(img, uv, lod).rgb;
+}
+
+float sampleLuma(sampler2D img, vec2 uv, vec2 imgSize) {
+	return luma(sampleColor(img, uv, imgSize));
+}
+
+// crossfaded luminance of the cell center offset by cellOffset whole cells
+float mixedLuma(vec2 centerPx, vec2 cellOffset) {
+	vec2 px = centerPx + cellOffset * uCell;
+	vec2 uv = vec2(px.x / uResolution.x, 1.0 - px.y / uResolution.y);
+	float lA = sampleLuma(uImageA, coverUv(uv, uSizeA), uSizeA);
+	float lB = sampleLuma(uImageB, coverUv(uv, uSizeB), uSizeB);
+	return mix(lB, lA, uMix);
+}
+
+// crossfaded source color at the cell center (one tap per image)
+vec3 mixedColor(vec2 centerPx) {
+	vec2 uv = vec2(centerPx.x / uResolution.x, 1.0 - centerPx.y / uResolution.y);
+	vec3 cA = sampleColor(uImageA, coverUv(uv, uSizeA), uSizeA);
+	vec3 cB = sampleColor(uImageB, coverUv(uv, uSizeB), uSizeB);
+	return mix(cB, cA, uMix);
+}
+
+// 4x4 ordered-dither threshold in [0,1) for the given cell
+float bayer(vec2 cell) {
+	float m[16] = float[16](
+		0.0, 8.0, 2.0, 10.0,
+		12.0, 4.0, 14.0, 6.0,
+		3.0, 11.0, 1.0, 9.0,
+		15.0, 7.0, 13.0, 5.0
+	);
+	int i = int(mod(cell.x, 4.0)) + int(mod(cell.y, 4.0)) * 4;
+	return m[i] / 16.0;
+}
+
+float glyphAlpha(float index, vec2 inCell) {
+	vec2 atlasUv = vec2((index + inCell.x) / uAtlasCols, 1.0 - inCell.y);
+	return texture(uAtlas, atlasUv).a;
 }
 
 void main() {
 	vec2 cell = floor(gl_FragCoord.xy / uCell);
 	vec2 center = (cell + 0.5) * uCell;
-	vec2 uv = vec2(center.x / uResolution.x, 1.0 - center.y / uResolution.y);
 
-	float lA = sampleLuma(uImageA, coverUv(uv, uSizeA), uSizeA);
-	float lB = sampleLuma(uImageB, coverUv(uv, uSizeB), uSizeB);
-	float l = mix(lB, lA, uMix);
+	vec3 col = mixedColor(center);
+	float l = luma(col);
 
-	float glyph = floor(clamp(l, 0.0, 0.999) * uGlyphCount);
+	// 4-tap gradient on raw luma (edge structure is theme-independent)
+	float gx = mixedLuma(center, vec2(1.0, 0.0)) - mixedLuma(center, vec2(-1.0, 0.0));
+	float gy = mixedLuma(center, vec2(0.0, 1.0)) - mixedLuma(center, vec2(0.0, -1.0));
+	float mag = length(vec2(gx, gy));
+
+	// tone curve: gamma then S-curve contrast around mid grey
+	float t = pow(clamp(l, 0.0, 1.0), GAMMA);
+	t = clamp((t - 0.5) * CONTRAST + 0.5, 0.0, 1.0);
+
+	// theme inversion keeps brightness reading positive in both modes
+	t = mix(t, 1.0 - t, uInvert);
+
+	// dither between glyph steps for smoother tonal gradation
+	t += (bayer(cell) - 0.5) / uGlyphCount;
+
+	float brightIdx = floor(clamp(t, 0.0, 0.999) * uGlyphCount);
+
+	// directional glyph from gradient angle, folded to [0,pi) and binned 0..3
+	float ang = mod(atan(gy, gx), PI);
+	float bin = mod(floor(ang / (PI / 4.0) + 0.5), 4.0);
+	float edgeIdx = uGlyphCount + bin;
+
 	vec2 inCell = fract(gl_FragCoord.xy / uCell);
-	vec2 atlasUv = vec2((glyph + inCell.x) / uGlyphCount, 1.0 - inCell.y);
-	float a = texture(uAtlas, atlasUv).a;
+	float aBright = glyphAlpha(brightIdx, inCell);
+	float aEdge = glyphAlpha(edgeIdx, inCell);
+	float a = mix(aBright, aEdge, smoothstep(EDGE_LO, EDGE_HI, mag));
 
-	outColor = vec4(mix(uBg, uFg, a * ${GLYPH_INTENSITY.toFixed(2)}), 1.0);
+	// muted source color: desaturate toward its own luma, then tint the theme ink
+	vec3 muted = mix(vec3(l), col, COLOR_SAT);
+	vec3 ink = mix(uFg, muted, COLOR_MIX);
+
+	outColor = vec4(mix(uBg, ink, a * ${GLYPH_INTENSITY.toFixed(2)}), 1.0);
 }`;
 
 type GlTexture = { tex: WebGLTexture; width: number; height: number };
@@ -77,6 +151,8 @@ const UNIFORM_NAMES = [
 	"uFg",
 	"uBg",
 	"uGlyphCount",
+	"uAtlasCols",
+	"uInvert",
 	"uSizeA",
 	"uSizeB",
 ] as const;
@@ -109,8 +185,10 @@ function createProgram(gl: WebGL2RenderingContext): WebGLProgram {
 }
 
 function createGlyphAtlas(gl: WebGL2RenderingContext): WebGLTexture {
+	// ramp glyphs first (indices 0..ramp), directional glyphs appended after
+	const glyphs = GLYPH_RAMP + DIR_GLYPHS;
 	const canvas = document.createElement("canvas");
-	canvas.width = GLYPH_SIZE * GLYPH_RAMP.length;
+	canvas.width = GLYPH_SIZE * glyphs.length;
 	canvas.height = GLYPH_SIZE;
 	const ctx = canvas.getContext("2d");
 	if (!ctx) throw new Error("2d context unavailable");
@@ -118,8 +196,8 @@ function createGlyphAtlas(gl: WebGL2RenderingContext): WebGLTexture {
 	ctx.font = `${Math.round(GLYPH_SIZE * 0.8)}px "Courier New", monospace`;
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
-	for (let i = 0; i < GLYPH_RAMP.length; i++) {
-		ctx.fillText(GLYPH_RAMP[i], i * GLYPH_SIZE + GLYPH_SIZE / 2, GLYPH_SIZE / 2);
+	for (let i = 0; i < glyphs.length; i++) {
+		ctx.fillText(glyphs[i], i * GLYPH_SIZE + GLYPH_SIZE / 2, GLYPH_SIZE / 2);
 	}
 	const tex = gl.createTexture();
 	if (!tex) throw new Error("texture allocation failed");
@@ -149,6 +227,10 @@ function parseHex(hex: string): Rgb {
 	return rgb.some(Number.isNaN) ? [0.5, 0.5, 0.5] : rgb;
 }
 
+function luma([r, g, b]: Rgb): number {
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
 export class AsciiRenderer {
 	private gl: WebGL2RenderingContext;
 	private canvas: HTMLCanvasElement;
@@ -162,6 +244,7 @@ export class AsciiRenderer {
 	private dpr = 1;
 	private fg: Rgb = [1, 1, 1];
 	private bg: Rgb = [0, 0, 0];
+	private invert = false; // light mode: invert brightness ramp
 	private rafId = 0;
 	private pendingSrc: string | null = null;
 	private destroyed = false;
@@ -194,14 +277,17 @@ export class AsciiRenderer {
 	setTheme(fgHex: string, bgHex: string): void {
 		this.fg = parseHex(fgHex);
 		this.bg = parseHex(bgHex);
+		// light theme = background brighter than foreground; invert the ramp so
+		// bright photo areas stay light (a true positive) in both modes
+		this.invert = luma(this.bg) > luma(this.fg);
 		this.render();
 	}
 
 	async show(src: string, animate: boolean): Promise<void> {
 		this.pendingSrc = src;
 		const next = await this.loadTexture(src);
-		// a newer show() call won the race while we were loading
-		if (this.destroyed || this.pendingSrc !== src || next === this.current) return;
+		// null = torn down mid-load; or a newer show() won the race while loading
+		if (!next || this.destroyed || this.pendingSrc !== src || next === this.current) return;
 		if (!this.current || !animate) {
 			this.current = next;
 			this.previous = null;
@@ -223,13 +309,15 @@ export class AsciiRenderer {
 		this.gl.deleteProgram(this.program);
 	}
 
-	private async loadTexture(src: string): Promise<GlTexture> {
+	// resolves null when the renderer is torn down mid-load (StrictMode remount,
+	// Fast Refresh, or navigating away) — a benign cancellation, not an error
+	private async loadTexture(src: string): Promise<GlTexture | null> {
 		const cached = this.textures.get(src);
 		if (cached) return cached;
 		const img = new Image();
 		img.src = src;
 		await img.decode();
-		if (this.destroyed) throw new Error(`renderer destroyed during load: ${src}`);
+		if (this.destroyed) return null;
 		if (!img.naturalWidth || !img.naturalHeight) throw new Error(`empty image: ${src}`);
 		const gl = this.gl;
 		const tex = gl.createTexture();
@@ -294,6 +382,8 @@ export class AsciiRenderer {
 		gl.uniform3fv(u.uFg, this.fg);
 		gl.uniform3fv(u.uBg, this.bg);
 		gl.uniform1f(u.uGlyphCount, GLYPH_RAMP.length);
+		gl.uniform1f(u.uAtlasCols, GLYPH_RAMP.length + DIR_GLYPHS.length);
+		gl.uniform1f(u.uInvert, this.invert ? 1 : 0);
 		gl.uniform2f(u.uSizeA, this.current.width, this.current.height);
 		gl.uniform2f(u.uSizeB, prev.width, prev.height);
 		gl.drawArrays(gl.TRIANGLES, 0, 3);
