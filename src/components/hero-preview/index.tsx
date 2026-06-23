@@ -1,61 +1,51 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { AnimatePresence, motion } from 'motion/react';
-import HeroNavigator from '@/components/hero-navigator';
-import { useTransitionStore } from '@/store/transition';
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { AsciiBackground } from "@/components/ascii-background";
+import HeroNavigator from "@/components/hero-navigator";
+import { MobilePager } from "@/components/mobile-pager";
+import { useTransitionStore } from "@/store/transition";
 
-const DEFAULT_SRC = '/images/gifs/af-ascii.gif';
+const DEFAULT_SRC = "/images/nav2/main.jpg";
 
-type Props = { className?: string };
+export function HeroPreview() {
+	const [previewSrc, setPreviewSrc] = useState(DEFAULT_SRC);
+	const phase = useTransitionStore((s) => s.phase);
+	const registerPreviewEl = useTransitionStore((s) => s.registerPreviewEl);
+	const isMobile = useTransitionStore((s) => s.isMobile);
 
-export default function HeroPreview({ className }: Props) {
-  const [previewSrc, setPreviewSrc] = useState(DEFAULT_SRC);
-  const phase = useTransitionStore(s => s.phase);
-  const registerPreviewEl = useTransitionStore(s => s.registerPreviewEl);
-  const previewContainerRef = useRef<HTMLDivElement>(null);
+	// the main page has no per-link expand origin — links rise from the bottom.
+	// register null on mount so the overlay takes the shift-up path, and to clear
+	// any ref a previous page (e.g. a link card) left registered.
+	useEffect(() => {
+		registerPreviewEl(null);
+	}, [registerPreviewEl]);
 
-  useEffect(() => {
-    registerPreviewEl(previewContainerRef.current);
-    return () => registerPreviewEl(null);
-  }, [registerPreviewEl]);
+	const handlePreview = (src: string | null) => setPreviewSrc(src ?? DEFAULT_SRC);
 
-  return (
-    <motion.div
-      className={`hidden sm:flex w-full flex-1 min-h-0${className ? ` ${className}` : ''}`}
-      animate={{ opacity: phase === 'idle' ? 1 : 0 }}
-      transition={{ duration: 0.25 }}
-    >
-      {/* Navigator: top-aligned, overlaps preview's left edge via negative margin */}
-      <div className="self-center shrink-0 relative z-10 mt-6" style={{ marginRight: '-8rem' }}>
-        <HeroNavigator onPreview={(src) => setPreviewSrc(src ?? DEFAULT_SRC)} />
-      </div>
+	return (
+		<>
+			{/* full-viewport ascii background — fades out while a transition is in flight */}
+			<motion.div
+				className="pointer-events-none fixed inset-0 z-0"
+				animate={{ opacity: phase === "idle" ? 1 : 0 }}
+				transition={{ duration: 0.25 }}
+				aria-hidden
+			>
+				<AsciiBackground src={previewSrc} />
+			</motion.div>
 
-      {/* Preview container — ref registered with store for TransitionOverlay origin */}
-      <div
-        ref={previewContainerRef}
-        className="flex-1 min-h-0 relative overflow-hidden border-black/80 dark:border-white bg-linear-to-br/oklch from-zinc-300 to-zinc-100 dark:bg-linear-to-br/oklch dark:from-zinc-500 dark:to-slate-900 rounded-[10px]"
-      >
-        <AnimatePresence>
-          <motion.div
-            key={previewSrc}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: phase === 'idle' ? 1 : 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="absolute inset-0 m-4"
-          >
-            <Image
-              fill
-              src={previewSrc}
-              alt=""
-              className="object-cover opacity-80 rounded-xl invert grayscale-100 dark:grayscale-0 dark:invert-0"
-              unoptimized
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  );
+			{/* desktop: navigator floats over the background */}
+			<div className="relative z-10 hidden w-full flex-1 min-h-0 sm:flex">
+				<div className="mt-6 shrink-0 self-center">
+					<HeroNavigator onPreview={handlePreview} />
+				</div>
+			</div>
+
+			{/* mobile: two-axis pager — mounted only on mobile so its preview effect
+			    can't override the desktop default */}
+			{isMobile && <MobilePager onPreview={handlePreview} />}
+		</>
+	);
 }

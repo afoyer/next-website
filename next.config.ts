@@ -1,19 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
-  experimental: {
-    viewTransition: true,
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**.s3.*.amazonaws.com",
-      },
-    ],
-  },
+	/* config options here */
+	reactCompiler: true,
+	experimental: {
+		viewTransition: true,
+	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "**.s3.*.amazonaws.com",
+			},
+			{
+				protocol: "https",
+				hostname: "upload.wikimedia.org",
+			},
+		],
+	},
 };
 
 export default nextConfig;

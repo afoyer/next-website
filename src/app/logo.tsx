@@ -1,34 +1,37 @@
 "use client";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-// @ts-ignore - GSAP Flip case sensitivity issue on macOS
+// gsap ships Flip.js (runtime) but flip.d.ts (types); suppressing the program-level
+// TS1149 casing collision needs ts-ignore — the expect-error variant is reported unused.
+// biome-ignore lint/suspicious/noTsIgnore: see above
+// @ts-ignore
 import { Flip } from "gsap/Flip";
 
 gsap.registerPlugin(Flip);
 
-export default function Logo({className}: {className?: string}) {
-  useGSAP(() => {
-    const state = Flip.getState(".af-logo", ".af-nav-logo");
-    Flip.from(state, { duration: 1, ease: "power2.inOut" });
-  });
-  return (
-    <svg
-      className={`h-full w-full af-logo ${className || ''}`}
-      viewBox="0 0 271 158"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M0.180369 156.43C-0.280135 157.093 0.194403 158 1.00173 158H26.8251L38.9084 143.939C39.2599 143.53 39.7151 143.224 40.2262 143.051L105.483 121.074C106.779 120.638 108.121 121.602 108.121 122.969V158H118.09V1H108.644C108.316 1 108.009 1.16049 107.823 1.42959L0.180369 156.43ZM97.2264 98.2205C97.2265 98.6442 96.9596 99.022 96.5602 99.1634L51.9974 114.942C51.0941 115.262 50.3016 114.25 50.828 113.45L95.3778 45.6772C95.923 44.8478 97.2132 45.2336 97.2134 46.2263L97.2264 98.2205Z"
-        
-      />
-      <path
-        d="M118.09 1.11L270.09 0L237.613 29H150.42V69H192.057L169.524 99H150.42V158H118.09"
-        
-      />
-      <path
-        d="M192.057 69L169.524 99H198.425L220.259 69H192.057Z"
-      
-      />
-    </svg>
-  );
+export default function Logo({ className }: { className?: string }) {
+	useGSAP(() => {
+		const state = Flip.getState(".af-logo", ".af-nav-logo");
+		Flip.from(state, { duration: 1, ease: "power2.inOut" });
+	});
+	return (
+		<svg
+			width="267"
+			height="157"
+			viewBox="0 0 267 157"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			className={`h-full w-full af-logo ${className || ""}`}
+			aria-label="AF Logo"
+		>
+			<path
+				d="M0.340022 153.889C-0.547286 155.218 0.405368 157 2.00337 157H24.2634C24.6826 157 25.0911 156.868 25.4314 156.624L58.9079 132.54C59.1043 132.399 59.3247 132.295 59.5584 132.232L100.565 121.248C101.836 120.908 103.083 121.865 103.083 123.18V155C103.083 156.105 103.978 157 105.083 157H116.173V2C116.173 0.895431 115.277 0 114.173 0H103.083L0.340022 153.889ZM103.083 83.0228C103.083 83.9008 102.51 84.6762 101.671 84.9344L64.0917 96.4965C62.3518 97.0318 60.8596 95.1535 61.7744 93.5798L99.3538 28.933C100.381 27.1667 103.083 27.8951 103.083 29.9381V83.0228Z"
+				fill="currentColor"
+			/>
+			<path
+				d="M116.173 2C116.173 0.895431 115.277 0 114.173 0H103.083H264.046C265.701 0 266.639 1.89529 265.637 3.21184L247.357 27.2118C246.979 27.7085 246.39 28 245.766 28H150.503C149.398 28 148.503 28.8954 148.503 30V48V67.5644C148.503 68.6751 149.408 69.573 150.518 69.5643L211.338 69.0853C213.013 69.0721 213.961 71.001 212.927 72.3193L204.489 83.0817L195.511 95.2551C195.134 95.7663 194.537 96.0681 193.902 96.0681H150.503C149.398 96.0681 148.503 96.9635 148.503 98.0681V155C148.503 156.105 147.607 157 146.503 157H116.173"
+				fill="currentColor"
+			/>
+		</svg>
+	);
 }

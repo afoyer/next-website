@@ -6,97 +6,93 @@ const DEFAULT_DELAY = 0.05;
 const STAGGER_DELAY = 0.2;
 
 const linkHoverVariants = {
-  hovered: ({ index, length }: { index: number; length: number }) => {
-    return {
-      y: "-100%",
-      transition: {
-        delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
-      },
-    };
-  },
-  notHovered: ({ index, length }: { index: number; length: number }) => {
-    return {
-      y: 0,
-      transition: {
-        delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
-      },
-    };
-  },
+	hovered: ({ index, length }: { index: number; length: number }) => {
+		return {
+			y: "-100%",
+			transition: {
+				delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
+			},
+		};
+	},
+	notHovered: ({ index, length }: { index: number; length: number }) => {
+		return {
+			y: 0,
+			transition: {
+				delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
+			},
+		};
+	},
 };
 const bottomLinkHoverVariants = {
-  hovered: ({ index, length }: { index: number; length: number }) => {
-    return {
-      y: 0,
-      transition: {
-        duration: 0.2,
-        delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
-      },
-    };
-  },
-  notHovered: ({ index, length }: { index: number; length: number }) => {
-    return {
-      y: "100%",
-      transition: {
-        duration: 0.2,
-        delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
-      },
-    };
-  },
+	hovered: ({ index, length }: { index: number; length: number }) => {
+		return {
+			y: 0,
+			transition: {
+				duration: 0.2,
+				delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
+			},
+		};
+	},
+	notHovered: ({ index, length }: { index: number; length: number }) => {
+		return {
+			y: "100%",
+			transition: {
+				duration: 0.2,
+				delay: DEFAULT_DELAY + (index / length) * STAGGER_DELAY,
+			},
+		};
+	},
 };
 
 export default function LinkHover({
-  children,
-  casing,
-  className,
-  onClick,
-  target,
-  rel,
+	children,
+	casing,
+	className,
+	onClick,
+	target,
+	rel,
 }: {
-  children: string;
-  casing?: "uppercase" | "lowercase";
-  className?: string;
-  onClick?: () => void;
-  target?: string;
-  rel?: string;
+	children: string;
+	casing?: "uppercase" | "lowercase";
+	className?: string;
+	onClick?: () => void;
+	target?: string;
+	rel?: string;
 }) {
-  const text = useMemo(() => children.split(/(?<=.)/), [children]);
-  return (
-    <motion.div className={className} initial="notHovered" whileHover="hovered">
-      <motion.div
-        className={`overflow-hidden relative whitespace-nowrap block ${casing ?? ""}`}
-        style={{
-          lineHeight: casing === "lowercase" ? 1.1 : 0.9,
-        }}
-      >
-                <motion.div>
-            {text.map((char, index) => (
-              <motion.span
-                key={`top-${index}`}
-                variants={linkHoverVariants}
-                className={
-                  char === " " ? "inline-block whitespace-pre" : "inline-block"
-                }
-                custom={{ index, length: text.length }}
-              >
-                {char}
-              </motion.span>
-            ))}
-          </motion.div>
-          <div className="absolute inset-0">
-            {text.map((char, index) => (
-              <motion.span
-                key={`bottom-${index}`}
-                variants={bottomLinkHoverVariants}
-                className={
-                  char === " " ? "inline-block whitespace-pre" : "inline-block"
-                }
-                custom={{ index, length: text.length }}
-              >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
-          </div>
-      </motion.div>
-    </motion.div>
-  );
+	const text = useMemo(() => children.split(/(?<=.)/), [children]);
+	return (
+		<motion.div className={className} initial="notHovered" whileHover="hovered">
+			<motion.div
+				className={`overflow-hidden relative whitespace-nowrap block ${casing ?? ""}`}
+				style={{
+					lineHeight: 1.1,
+				}}
+			>
+				<motion.div>
+					{text.map((char, index) => (
+						<motion.span
+							key={`top-${index}`}
+							variants={linkHoverVariants}
+							className={char === " " ? "inline-block whitespace-pre" : "inline-block"}
+							custom={{ index, length: text.length }}
+						>
+							{char}
+						</motion.span>
+					))}
+				</motion.div>
+				<div className="absolute inset-0">
+					{text.map((char, index) => (
+						<motion.span
+							key={`bottom-${index}`}
+							variants={bottomLinkHoverVariants}
+							className={char === " " ? "inline-block whitespace-pre" : "inline-block"}
+							custom={{ index, length: text.length }}
+						>
+							{char === " " ? "\u00A0" : char}
+						</motion.span>
+					))}
+				</div>
+			</motion.div>
+		</motion.div>
+	);
 }

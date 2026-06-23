@@ -1,91 +1,130 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
-export type TransitionPhase = 'idle' | 'expanding' | 'holding' | 'rippling'
+export type TransitionPhase = "idle" | "expanding" | "holding" | "rippling";
 
 function computeScreenDiagonal(): number {
-  return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2)
+	return Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2);
 }
 
-interface TransitionStore {
-  phase: TransitionPhase
-  previewSrc: string | null
-  previewRect: DOMRect | null
-  rippleRadius: number      // animated 0 → maxRippleRadius, driven by RippleCanvas
-  maxRippleRadius: number   // screen diagonal, set when rippling starts
-  isMobile: boolean
-  _previewEl: HTMLElement | null
+export interface TransitionStore {
+	phase: TransitionPhase;
+	previewSrc: string | null;
+	previewRect: DOMRect | null;
+	transitionVW: number;
+	transitionVH: number;
+	rippleRadius: number;
+	maxRippleRadius: number;
+	isMobile: boolean;
+	_previewEl: HTMLElement | null;
+	pendingNavigate: (() => void) | null;
 
-  updatePreview(src: string): void
-  registerPreviewEl(el: HTMLElement | null): void
-  triggerTransition(): void
-  onExpandComplete(): void
-  onRouteReady(): void
-  updateRippleRadius(r: number): void
-  onRippleComplete(): void
-  initMobile(): void
+	updatePreview(src: string): void;
+	registerPreviewEl(el: HTMLElement | null): void;
+	triggerTransition(navigateFn?: () => void): void;
+	onExpandComplete(): void;
+	onRouteReady(): void;
+	updateRippleRadius(r: number): void;
+	onRippleComplete(): void;
+	initMobile(): void;
 }
 
 export const useTransitionStore = create<TransitionStore>((set, get) => ({
-  phase: 'idle',
-  previewSrc: null,
-  previewRect: null,
-  rippleRadius: 0,
-  maxRippleRadius: 0,
-  isMobile: false,
-  _previewEl: null,
+	phase: "idle",
+	previewSrc: null,
+	previewRect: null,
+	transitionVW: 0,
+	transitionVH: 0,
+	rippleRadius: 0,
+	maxRippleRadius: 0,
+	isMobile: false,
+	_previewEl: null,
+	pendingNavigate: null,
 
-  updatePreview: (src: string) => {
-    // Lock preview once a transition starts — no hover hijacking mid-transition
-    if (get().phase !== 'idle') return
-    set({ previewSrc: src })
-  },
+	updatePreview: (src: string) => {
+		if (get().phase !== "idle") return;
+		set({ previewSrc: src });
+	},
 
-  registerPreviewEl: (el: HTMLElement | null) => {
-    set({ _previewEl: el })
-  },
+	registerPreviewEl: (el: HTMLElement | null) => {
+		set({ _previewEl: el });
+	},
 
-  triggerTransition: () => {
-    if (
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      return
-    }
+	triggerTransition: (navigateFn?: () => void) => {
+		if (
+			typeof window !== "undefined" &&
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches
+		) {
+			navigateFn?.();
+			return;
+		}
 
-    const state = get()
-    if (state.phase !== 'idle') return
+		const state = get();
+		if (state.phase !== "idle") return;
 
-    if (state.isMobile || state._previewEl === null) {
-      if (typeof window === 'undefined') return
-      set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
-      return
-    }
+		const vw = window.innerWidth;
+		const vh = window.innerHeight;
 
-    const previewRect = state._previewEl.getBoundingClientRect()
-    set({ phase: 'expanding', previewRect })
-  },
+		// a registered element (e.g. a link card) is the expand origin; otherwise null,
+		// and the overlay plays a subtle shift-up entrance instead.
+		const previewRect = state._previewEl?.getBoundingClientRect() ?? null;
 
-  onExpandComplete: () => {
-    set({ phase: 'holding' })
-  },
+		// nothing to show (mobile pager, or no ref and no preview image) → skip straight to
+		// the ripple reveal. The overlay renders nothing without a previewSrc, so routing
+		// these through "expanding" would never fire onExpandComplete and would stall.
+		if (state.isMobile || (previewRect === null && state.previewSrc === null)) {
+			navigateFn?.();
+			set({
+				phase: "rippling",
+				transitionVW: vw,
+				transitionVH: vh,
+				rippleRadius: 0,
+				maxRippleRadius: computeScreenDiagonal(),
+			});
+			return;
+		}
 
-  onRouteReady: () => {
-    if (typeof window === 'undefined') return
-    set({ phase: 'rippling', rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() })
-  },
+		set({
+			phase: "expanding",
+			previewRect,
+			transitionVW: vw,
+			transitionVH: vh,
+			pendingNavigate: navigateFn ?? null,
+		});
+	},
 
-  updateRippleRadius: (r: number) => {
-    set({ rippleRadius: r })
-  },
+	onExpandComplete: () => {
+		if (get().phase !== "expanding") return;
+		const { pendingNavigate } = get();
+		set({ phase: "holding", pendingNavigate: null });
+		pendingNavigate?.();
+	},
 
-  onRippleComplete: () => {
-    set({ phase: 'idle', previewSrc: null, previewRect: null, rippleRadius: 0, maxRippleRadius: 0 })
-  },
+	onRouteReady: () => {
+		if (typeof window === "undefined") return;
+		set({ phase: "rippling", rippleRadius: 0, maxRippleRadius: computeScreenDiagonal() });
+	},
 
-  initMobile: () => {
-    if (typeof window !== 'undefined') {
-      const isMobile = window.matchMedia('(max-width: 639px)').matches
-      set({ isMobile })
-    }
-  },
-}))
+	updateRippleRadius: (r: number) => {
+		set({ rippleRadius: r });
+	},
+
+	onRippleComplete: () => {
+		set({
+			phase: "idle",
+			previewSrc: null,
+			previewRect: null,
+			transitionVW: 0,
+			transitionVH: 0,
+			rippleRadius: 0,
+			maxRippleRadius: 0,
+			pendingNavigate: null,
+		});
+	},
+
+	initMobile: () => {
+		if (typeof window !== "undefined") {
+			const isMobile = window.matchMedia("(max-width: 639px)").matches;
+			set({ isMobile });
+		}
+	},
+}));
