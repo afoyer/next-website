@@ -4,6 +4,9 @@ import { motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { useTransitionStore } from "@/store/transition";
 
+// px the no-ref overlay starts below its resting position — a subtle upward entrance
+const SHIFT_UP = 48;
+
 export default function TransitionOverlay() {
 	const phase = useTransitionStore((s) => s.phase);
 	const previewSrc = useTransitionStore((s) => s.previewSrc);
@@ -31,10 +34,12 @@ export default function TransitionOverlay() {
 				left: previewRect.left,
 				width: previewRect.width,
 				height: previewRect.height,
+				opacity: 1,
 			}
-		: { top: 0, left: 0, width: transitionVW, height: transitionVH };
+		: // no ref: start slightly below, faded out, and rise + fade into place
+			{ top: SHIFT_UP, left: 0, width: transitionVW, height: transitionVH, opacity: 0 };
 
-	const targetDims = { top: 0, left: 0, width: transitionVW, height: transitionVH };
+	const targetDims = { top: 0, left: 0, width: transitionVW, height: transitionVH, opacity: 1 };
 
 	return (
 		<motion.div

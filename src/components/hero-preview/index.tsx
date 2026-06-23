@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AsciiBackground } from "@/components/ascii-background";
 import HeroNavigator from "@/components/hero-navigator";
 import { MobilePager } from "@/components/mobile-pager";
@@ -14,20 +14,20 @@ export function HeroPreview() {
 	const phase = useTransitionStore((s) => s.phase);
 	const registerPreviewEl = useTransitionStore((s) => s.registerPreviewEl);
 	const isMobile = useTransitionStore((s) => s.isMobile);
-	const bgRef = useRef<HTMLDivElement>(null);
 
+	// the main page has no per-link expand origin — links rise from the bottom.
+	// register null on mount so the overlay takes the shift-up path, and to clear
+	// any ref a previous page (e.g. a link card) left registered.
 	useEffect(() => {
-		registerPreviewEl(bgRef.current);
-		return () => registerPreviewEl(null);
+		registerPreviewEl(null);
 	}, [registerPreviewEl]);
 
 	const handlePreview = (src: string | null) => setPreviewSrc(src ?? DEFAULT_SRC);
 
 	return (
 		<>
-			{/* full-viewport ascii background — registered as the ripple transition origin */}
+			{/* full-viewport ascii background — fades out while a transition is in flight */}
 			<motion.div
-				ref={bgRef}
 				className="pointer-events-none fixed inset-0 z-0"
 				animate={{ opacity: phase === "idle" ? 1 : 0 }}
 				transition={{ duration: 0.25 }}

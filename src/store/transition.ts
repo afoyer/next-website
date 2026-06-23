@@ -64,7 +64,14 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
 		const vw = window.innerWidth;
 		const vh = window.innerHeight;
 
-		if (state.isMobile || state._previewEl === null) {
+		// a registered element (e.g. a link card) is the expand origin; otherwise null,
+		// and the overlay plays a subtle shift-up entrance instead.
+		const previewRect = state._previewEl?.getBoundingClientRect() ?? null;
+
+		// nothing to show (mobile pager, or no ref and no preview image) → skip straight to
+		// the ripple reveal. The overlay renders nothing without a previewSrc, so routing
+		// these through "expanding" would never fire onExpandComplete and would stall.
+		if (state.isMobile || (previewRect === null && state.previewSrc === null)) {
 			navigateFn?.();
 			set({
 				phase: "rippling",
@@ -76,7 +83,6 @@ export const useTransitionStore = create<TransitionStore>((set, get) => ({
 			return;
 		}
 
-		const previewRect = state._previewEl.getBoundingClientRect();
 		set({
 			phase: "expanding",
 			previewRect,
