@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AsciiBackground } from "@/components/ascii-background";
 import HeroNavigator from "@/components/hero-navigator";
 import { MobilePager } from "@/components/mobile-pager";
@@ -14,6 +14,7 @@ export function HeroPreview() {
 	const phase = useTransitionStore((s) => s.phase);
 	const registerPreviewEl = useTransitionStore((s) => s.registerPreviewEl);
 	const isMobile = useTransitionStore((s) => s.isMobile);
+	const boundsRef = useRef<HTMLDivElement>(null);
 
 	// the main page has no per-link expand origin — links rise from the bottom.
 	// register null on mount so the overlay takes the shift-up path, and to clear
@@ -37,9 +38,9 @@ export function HeroPreview() {
 			</motion.div>
 
 			{/* desktop: navigator floats over the background */}
-			<div className="relative z-10 hidden w-full flex-1 min-h-0 sm:flex">
+			<div ref={boundsRef} className="relative z-10 hidden w-full flex-1 min-h-0 sm:flex">
 				<div className="mt-6 shrink-0 self-center">
-					<HeroNavigator onPreview={handlePreview} />
+					<HeroNavigator onPreview={handlePreview} boundsRef={boundsRef} />
 				</div>
 			</div>
 

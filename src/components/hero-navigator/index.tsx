@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useDragControls } from "motion/react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 import TransitionLink from "@/components/transition-link";
 import { useTransitionStore } from "@/store/transition";
 import LinkHover from "../link-hover";
@@ -14,6 +14,7 @@ const ROW_HEIGHT = 48;
 const NUB_HEIGHT = 20;
 const SPRING = { type: "spring" as const, stiffness: 380, damping: 36 };
 const NUB_SPRING = { type: "spring" as const, stiffness: 500, damping: 40 };
+const GRIP_HEIGHT = 18;
 
 import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/lib/nav-links";
 
@@ -24,14 +25,18 @@ const COMPACT_HEIGHT = TABS.length * ROW_HEIGHT;
 
 // ── component ─────────────────────────────────────────────────────────────────
 
-type Props = { onPreview: (src: string | null) => void };
+type Props = {
+	onPreview: (src: string | null) => void;
+	boundsRef: RefObject<HTMLDivElement | null>;
+};
 
-export default function HeroNavigator({ onPreview }: Props) {
+export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 	const [activeTab, setActiveTab] = useState<Tab>("main");
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [shellHeight, setShellHeight] = useState(COMPACT_HEIGHT);
 	const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
 	const updatePreview = useTransitionStore((s) => s.updatePreview);
+	const dragControls = useDragControls();
 
 	const compactRef = useRef<HTMLDivElement>(null);
 	const expandedRef = useRef<HTMLDivElement>(null);
@@ -83,7 +88,25 @@ export default function HeroNavigator({ onPreview }: Props) {
 	const items = ITEMS[activeTab];
 
 	return (
-		<div className={styles.wrapper}>
+		<motion.div
+			className={styles.wrapper}
+			drag
+			dragControls={dragControls}
+			dragListener={false}
+			dragMomentum={false}
+			dragElastic={0.06}
+			dragConstraints={boundsRef}
+		>
+			<motion.div
+				className={styles.grip}
+				onPointerDown={(e) => dragControls.start(e)}
+				initial={false}
+				animate={{ height: isExpanded ? 0 : GRIP_HEIGHT, opacity: isExpanded ? 0 : 1 }}
+				transition={NUB_SPRING}
+				aria-hidden
+			>
+				<span className={styles.grip_dots}>⠿⠿⠿</span>
+			</motion.div>
 			<motion.div className={styles.shell} animate={{ height: shellHeight }} transition={SPRING}>
 				<motion.div
 					className={styles.strip}
@@ -161,6 +184,6 @@ export default function HeroNavigator({ onPreview }: Props) {
 					</div>
 				</motion.div>
 			</motion.div>
-		</div>
+		</motion.div>
 	);
 }

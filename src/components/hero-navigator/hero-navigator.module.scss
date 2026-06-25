@@ -3,7 +3,38 @@
 // ── wrapper positioning ────────────────────────────────────────────────────────
 
 .wrapper {
-  // layout handled by parent flex row
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+}
+
+.grip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(1deg, rgba(88, 88, 88, 0.722) 0%, rgba(0, 0, 0, 0.793) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.grip_dots {
+  font-size: 10px;
+  letter-spacing: 2px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  font-family: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .shell {
