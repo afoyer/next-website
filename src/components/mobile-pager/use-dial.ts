@@ -5,7 +5,7 @@ import {
 	useMotionValue,
 	useTransform,
 } from "motion/react";
-import type { KeyboardEvent, PointerEvent, RefObject } from "react";
+import type { KeyboardEvent, MutableRefObject, PointerEvent, RefObject } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import {
 	ANGLE,
@@ -32,7 +32,7 @@ export function useDial({ count, index, active, onSettle, onSwipeSection }: UseD
 	pos: MotionValue<number>;
 	stageDeg: MotionValue<number>;
 	containerRef: RefObject<HTMLDivElement | null>;
-	didDragRef: React.MutableRefObject<boolean>;
+	didDragRef: MutableRefObject<boolean>;
 	rollTo: (index: number) => void;
 	handlePointerDown: (e: PointerEvent) => void;
 	handlePointerMove: (e: PointerEvent) => void;
@@ -183,6 +183,7 @@ export function useDial({ count, index, active, onSettle, onSwipeSection }: UseD
 		if (draggingRef.current) return;
 		if (Math.round(pos.get()) === index) return;
 		controlsRef.current?.stop();
+		// index is already authoritative here (parent-driven) — no onSettle, avoids a feedback loop
 		controlsRef.current = animate(pos, index, SETTLE_SPRING);
 	}, [index, pos]);
 
