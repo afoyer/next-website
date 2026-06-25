@@ -44,33 +44,35 @@ export function Dial({ items, index, active, onSettle, onSwipeSection }: DialPro
 	};
 
 	return (
-		<section
-			ref={containerRef}
-			className="relative h-full w-full overflow-hidden outline-none"
-			style={{ perspective: "700px" }}
-			role="application"
-			tabIndex={active ? 0 : -1}
-			onPointerDown={handlePointerDown}
-			onPointerMove={handlePointerMove}
-			onPointerUp={handlePointerUp}
-			onPointerCancel={handlePointerUp}
-			onKeyDown={handleKeyDown}
-		>
-			<motion.div
-				className="absolute inset-0"
-				style={{ transformStyle: "preserve-3d", rotateX: stageDeg }}
+		<>
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: this is a gesture surface; the interactive content is the <a>/<TransitionLink> inside each item */}
+			<div
+				ref={containerRef}
+				className="relative h-full w-full overflow-hidden outline-none"
+				style={{ perspective: "700px" }}
+				tabIndex={active ? 0 : -1}
+				onPointerDown={handlePointerDown}
+				onPointerMove={handlePointerMove}
+				onPointerUp={handlePointerUp}
+				onPointerCancel={handlePointerUp}
+				onKeyDown={handleKeyDown}
 			>
-				{items.map((item, i) => (
-					<DialItem
-						key={item.href}
-						item={item}
-						i={i}
-						pos={pos}
-						onClickCapture={(e) => handleItemClickCapture(e, i)}
-					/>
-				))}
-			</motion.div>
-		</section>
+				<motion.div
+					className="absolute inset-0"
+					style={{ transformStyle: "preserve-3d", rotateX: stageDeg }}
+				>
+					{items.map((item, i) => (
+						<DialItem
+							key={item.href}
+							item={item}
+							i={i}
+							pos={pos}
+							onClickCapture={(e) => handleItemClickCapture(e, i)}
+						/>
+					))}
+				</motion.div>
+			</div>
+		</>
 	);
 }
 
