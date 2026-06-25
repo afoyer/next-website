@@ -102,6 +102,10 @@ function DialItem({
 				fontWeight,
 				backfaceVisibility: "hidden",
 			}}
+			// motion emits translate before rotate; a cylinder needs rotate first,
+			// then push out along the rotated axis — force that order explicitly,
+			// otherwise every item collapses onto the center line.
+			transformTemplate={() => `rotateX(${-i * ANGLE}deg) translateZ(${RADIUS}px)`}
 			onClickCapture={onClickCapture}
 		>
 			{item.external ? (
