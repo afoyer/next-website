@@ -175,6 +175,7 @@ export function useDial({ count, index, active, onSettle, onSwipeSection }: UseD
 		return () => {
 			el.removeEventListener("wheel", onWheel);
 			if (timer) clearTimeout(timer);
+			didDragRef.current = false;
 		};
 	}, [active, count, pos, settleTo]);
 

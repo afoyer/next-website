@@ -88,6 +88,7 @@ function DialItem({
 	onClickCapture: (e: React.MouseEvent) => void;
 }) {
 	const opacity = useTransform(pos, (p) => itemOpacity(p - i));
+	const fontWeight = useTransform(pos, (p) => (Math.abs(p - i) < 0.5 ? 800 : 500));
 
 	return (
 		<motion.div
@@ -98,6 +99,7 @@ function DialItem({
 				rotateX: -i * ANGLE,
 				z: RADIUS,
 				opacity,
+				fontWeight,
 				backfaceVisibility: "hidden",
 			}}
 			onClickCapture={onClickCapture}
@@ -107,13 +109,13 @@ function DialItem({
 					href={item.href}
 					target="_blank"
 					rel="noopener noreferrer"
-					className="flex items-center gap-2 text-4xl lowercase font-bold"
+					className="flex items-center gap-2 text-4xl lowercase"
 				>
 					{item.label}
 					<ExternalLink size={20} />
 				</a>
 			) : (
-				<TransitionLink href={item.href} className="text-4xl lowercase font-bold">
+				<TransitionLink href={item.href} className="text-4xl lowercase">
 					{item.label}
 				</TransitionLink>
 			)}

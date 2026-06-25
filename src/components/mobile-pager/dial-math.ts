@@ -8,7 +8,7 @@ export const ANGLE = 24;
 export const ITEM_HEIGHT = 60;
 
 /** Cylinder radius (px): half the slot height divided by tan(half the per-item angle). */
-export const RADIUS = Math.round(ITEM_HEIGHT / 2 / Math.tan((ANGLE / 2) * (Math.PI / 180)));
+export const RADIUS: number = Math.round(ITEM_HEIGHT / 2 / Math.tan((ANGLE / 2) * (Math.PI / 180)));
 
 /** Spring used to settle the dial onto an item. */
 export const SETTLE_SPRING = { type: "spring" as const, stiffness: 300, damping: 32 };
@@ -37,7 +37,7 @@ export function clamp(value: number, min: number, max: number): number {
 
 /** Snap target after a flick: project momentum forward, round, clamp to range. */
 export function projectTarget(pos: number, velocity: number, count: number): number {
-	return clamp(Math.round(pos + velocity * MOMENTUM_FACTOR), 0, count - 1);
+	return clamp(Math.round(pos + velocity * MOMENTUM_FACTOR), 0, Math.max(0, count - 1));
 }
 
 /**
