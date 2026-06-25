@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 76px;
+  width: 100%;
   overflow: hidden;
   border-radius: 8px 8px 0 0;
   background: linear-gradient(1deg, rgba(88, 88, 88, 0.722) 0%, rgba(0, 0, 0, 0.793) 100%);
@@ -101,7 +101,9 @@
   &:hover {
     filter: brightness(1.25);
   }
-
+  &:first-child {
+    border-radius: 0 0 0 0;
+  }
   &:last-child {
     border-bottom: none;
     border-radius: 0 0 10px 10px;
@@ -121,13 +123,19 @@
   background: none;
   border: none;
   border-bottom: 1px solid rgba(7, 9, 12, 0.2);
-  cursor: pointer;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
   width: 100%;
   font-family: "helvetica-neue-lt-pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   transition: color 0.15s ease;
 
   &:hover {
     color: rgba(255, 255, 255, 0.65);
+  }
+
+  &:active {
+    cursor: grabbing;
   }
 }
 

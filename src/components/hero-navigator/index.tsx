@@ -135,6 +135,7 @@ export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 								key={`bc-${activeTab}`}
 								className={styles.breadcrumb}
 								onClick={handleBack}
+								onPointerDown={(e) => dragControls.start(e)}
 								initial={{ opacity: 0, x: -8 }}
 								animate={{ opacity: 1, x: 0 }}
 								exit={{ opacity: 0, x: -8 }}
