@@ -1,4 +1,4 @@
-# Project: ShopFront
+# Project: aymericfoyer.com
 
 A personal portfolio with many ASCII style transitions, showcasing my photos, projects, and past work. This project uses NextJS's App Router style.
 
@@ -24,5 +24,7 @@ A personal portfolio with many ASCII style transitions, showcasing my photos, pr
 ## Important Notes
 
 - NEVER commit .env files
-- Product images are stored in Flickr
+- Photos are served from Flickr via the Amplify backend
+- Human-editable content lives in `src/content/` (site.ts, nav.ts, theme.ts) and per-page `content.ts` files. Put new prose, links, and nav entries there, never inline in components.
+- `bun run check:nav` verifies every internal nav link has a page. Run it after editing nav.ts.
 - This project uses GSAP and motion packages for smooth transitions. Use GSAP for any scroll animation and motion for simple transitions (hover,click, AnimatePresence). Use your best judgement.

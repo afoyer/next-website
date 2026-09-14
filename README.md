@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# aymericfoyer.com
 
-## Getting Started
+Personal portfolio: photos, projects, and past work, with ASCII-style transitions.
+Built with Next.js (App Router), Tailwind, GSAP, and motion. Uses `bun`.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+bun dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Other scripts: `bun run lint`, `bun run typecheck`, `bun run check:nav`, `bun test`, `bun run build`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Editing the site
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Everything you are likely to change lives in `src/content/`. Components only
+render what those files export, so you should never need to open a component
+to change text, a link, or a colour.
 
-## Learn More
+| Want to change… | Edit |
+|---|---|
+| Your name, tagline, tab title, social links, default hero photo | `src/content/site.ts` |
+| Nav sections and items | `src/content/nav.ts` |
+| Light/dark colours | `src/content/theme.ts` |
+| Text on a specific page | `src/app/(main)/<page>/content.ts` |
 
-To learn more about Next.js, take a look at the following resources:
+### Add a nav item
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Open `src/content/nav.ts` and add an entry to the right section. `label` and `href` are required.
+2. Put an animated ASCII preview at `public/images/gifs/<slug>-ascii.gif` and reference it as `preview`.
+3. Optionally put a photo at `public/images/nav2/<slug>.jpg` and reference it as `frame`.
+4. Create the page (next section).
+5. Run `bun run check:nav`. It fails if any internal link has no page.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Add a page
 
-## Deploy on Vercel
+1. Create `src/app/(main)/<path>/page.tsx` with a default-exported component.
+2. If the page has prose, put it in `src/app/(main)/<path>/content.ts` and import from there.
+3. Page images go in `public/images/<page>/`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Change a colour
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Every key in `src/content/theme.ts` has a `light` and a `dark` value and becomes a
+CSS variable. To add a new one, add the key there and a matching
+`--color-<name>: var(--<name>);` line in `src/app/globals.css`.
+
+## Layout
+
+```
+src/
+  content/        site-wide editable data (see table above)
+  app/            routes; each page folder may have a content.ts
+  components/     reusable UI
+  store/          zustand stores (theme, transition, hero)
+  lib/            small utilities
+scripts/          check-nav.ts and its test
+amplify/          backend that fetches Flickr photos
+public/images/    gifs/ (nav previews), nav2/ (hero frames), <page>/ (page assets)
+```
