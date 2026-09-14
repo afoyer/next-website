@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useRef } from "react";
+import { pantonify } from "../../content";
 import useColAnimation from "./animations";
-import { pantonifyData } from "./data";
 import styles from "./index.module.css";
 
 const COL_GRADIENT =
@@ -22,8 +22,8 @@ export default function CardCols() {
 				<div className={`${styles.col} col_1`}>
 					<div className={`${styles.col_content_wrapper} ${COL_GRADIENT}`}>
 						<div className={`${styles.col_content}`}>
-							<h1 className={styles.heading}>{pantonifyData.introHeading}</h1>
-							<p className={styles.subheading}>{pantonifyData.introSubHeading}</p>
+							<h1 className={styles.heading}>{pantonify.introHeading}</h1>
+							<p className={styles.subheading}>{pantonify.introSubHeading}</p>
 						</div>
 					</div>
 				</div>

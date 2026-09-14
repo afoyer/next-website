@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useMobileBreakpoint } from "@/components/nav/hooks";
 import { cn } from "@/lib/utils";
-import type { SectionNode } from "../sections";
+import type { SectionNode } from "../content";
 
 const OPEN_WIDTH = 280;
 const RAIL_WIDTH = 44;

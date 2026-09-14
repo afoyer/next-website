@@ -6,7 +6,7 @@ import { OverviewCard } from "./components/OverviewCard";
 import { Placeholder } from "./components/Placeholder";
 import { Section } from "./components/Section";
 import { Sidebar } from "./components/Sidebar";
-import { SECTIONS } from "./sections";
+import { amazon, SECTIONS } from "./content";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -32,10 +32,7 @@ export default function AmazonPage() {
 				</Section>
 
 				<Section id="lop" title="Local Access Panel">
-					<Placeholder>
-						Placeholder — describe the Local Access Panel: the on-premises application built for
-						data center operators, what problem it solved, and its architecture.
-					</Placeholder>
+					<Placeholder>{amazon.lopPlaceholder}</Placeholder>
 				</Section>
 
 				<Section id="metric-organizer" title="MetricOrganizer">
