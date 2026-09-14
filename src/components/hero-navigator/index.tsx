@@ -20,7 +20,6 @@ import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/lib/nav-l
 
 // ── data ───────────────────────────────────────────────────────────────────────
 
-const ITEMS = NAV_ITEMS;
 const COMPACT_HEIGHT = GRIP_HEIGHT + TABS.length * ROW_HEIGHT;
 
 // ── component ─────────────────────────────────────────────────────────────────
@@ -85,7 +84,7 @@ export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 		}, 80);
 	};
 
-	const items = ITEMS[activeTab];
+	const items = NAV_ITEMS[activeTab];
 
 	return (
 		<motion.div
