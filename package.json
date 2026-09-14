@@ -6,9 +6,10 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "biome check .",
+		"lint": "bun run check:nav && biome check .",
 		"format": "biome format --write .",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"check:nav": "bun scripts/check-nav.ts"
 	},
 	"dependencies": {
 		"@gsap/react": "^2.1.2",
@@ -35,6 +36,7 @@
 		"@aws-amplify/backend-cli": "^1.8.2",
 		"@biomejs/biome": "2.4.16",
 		"@tailwindcss/postcss": "^4",
+		"@types/bun": "^1.4.2",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
