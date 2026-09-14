@@ -9,7 +9,7 @@ import RouteReadyListener from "@/components/route-ready-listener";
 import { ThemeSync } from "@/components/theme-sync";
 import TransitionOverlay from "@/components/transition-overlay";
 import { site } from "@/content/site";
-import { colors } from "@/lib/tokens";
+import { colors } from "@/content/theme";
 import AmplifyProvider from "./amplify-provider";
 import QueryProvider from "./query-provider";
 
