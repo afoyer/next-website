@@ -17,18 +17,16 @@ export default function Pantonify() {
 	});
 
 	return (
-		<>
-			<div ref={sectionRef} className="bg-white/90 dark:bg-[#242424]">
-				<div className={styles["page-wrapper"]}>
-					<section
-						className={`${styles.section} ${styles.browser} pantone-card bg-green-500 dark:bg-green-700`}
-					>
-						<PantonifyCard />
-					</section>
-				</div>
-
-				<CardCols />
+		<div ref={sectionRef} className="bg-white/90 dark:bg-[#242424]">
+			<div className={styles["page-wrapper"]}>
+				<section
+					className={`${styles.section} ${styles.browser} pantone-card bg-green-500 dark:bg-green-700`}
+				>
+					<PantonifyCard />
+				</section>
 			</div>
-		</>
+
+			<CardCols />
+		</div>
 	);
 }

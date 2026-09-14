@@ -1,16 +1,31 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { AsciiRenderer } from "./renderer";
 
 const RESIZE_DEBOUNCE_MS = 150;
 
-type Props = { src: string };
+export type AsciiBackgroundHandle = {
+	/** anchor the image's vertical center at a viewport y (CSS px from top) */
+	setCenterY: (y: number) => void;
+};
 
-export function AsciiBackground({ src }: Props) {
+type Props = { src: string; ref?: Ref<AsciiBackgroundHandle> };
+
+export function AsciiBackground({ src, ref }: Props) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const rendererRef = useRef<AsciiRenderer | null>(null);
+	const centerYRef = useRef<number | null>(null);
 	const [failed, setFailed] = useState(false);
+
+	// imperative so drag frames bypass React state; remembered so a renderer
+	// created later (StrictMode remount, context recovery) picks it up
+	useImperativeHandle(ref, () => ({
+		setCenterY: (y) => {
+			centerYRef.current = y;
+			rendererRef.current?.setCenterY(y);
+		},
+	}));
 
 	useEffect(() => {
 		if (failed) return;
@@ -25,6 +40,7 @@ export function AsciiBackground({ src }: Props) {
 			return;
 		}
 		rendererRef.current = renderer;
+		if (centerYRef.current !== null) renderer.setCenterY(centerYRef.current);
 
 		const applySize = () => renderer.resize(window.innerWidth, window.innerHeight);
 		applySize();

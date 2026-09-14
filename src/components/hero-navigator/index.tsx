@@ -21,7 +21,7 @@ import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/lib/nav-l
 // ── data ───────────────────────────────────────────────────────────────────────
 
 const ITEMS = NAV_ITEMS;
-const COMPACT_HEIGHT = TABS.length * ROW_HEIGHT;
+const COMPACT_HEIGHT = GRIP_HEIGHT + TABS.length * ROW_HEIGHT;
 
 // ── component ─────────────────────────────────────────────────────────────────
 
@@ -49,7 +49,7 @@ export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 			return;
 		}
 		if (expandedRef.current) setShellHeight(expandedRef.current.offsetHeight);
-	}, [isExpanded, activeTab]);
+	}, [isExpanded]);
 
 	const handleTabClick = (tab: Tab) => {
 		setActiveTab(tab);
@@ -97,17 +97,17 @@ export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 			dragElastic={0.06}
 			dragConstraints={boundsRef}
 		>
-			<motion.div
-				className={styles.grip}
-				onPointerDown={(e) => dragControls.start(e)}
-				initial={false}
-				animate={{ height: isExpanded ? 0 : GRIP_HEIGHT, opacity: isExpanded ? 0 : 1 }}
-				transition={NUB_SPRING}
-				aria-hidden
-			>
-				<span className={styles.grip_dots}>⠿⠿⠿</span>
-			</motion.div>
 			<motion.div className={styles.shell} animate={{ height: shellHeight }} transition={SPRING}>
+				<motion.div
+					className={styles.grip}
+					onPointerDown={(e) => dragControls.start(e)}
+					initial={false}
+					animate={{ height: isExpanded ? 0 : GRIP_HEIGHT, opacity: isExpanded ? 0 : 1 }}
+					transition={NUB_SPRING}
+					aria-hidden
+				>
+					<span className={styles.grip_dots}>⠿⠿⠿</span>
+				</motion.div>
 				<motion.div
 					className={styles.strip}
 					animate={{ x: isExpanded ? -PANEL_WIDTH : 0 }}
@@ -121,6 +121,7 @@ export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 						transition={SPRING}
 					>
 						{TABS.map((tab) => (
+							// biome-ignore lint/a11y/useButtonType: no need
 							<button key={tab} className={styles.compact_row} onClick={() => handleTabClick(tab)}>
 								<div className={styles.row_bg} style={{ backgroundColor: "rgba(50,50,50,0.38)" }} />
 								<span className={styles.row_label}>{TAB_LABELS[tab]}</span>
@@ -134,7 +135,7 @@ export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 							<motion.button
 								key={`bc-${activeTab}`}
 								className={styles.breadcrumb}
-								onClick={handleBack}
+								onTap={handleBack}
 								onPointerDown={(e) => dragControls.start(e)}
 								initial={{ opacity: 0, x: -8 }}
 								animate={{ opacity: 1, x: 0 }}

@@ -38,7 +38,7 @@ export default function RootLayout({
 				<RippleCanvas />
 				<RouteReadyListener />
 				<ThemeSync />
-				<div className="z-60 fixed w-screen top-4 px-4 sm:px-20 sm:pt-6">
+				<div data-id="site-nav" className="z-60 fixed w-screen top-4 px-4 sm:px-20 sm:pt-6">
 					<Navigation />
 				</div>
 				<AmplifyProvider>

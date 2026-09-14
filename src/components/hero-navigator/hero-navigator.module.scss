@@ -13,9 +13,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   overflow: hidden;
   border-radius: 8px 8px 0 0;
-  background: linear-gradient(1deg, rgba(88, 88, 88, 0.722) 0%, rgba(0, 0, 0, 0.793) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: grab;

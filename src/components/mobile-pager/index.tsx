@@ -44,7 +44,7 @@ export function MobilePager({ onPreview }: Props) {
 	return (
 		<div className="sm:hidden fixed inset-0 z-10 flex flex-col touch-none">
 			{/* tab bar */}
-			<div className="flex justify-center gap-8 pt-32">
+			<div data-id="mobile-tabs" className="flex justify-center gap-8 pt-32">
 				{NAV_SECTIONS.map((s, i) => (
 					<button
 						key={s.id}

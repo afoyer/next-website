@@ -30,6 +30,7 @@ uniform float uAtlasCols; // total glyph columns (ramp + directional)
 uniform float uInvert; // 1 in light mode: quantize on 1 - l
 uniform vec2 uSizeA;
 uniform vec2 uSizeB;
+uniform float uCenterY; // viewport v (y-down, like uv below) the image center is anchored to
 
 out vec4 outColor;
 
@@ -44,14 +45,17 @@ float luma(vec3 c) {
 	return dot(c, vec3(0.2126, 0.7152, 0.0722));
 }
 
+// cover-fit the image to the viewport, horizontally centered, vertically anchored at uCenterY
 vec2 coverUv(vec2 uv, vec2 imgSize) {
 	float sa = uResolution.x / uResolution.y;
 	float ia = imgSize.x / imgSize.y;
 	vec2 scale = sa > ia ? vec2(1.0, ia / sa) : vec2(sa / ia, 1.0);
-	return (uv - 0.5) * scale + 0.5;
+	return (uv - vec2(0.5, uCenterY)) * scale + 0.5;
 }
 
+// outside the image (exposed by the anchor shift) reads as plain background
 vec3 sampleColor(sampler2D img, vec2 uv, vec2 imgSize) {
+	if (any(lessThan(uv, vec2(0.0))) || any(greaterThan(uv, vec2(1.0)))) return uBg;
 	// pick the mip whose texel density matches one cell, so each cell
 	// reads a stable local average instead of a noisy point sample
 	float texelsPerCell = imgSize.y * uCell / uResolution.y;
@@ -155,6 +159,7 @@ const UNIFORM_NAMES = [
 	"uInvert",
 	"uSizeA",
 	"uSizeB",
+	"uCenterY",
 ] as const;
 
 type UniformName = (typeof UNIFORM_NAMES)[number];
@@ -245,6 +250,8 @@ export class AsciiRenderer {
 	private fg: Rgb = [1, 1, 1];
 	private bg: Rgb = [0, 0, 0];
 	private invert = false; // light mode: invert brightness ramp
+	private cssHeight = 0;
+	private cssCenterY: number | null = null; // CSS px from top; null = viewport center
 	private rafId = 0;
 	private pendingSrc: string | null = null;
 	private destroyed = false;
@@ -268,6 +275,7 @@ export class AsciiRenderer {
 
 	resize(cssWidth: number, cssHeight: number): void {
 		this.dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+		this.cssHeight = cssHeight;
 		this.canvas.width = Math.round(cssWidth * this.dpr);
 		this.canvas.height = Math.round(cssHeight * this.dpr);
 		this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
@@ -280,6 +288,12 @@ export class AsciiRenderer {
 		// light theme = background brighter than foreground; invert the ramp so
 		// bright photo areas stay light (a true positive) in both modes
 		this.invert = luma(this.bg) > luma(this.fg);
+		this.render();
+	}
+
+	// anchor the image's vertical center at a viewport y given in CSS px from the top
+	setCenterY(cssY: number): void {
+		this.cssCenterY = cssY;
 		this.render();
 	}
 
@@ -386,6 +400,8 @@ export class AsciiRenderer {
 		gl.uniform1f(u.uInvert, this.invert ? 1 : 0);
 		gl.uniform2f(u.uSizeA, this.current.width, this.current.height);
 		gl.uniform2f(u.uSizeB, prev.width, prev.height);
+		const cy = this.cssCenterY !== null && this.cssHeight ? this.cssCenterY / this.cssHeight : 0.5;
+		gl.uniform1f(u.uCenterY, cy);
 		gl.drawArrays(gl.TRIANGLES, 0, 3);
 	}
 }
