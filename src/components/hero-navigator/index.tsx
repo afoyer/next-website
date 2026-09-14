@@ -16,7 +16,7 @@ const SPRING = { type: "spring" as const, stiffness: 380, damping: 36 };
 const NUB_SPRING = { type: "spring" as const, stiffness: 500, damping: 40 };
 const GRIP_HEIGHT = 18;
 
-import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/lib/nav-links";
+import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/content/nav";
 
 // ── data ───────────────────────────────────────────────────────────────────────
 

@@ -3,7 +3,7 @@
 import { ExternalLink } from "lucide-react";
 import { type MotionValue, motion, useTransform } from "motion/react";
 import TransitionLink from "@/components/transition-link";
-import type { NavItem } from "@/lib/nav-links";
+import type { NavItem } from "@/content/nav";
 import { ANGLE, ITEM_HEIGHT, itemOpacity, RADIUS } from "./dial-math";
 import { useDial } from "./use-dial";
 

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Logo from "@/app/logo";
-import { NAV_ITEMS, type NavItem, type Tab } from "@/lib/nav-links";
+import { NAV_ITEMS, type NavItem, type Tab } from "@/content/nav";
 import { useTransitionStore } from "@/store/transition";
 import TransitionLink from "../transition-link";
 import { DarkModeToggle } from "./DarkModeToggle";

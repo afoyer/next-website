@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { NAV_SECTIONS } from "@/lib/nav-links";
+import { NAV_SECTIONS } from "@/content/nav";
 import { Dial } from "./dial";
 
 const SPRING = { type: "spring" as const, stiffness: 300, damping: 32 };
