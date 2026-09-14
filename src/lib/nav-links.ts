@@ -1,3 +1,5 @@
+import { site } from "@/content/site";
+
 export type NavItem = {
 	label: string;
 	href: string;
@@ -21,7 +23,7 @@ export const NAV_SECTIONS: NavSection[] = [
 			{ label: "about", href: "/about", gradient: "#888", preview: "/images/gifs/about-ascii.gif" },
 			{
 				label: "linkedin",
-				href: "https://www.linkedin.com/in/aymeric-foyer/",
+				href: site.socials.linkedin,
 				gradient: "#778",
 				preview: "/images/gifs/linkedin-ascii.gif",
 				frame: "/images/nav2/linkedin.jpg",

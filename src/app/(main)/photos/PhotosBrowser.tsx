@@ -6,6 +6,7 @@ import { generateClient } from "aws-amplify/data";
 import { AlignJustify, Camera, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { site } from "@/content/site";
 import styles from "./photos.module.scss";
 
 const client = generateClient<Schema>();
@@ -134,7 +135,7 @@ export default function PhotosBrowser() {
 				<aside className={styles.sidebar}>
 					<div className={styles.icons}>
 						<a
-							href="https://www.instagram.com/"
+							href={site.socials.instagram}
 							target="_blank"
 							rel="noopener noreferrer"
 							aria-label="Instagram"

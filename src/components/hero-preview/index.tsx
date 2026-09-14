@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { AsciiBackground, type AsciiBackgroundHandle } from "@/components/ascii-background";
 import HeroNavigator from "@/components/hero-navigator";
 import { MobilePager } from "@/components/mobile-pager";
+import { site } from "@/content/site";
 import { useTransitionStore } from "@/store/transition";
 
-const DEFAULT_SRC = "/images/nav2/main.jpg";
+const DEFAULT_SRC: string = site.defaultHeroImage;
 // the pager's text sits directly on the ascii glyphs, so keep them faint on mobile
 const MOBILE_BG_OPACITY = 0.4;
 

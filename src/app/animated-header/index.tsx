@@ -2,7 +2,9 @@
 
 import { motion } from "motion/react";
 
-const text = "Aymeric Foyer";
+import { site } from "@/content/site";
+
+const text = site.name;
 
 const CHAR_STAGGER = 0.02;
 const CHAR_DURATION = 0.3;
@@ -70,7 +72,7 @@ export default function AnimatedHeader() {
 				custom={CHARS_DONE}
 				className="hidden md:flex helvetica text-md sm:text-md font-semibold overflow-clip relative text-white/50"
 			>
-				Front-End Engineer. Designer. Photographer.
+				{site.tagline}
 			</motion.h2>
 		</div>
 	);
