@@ -19,6 +19,7 @@ export const site = {
 	defaultHeroImage: "/images/nav2/main.jpg",
 	socials: {
 		linkedin: "https://www.linkedin.com/in/aymeric-foyer/",
-		instagram: "https://www.instagram.com/",
+		instagram: "https://www.instagram.com/aymericjlf",
+		flickr: "https://www.flickr.com/photos/aymericf/",
 	},
 } as const;
