@@ -8,9 +8,15 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 
 export const EASE = "power3.out";
 
-/** ScrollTrigger config shared by every one-shot reveal on the page. */
+/**
+ * ScrollTrigger config shared by every one-shot reveal on the page.
+ *
+ * `clamp()` keeps the start inside the scrollable range, so an element near
+ * the bottom of the document (whose top can never reach 82% of the viewport)
+ * still fires once the page is scrolled as far as it goes.
+ */
 export function enterOnce(trigger: gsap.DOMTarget, start = "top 82%"): ScrollTrigger.Vars {
-	return { trigger, start, once: true };
+	return { trigger, start: `clamp(${start})`, once: true };
 }
 
 /**

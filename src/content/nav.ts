@@ -77,6 +77,13 @@ export const NAV_SECTIONS: NavSection[] = [
 				preview: "/images/gifs/pantonify-ascii.gif",
 				frame: "/images/nav2/pantonify.jpg",
 			},
+			{
+				label: "tripjam",
+				href: "/projects/tripjam",
+				gradient: "#a89468",
+				preview: "/images/gifs/tripjam-ascii.gif",
+				frame: "/images/nav2/tripjam.jpg",
+			},
 		],
 	},
 	{

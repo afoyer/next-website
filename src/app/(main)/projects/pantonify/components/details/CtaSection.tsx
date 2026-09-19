@@ -3,8 +3,9 @@
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { useRef } from "react";
+import Logo from "@/app/logo";
+import { EASE, enterOnce, useReveal } from "@/hooks/useReveal";
 import { pantonify } from "../../content";
-import { EASE, enterOnce, useReveal } from "./useReveal";
 
 const { cta, meta } = pantonify;
 
@@ -71,7 +72,7 @@ export function CtaSection() {
 			>
 				<span>{cta.footer}</span>
 				<span className="flex size-10 items-center justify-center rounded-full bg-linear-to-br from-[#b8b8b8] to-[#e0e0e0] text-xs font-black tracking-[-0.06em] text-[#121212] shadow-[inset_1px_1px_3px_rgba(0,0,0,0.15)] lg:size-11">
-					AF
+					<Logo className="p-1" />
 				</span>
 			</div>
 		</section>

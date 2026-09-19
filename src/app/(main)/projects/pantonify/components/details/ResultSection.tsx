@@ -6,7 +6,7 @@ import { pantonify, type TimeRange } from "../../content";
 import { Eyebrow } from "./Eyebrow";
 import styles from "./index.module.css";
 import { ResultCard } from "./ResultCard";
-import { EASE, enterOnce, useReveal } from "./useReveal";
+import { EASE, enterOnce, useReveal } from "@/hooks/useReveal";
 
 const { result } = pantonify;
 

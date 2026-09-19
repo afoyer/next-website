@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { pantonify } from "../../content";
 import { Eyebrow } from "./Eyebrow";
-import { EASE, enterOnce, useReveal } from "./useReveal";
+import { EASE, enterOnce, useReveal } from "@/hooks/useReveal";
 
 const { decisions } = pantonify;
 

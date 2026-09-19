@@ -4,7 +4,7 @@
 import type { ReactNode } from "react";
 
 export const ABOUT_BLURB =
-	"Rorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.";
+	"Focused on software engineering, with a specialization in user interface development. At Amazon Web Services (AWS), I contributed to building a robust end-to-end UI platform using TypeScript and GraphQL Schemas, streamlining data center monitoring and enhancing scalability.  ";
 
 export type Education = {
 	id: string;

@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { type ProcessStep, pantonify } from "../../content";
 import { Eyebrow } from "./Eyebrow";
 import styles from "./index.module.css";
-import { EASE, enterOnce, useReveal } from "./useReveal";
+import { EASE, enterOnce, useReveal } from "@/hooks/useReveal";
 
 const { process } = pantonify;
 
