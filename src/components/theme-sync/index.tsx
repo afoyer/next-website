@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { colors } from "@/lib/tokens";
+import { colors } from "@/content/theme";
 import { useThemeStore } from "@/store/theme";
 
 function toKebab(key: string): string {

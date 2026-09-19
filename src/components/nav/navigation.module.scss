@@ -131,14 +131,14 @@
           // toned-down gradients (less saturated than Figma spec)
           &.tab_projects {
             width: 116px;
-            background: linear-gradient(62deg, rgba(92, 8, 25, 0.55) 7%, rgba(3, 3, 3, 0.3) 173%);
+            background: linear-gradient(62deg, rgba(92, 8, 25, 1) 7%, rgba(3, 3, 3, 1) 173%);
             backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
             -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
           }
 
           &.tab_work {
             width: 115px;
-            background: linear-gradient(50deg, rgba(5, 6, 8, 0.3) 10%, rgba(44, 61, 79, 0.55) 169%);
+            background: linear-gradient(50deg, rgba(5, 6, 8, 1) 10%, rgba(44, 61, 79, 1) 169%);
             backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
             -webkit-backdrop-filter: blur(28px) brightness(0.9) saturate(140%);
             border-radius: 0 10px 0 0;
@@ -368,7 +368,7 @@
           position: absolute;
           inset: 0;
           mix-blend-mode: screen;
-          opacity: 0.45;
+          opacity: 1;
         }
 
         .item_link {

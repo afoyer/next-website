@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useDragControls } from "motion/react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 import TransitionLink from "@/components/transition-link";
 import { useTransitionStore } from "@/store/transition";
 import LinkHover from "../link-hover";
@@ -14,24 +14,28 @@ const ROW_HEIGHT = 48;
 const NUB_HEIGHT = 20;
 const SPRING = { type: "spring" as const, stiffness: 380, damping: 36 };
 const NUB_SPRING = { type: "spring" as const, stiffness: 500, damping: 40 };
+const GRIP_HEIGHT = 18;
 
-import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/lib/nav-links";
+import { NAV_ITEMS, type NavItem, TAB_LABELS, TABS, type Tab } from "@/content/nav";
 
 // ── data ───────────────────────────────────────────────────────────────────────
 
-const ITEMS = NAV_ITEMS;
-const COMPACT_HEIGHT = TABS.length * ROW_HEIGHT;
+const COMPACT_HEIGHT = GRIP_HEIGHT + TABS.length * ROW_HEIGHT;
 
 // ── component ─────────────────────────────────────────────────────────────────
 
-type Props = { onPreview: (src: string | null) => void };
+type Props = {
+	onPreview: (src: string | null) => void;
+	boundsRef: RefObject<HTMLDivElement | null>;
+};
 
-export default function HeroNavigator({ onPreview }: Props) {
+export default function HeroNavigator({ onPreview, boundsRef }: Props) {
 	const [activeTab, setActiveTab] = useState<Tab>("main");
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [shellHeight, setShellHeight] = useState(COMPACT_HEIGHT);
 	const [nubPos, setNubPos] = useState({ y: 0, opacity: 0 });
 	const updatePreview = useTransitionStore((s) => s.updatePreview);
+	const dragControls = useDragControls();
 
 	const compactRef = useRef<HTMLDivElement>(null);
 	const expandedRef = useRef<HTMLDivElement>(null);
@@ -44,7 +48,7 @@ export default function HeroNavigator({ onPreview }: Props) {
 			return;
 		}
 		if (expandedRef.current) setShellHeight(expandedRef.current.offsetHeight);
-	}, [isExpanded, activeTab]);
+	}, [isExpanded]);
 
 	const handleTabClick = (tab: Tab) => {
 		setActiveTab(tab);
@@ -80,11 +84,29 @@ export default function HeroNavigator({ onPreview }: Props) {
 		}, 80);
 	};
 
-	const items = ITEMS[activeTab];
+	const items = NAV_ITEMS[activeTab];
 
 	return (
-		<div className={styles.wrapper}>
+		<motion.div
+			className={styles.wrapper}
+			drag
+			dragControls={dragControls}
+			dragListener={false}
+			dragMomentum={false}
+			dragElastic={0.06}
+			dragConstraints={boundsRef}
+		>
 			<motion.div className={styles.shell} animate={{ height: shellHeight }} transition={SPRING}>
+				<motion.div
+					className={styles.grip}
+					onPointerDown={(e) => dragControls.start(e)}
+					initial={false}
+					animate={{ height: isExpanded ? 0 : GRIP_HEIGHT, opacity: isExpanded ? 0 : 1 }}
+					transition={NUB_SPRING}
+					aria-hidden
+				>
+					<span className={styles.grip_dots}>⠿⠿⠿</span>
+				</motion.div>
 				<motion.div
 					className={styles.strip}
 					animate={{ x: isExpanded ? -PANEL_WIDTH : 0 }}
@@ -98,6 +120,7 @@ export default function HeroNavigator({ onPreview }: Props) {
 						transition={SPRING}
 					>
 						{TABS.map((tab) => (
+							// biome-ignore lint/a11y/useButtonType: no need
 							<button key={tab} className={styles.compact_row} onClick={() => handleTabClick(tab)}>
 								<div className={styles.row_bg} style={{ backgroundColor: "rgba(50,50,50,0.38)" }} />
 								<span className={styles.row_label}>{TAB_LABELS[tab]}</span>
@@ -111,7 +134,8 @@ export default function HeroNavigator({ onPreview }: Props) {
 							<motion.button
 								key={`bc-${activeTab}`}
 								className={styles.breadcrumb}
-								onClick={handleBack}
+								onTap={handleBack}
+								onPointerDown={(e) => dragControls.start(e)}
 								initial={{ opacity: 0, x: -8 }}
 								animate={{ opacity: 1, x: 0 }}
 								exit={{ opacity: 0, x: -8 }}
@@ -161,6 +185,6 @@ export default function HeroNavigator({ onPreview }: Props) {
 					</div>
 				</motion.div>
 			</motion.div>
-		</div>
+		</motion.div>
 	);
 }

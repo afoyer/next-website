@@ -6,6 +6,7 @@ import { generateClient } from "aws-amplify/data";
 import { AlignJustify, Camera, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { site } from "@/content/site";
 import styles from "./photos.module.scss";
 
 const client = generateClient<Schema>();
@@ -101,6 +102,7 @@ export default function PhotosBrowser() {
 			<div className={styles.mobile_header}>
 				<span className={styles.mobile_label}>{activeLabel}</span>
 				<button
+					type="button"
 					className={styles.mobile_toggle}
 					onClick={() => setMenuOpen((v) => !v)}
 					aria-label={menuOpen ? "Close menu" : "Open photo menu"}
@@ -129,12 +131,13 @@ export default function PhotosBrowser() {
 				)}
 			</AnimatePresence>
 
-			<div className={styles.layout}>
+			{/* lifted above the z-0 shimmer canvas; the fixed overlays already sit higher */}
+			<div className={`${styles.layout} relative z-[1]`}>
 				{/* ── desktop sidebar ─────────────────────────────────────────── */}
 				<aside className={styles.sidebar}>
 					<div className={styles.icons}>
 						<a
-							href="https://www.instagram.com/"
+							href={site.socials.instagram}
 							target="_blank"
 							rel="noopener noreferrer"
 							aria-label="Instagram"
@@ -149,14 +152,20 @@ export default function PhotosBrowser() {
 								strokeLinecap="round"
 								strokeLinejoin="round"
 							>
+								<title>Instagram</title>
 								<rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
 								<circle cx="12" cy="12" r="4.5" />
 								<circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
 							</svg>
 						</a>
-						<button aria-label="Camera roll">
+						<a
+							aria-label="Camera roll"
+							href={site.socials.flickr}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							<Camera size={18} strokeWidth={1.5} />
-						</button>
+						</a>
 					</div>
 					<AlbumList
 						albums={albums}

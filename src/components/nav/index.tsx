@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Logo from "@/app/logo";
-import { NAV_ITEMS, type NavItem, type Tab } from "@/lib/nav-links";
+import { NAV_ITEMS, type NavItem, type Tab } from "@/content/nav";
 import { useTransitionStore } from "@/store/transition";
 import TransitionLink from "../transition-link";
 import { DarkModeToggle } from "./DarkModeToggle";
@@ -16,8 +16,6 @@ import LandingNavHeader from "./landing-nav-header";
 import styles from "./navigation.module.scss";
 
 // ─── data ─────────────────────────────────────────────────────────────────────
-
-const ITEMS = NAV_ITEMS;
 
 export const EASE_SPRING = [0.34, 1.56, 0.64, 1] as [number, number, number, number];
 
@@ -52,7 +50,7 @@ export default function Navigation() {
 		}
 	}, [pathname]);
 	const segment = pathname;
-	const currentItems = ITEMS[activeTab];
+	const currentItems = NAV_ITEMS[activeTab];
 
 	// ── open/close helpers ────────────────────────────────────────────────────
 	const scheduleClose = () => {

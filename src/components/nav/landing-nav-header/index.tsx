@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { site } from "@/content/site";
 import { EASE_SPRING } from "..";
 import { DarkModeToggle } from "../DarkModeToggle";
 
@@ -16,7 +17,7 @@ const charVariants = {
 	},
 	exit: { opacity: 0, x: 6 },
 };
-const initialText = "/landing-page";
+const initialText = site.landingLabel;
 
 export default function LandingNavHeader() {
 	return (

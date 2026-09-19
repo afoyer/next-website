@@ -1,0 +1,46 @@
+/* Everything after the hero. Tokens live here so light/dark is one switch;
+   components read them with Tailwind's `bg-(--p-paper)` etc. */
+
+.details {
+	--p-paper: #f4f3ef;
+	--p-card: #ffffff;
+	--p-ink: #121212;
+	--p-muted: #5f5f5c;
+	--p-line: #dedcd5;
+	--p-accent: #1ed760;
+	--p-accent-ink: #0b3d1e;
+
+	background: var(--p-paper);
+	color: var(--p-ink);
+}
+
+:global([data-theme="dark"]) .details {
+	--p-paper: #242424;
+	--p-card: #1a1a1a;
+	--p-ink: #ededed;
+	--p-muted: #a3a3a3;
+	--p-line: #333333;
+}
+
+.mono {
+	font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Same hard shadow as the hero card. */
+.chip {
+	box-shadow: 4px 5px 2px -1px rgba(0, 0, 0, 0.18);
+}
+
+.chipSmall {
+	box-shadow: 3px 4px 2px -1px rgba(0, 0, 0, 0.18);
+}
+
+/* Reveal targets start hidden so nothing flashes before GSAP picks them up.
+   `motion-safe` keeps them visible when the user prefers reduced motion,
+   matching the matchMedia guard in useReveal. */
+@media (prefers-reduced-motion: no-preference) {
+	.details [data-id="reveal"],
+	.details [data-id="split"] {
+		visibility: hidden;
+	}
+}
