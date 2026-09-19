@@ -1,10 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import CardCols from "./components/card-cols";
-import SwatchCard from "./components/pantone-swatch";
+import { PantonifyDetails } from "./components/details";
 import { PantonifyCard } from "./components/pantonify-card";
-import TextCard from "./components/text-card";
 import { useSpinObserver } from "./hooks/useSpinObserver";
 import styles from "./page.module.scss";
 
@@ -26,7 +24,7 @@ export default function Pantonify() {
 				</section>
 			</div>
 
-			<CardCols />
+			<PantonifyDetails />
 		</div>
 	);
 }

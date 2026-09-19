@@ -5,15 +5,27 @@ import { cn } from "@/lib/utils";
 import { AsciiShimmerRenderer } from "./renderer";
 
 const RESIZE_DEBOUNCE_MS = 150;
+// same breakpoint the transition store uses for isMobile (tailwind `sm`)
+const MOBILE_QUERY = "(max-width: 639px)";
 
 // Viewport-filling ASCII shimmer that follows the pointer. Transparent canvas,
-// ink color from the theme's --foreground. Renders nothing if WebGL2 is missing.
+// ink color from the theme's --foreground. Renders nothing if WebGL2 is missing
+// or on mobile, where the glyphs only compete with the content.
 export function AsciiShimmer({ className }: { className?: string }) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [failed, setFailed] = useState(false);
+	const [mobile, setMobile] = useState(false);
 
 	useEffect(() => {
-		if (failed) return;
+		const mq = window.matchMedia(MOBILE_QUERY);
+		const apply = () => setMobile(mq.matches);
+		apply();
+		mq.addEventListener("change", apply);
+		return () => mq.removeEventListener("change", apply);
+	}, []);
+
+	useEffect(() => {
+		if (failed || mobile) return;
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
@@ -76,9 +88,9 @@ export function AsciiShimmer({ className }: { className?: string }) {
 			canvas.removeEventListener("webglcontextlost", onContextLost);
 			renderer.destroy();
 		};
-	}, [failed]);
+	}, [failed, mobile]);
 
-	if (failed) return null;
+	if (failed || mobile) return null;
 
 	return (
 		<canvas

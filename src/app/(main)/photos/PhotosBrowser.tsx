@@ -131,7 +131,8 @@ export default function PhotosBrowser() {
 				)}
 			</AnimatePresence>
 
-			<div className={styles.layout}>
+			{/* lifted above the z-0 shimmer canvas; the fixed overlays already sit higher */}
+			<div className={`${styles.layout} relative z-[1]`}>
 				{/* ── desktop sidebar ─────────────────────────────────────────── */}
 				<aside className={styles.sidebar}>
 					<div className={styles.icons}>

@@ -44,12 +44,12 @@ const hoverVariant2 = {
 };
 export default function AnimatedHeader() {
 	return (
-		<div className="flex flex-col gap-2 bg-[#0A0A0A] p-4 rounded-2xl shadow-2xl">
+		<div className="flex flex-col gap-2 sm:bg-[#1C1C1C] p-4 rounded-2xl sm:shadow-2xl">
 			<motion.h1
 				initial="initial"
 				animate="animate"
 				variants={variants}
-				className={`helvetica text-xl sm:text-5xl font-[1000] overflow-clip flex relative text-white`}
+				className={`helvetica text-xl sm:text-5xl font-[1000] overflow-clip flex relative sm:text-white`}
 			>
 				{text.split("").map((char, index) => (
 					<motion.div
