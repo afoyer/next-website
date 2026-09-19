@@ -1,0 +1,55 @@
+/* TripJam page tokens — the app's own warm palette, flipped for dark mode.
+   Components read them with Tailwind's `bg-(--t-card)` etc. */
+
+.page {
+	--t-ground: #ede8e1;
+	--t-paper: #f7f5f1;
+	--t-card: #ffffff;
+	--t-ink: #1b1b1b;
+	--t-muted: #6b6762;
+	--t-line: #e4dfd7;
+	--t-dot: #d6d0c6;
+	--t-accent: #e6e7e4;
+	--t-accent-ink: #070a09;
+	--t-forest: #282828;
+
+	background: var(--t-ground);
+	color: var(--t-ink);
+}
+
+:global([data-theme="dark"]) .page {
+	--t-ground: #242424;
+	--t-paper: #1c1c1c;
+	--t-card: #1a1a1a;
+	--t-ink: #ededed;
+	--t-muted: #a3a3a3;
+	--t-line: #333333;
+	--t-dot: #3a3a3a;
+	--t-forest: #ada8a1;
+}
+
+/* Board-style dot grid. */
+.dots {
+	background-color: var(--t-paper);
+	background-image: radial-gradient(var(--t-dot) 1.2px, transparent 1.2px);
+	background-size: 22px 22px;
+}
+
+.dotsSmall {
+	background-color: var(--t-paper);
+	background-image: radial-gradient(var(--t-dot) 1px, transparent 1px);
+	background-size: 14px 14px;
+}
+
+.mono {
+	font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Reveal targets start hidden so nothing flashes before GSAP picks them up;
+   left visible when the user prefers reduced motion (useReveal skips too). */
+@media (prefers-reduced-motion: no-preference) {
+	.page [data-id="reveal"],
+	.page [data-id="split"] {
+		visibility: hidden;
+	}
+}

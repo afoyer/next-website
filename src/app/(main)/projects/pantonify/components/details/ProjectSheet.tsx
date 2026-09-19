@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { pantonify } from "../../content";
 import { Eyebrow } from "./Eyebrow";
-import { useReveal } from "./useReveal";
+import { useReveal } from "@/hooks/useReveal";
 
 const { meta } = pantonify;
 
