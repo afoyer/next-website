@@ -76,11 +76,8 @@ export function ResultCard({ period }: { period: string }) {
 					<Swatch key={song.title} song={song} />
 				))}
 
-				<div className="flex items-center justify-between px-3.5 pb-3.5 pt-1 lg:px-4 lg:pb-4">
+				<div className="flex items-center px-3.5 pb-3.5 pt-1 lg:px-4 lg:pb-4">
 					<span className="text-[8px] font-medium opacity-60 lg:text-[9px]">{card.footer}</span>
-					<span className="flex size-6 items-center justify-center rounded-full bg-linear-to-br from-[#b8b8b8] to-[#e0e0e0] text-[8px] font-black tracking-[-0.06em] shadow-[inset_1px_1px_3px_rgba(0,0,0,0.12)] lg:size-7 lg:text-[9px]">
-						{card.badge}
-					</span>
 				</div>
 			</div>
 		</div>
