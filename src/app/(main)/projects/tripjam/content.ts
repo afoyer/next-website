@@ -34,30 +34,30 @@ export const tripjam = {
 		},
 		{
 			name: "Emily",
-			color: "#c43a7b",
+			color: "#75457F",
 			trail: "M1480 120 C 1200 260, 1020 120, 860 300 S 620 520, 380 470",
 			mobile: true,
 		},
 		{
-			name: "Andrew",
+			name: "Bryan",
 			color: "#4c7dd9",
 			trail: "M-40 640 C 200 700, 380 520, 620 600 S 1000 720, 1240 610",
 			mobile: true,
 		},
 		{
 			name: "Aymeric",
-			color: "#2e9c74",
+			color: "#000",
 			trail: "M1480 700 C 1240 560, 1080 720, 900 640 S 560 700, 240 760",
 		},
-		{ name: "Quynh", color: "#a48be0", trail: "M200 -40 C 260 200, 120 360, 260 480" },
-		{ name: "Vincent", color: "#e0862b", trail: "M1300 860 C 1260 620, 1380 480, 1180 380" },
+		{ name: "Quynh", color: "#ff2400", trail: "M200 -40 C 260 200, 120 360, 260 480" },
+		{ name: "Effie", color: "#2e9c74", trail: "M1300 860 C 1260 620, 1380 480, 1180 380" },
 	] satisfies Cursor[],
 
 	intro: {
-		heading: "Plan it together, on one canvas.",
+		heading: "Multipler Trip Planning.",
 		body: "TripJam is a real-time collaborative trip-planning board. Create a trip, share the room code, and search, drag, vote, sketch and chat together — then let Grok turn the board into a day-by-day itinerary you can share or download as a PDF.",
 		meta: {
-			role: "Developer",
+			role: "Developer | Designer",
 			team: "with Emily J., Quynh V., Anjali K.",
 			sourceUrl: "https://github.com/erenjax/travel-playground",
 			sourceLabel: "View source",
@@ -65,7 +65,7 @@ export const tripjam = {
 	},
 
 	board: {
-		heading: "One board. Everyone in it.",
+		heading: "One canvas. Everyone jumps in.",
 		body: "Every trip is a Liveblocks room. Cards, votes, notes, drawings, stickers, cursors and chat sync the moment anyone touches them.",
 		image: {
 			src: "/images/tripjam/board.png",
@@ -94,7 +94,7 @@ export const tripjam = {
 			{
 				id: "search",
 				title: "Place search",
-				body: "Google Places for hotels, attractions and food near the destination. Drag a result onto the canvas.",
+				body: "Google Places for hotels, attractions and food near the destination. Drag a result onto the canvas for others to see.",
 			},
 			{
 				id: "voting",

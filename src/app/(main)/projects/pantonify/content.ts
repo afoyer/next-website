@@ -41,11 +41,11 @@ export const pantonify = {
 	introHeading:
 		"Inspired by the clean lines of professional color grading, Pantonify offers a fresh take on personal data visualization.",
 	introSubHeading:
-		"The project pivots away from the popular 'retail receipt' aesthetic to focus on a more abstract, design-centric representation of music. The result is a seamless interface that translates top tracks into a vibrant, shareable color story, emphasizing the mood and vibrancy of a user's digital footprint.",
+		"The project finds a new way to represent people's music with their true colors. The result is a seamless interface that translates top tracks into a vibrant, shareable color story, emphasizing the mood and vibrancy of a user's digital footprint.",
 
 	/** Spec table on the project sheet. */
 	meta: {
-		role: "Design & development",
+		role: "Design | Development",
 		year: "2020",
 		stack: "Next.js · next-auth · Spotify Web API · fast-average-color · nearest-pantone",
 		swatch: "1ED760",
@@ -55,7 +55,7 @@ export const pantonify = {
 
 	result: {
 		heading: "Your top tracks, as a swatch book.",
-		body: "Each track becomes a Pantone-style chip: the album art is reduced to a single average color, matched to the closest Pantone code, and stacked into a card that is built to be screenshotted.",
+		body: "Each time scale is represented as a separate swatch card, allowing anyone to share their best hues.",
 		timeRanges: [
 			{ label: "4 weeks", value: "short_term" },
 			{ label: "6 months", value: "medium_term" },
@@ -64,18 +64,17 @@ export const pantonify = {
 		endpoint: "GET /v1/me/top/tracks?time_range=",
 		callout: {
 			label: "Shareable",
-			body: "9 : 19.5 card, sized for a story. One tap exports it as an image.",
+			body: "Pantone swatch type card. One tap exports it as an image.",
 		},
 		/** Labels on the swatch card itself. */
 		card: {
 			eyebrow: "Top tracks",
 			footer: "Made for Aymeric, 31/1/2022",
-			badge: "AF",
 		},
 	},
 
 	process: {
-		heading: "Five steps from login to swatch.",
+		heading: "Process from Spotify to swatch.",
 		body: "Every step is a chip. Read them left to right the way the pipeline runs — auth, data, color, match, render.",
 		steps: [
 			{
@@ -117,8 +116,8 @@ export const pantonify = {
 	},
 
 	pipeline: {
-		heading: "One cover. One color. One code.",
-		body: "Average color is a blunt instrument, and that is the point: it reads the record's overall temperature rather than one loud detail. Pantone matching then gives that temperature a name people already recognise.",
+		heading: "One cover. One color.",
+		body: "Album colors are averaged out, then matched to their nearest Pantone color.",
 		code: [
 			"// per track",
 			"const { hex } = await fac.getColorAsync(cover);",
@@ -131,8 +130,8 @@ export const pantonify = {
 		/** Rows from a real Pantonify export (31/1/2022). */
 		rows: [
 			{
-				artist: "The Weeknd",
-				title: "Sacrifice",
+				artist: "Daft Punk",
+				title: "Random Access Memories",
 				artGradient: "linear-gradient(160deg, #3c3f4d 0%, #14161c 60%, #0b0c10 100%)",
 				hex: "2B2F3B",
 				pantone: "19-4013",
@@ -157,7 +156,7 @@ export const pantonify = {
 	},
 
 	decisions: {
-		heading: "From receipt to swatch.",
+		heading: "From inspiration to swatch.",
 		items: [
 			{
 				title: "Drop the receipt.",
@@ -170,10 +169,6 @@ export const pantonify = {
 			{
 				title: "Code over hex.",
 				body: "The first build printed the raw hex. Swapping in the Pantone code made the card read as a real spec sheet — the same trick the login chip plays with 1ED760.",
-			},
-			{
-				title: "Helvetica, black on white.",
-				body: "Bold caps for the artist, light for the title — the Pantone chip's own hierarchy, so it needed no explanation.",
 			},
 		],
 		mockup: {

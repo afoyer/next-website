@@ -45,7 +45,7 @@ export function BoardSection() {
 						width={board.image.width}
 						height={board.image.height}
 						sizes="(min-width: 1024px) 1100px, 640px"
-						className="block h-[420px] w-full rounded-t-[18px] object-cover object-[8%_30%] shadow-[0_24px_60px_rgba(60,50,40,0.18)] lg:h-[700px] lg:rounded-t-3xl lg:object-[50%_28%] lg:shadow-[0_40px_100px_rgba(60,50,40,0.18)]"
+						className="block h-[420px] w-full rounded-[18px] object-cover object-[8%_30%] shadow-[0_24px_60px_rgba(60,50,40,0.18)] lg:h-[700px] lg:rounded-t-3xl lg:object-[50%_28%] lg:shadow-[0_40px_100px_rgba(60,50,40,0.18)]"
 					/>
 					{board.callouts.map((c) => (
 						<div
