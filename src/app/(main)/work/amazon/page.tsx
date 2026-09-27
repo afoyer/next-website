@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import { MetricOrganizerContent } from "./components/MetricOrganizerContent";
+import { MetricOrganizerTeaser } from "./components/MetricOrganizerTeaser";
 import { OverviewCard } from "./components/OverviewCard";
 import { Placeholder } from "./components/Placeholder";
 import { Section } from "./components/Section";
@@ -36,15 +36,7 @@ export default function AmazonPage() {
 				</Section>
 
 				<Section id="metric-organizer" title="MetricOrganizer">
-					<MetricOrganizerContent />
-				</Section>
-
-				<Section id="projects" title="Projects">
-					{projects.map((project, i) => (
-						<Section key={project.id} id={project.id} title={project.label} level={3}>
-							<Placeholder>{`Placeholder — project ${i + 1} details.`}</Placeholder>
-						</Section>
-					))}
+					<MetricOrganizerTeaser />
 				</Section>
 			</div>
 		</div>
