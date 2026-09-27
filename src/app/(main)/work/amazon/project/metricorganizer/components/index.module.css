@@ -1,0 +1,66 @@
+/* MetricOrganizer story tokens: Cloudscape-flavoured, light by default and
+   flipped for dark mode. Components read them with Tailwind's `bg-(--mo-surface)` etc.
+   Code blocks, query pills and the GraphQL bar keep one look in both themes. */
+
+.page {
+	--mo-line: #d1d5db;
+	--mo-line-strong: #9ca3af;
+	--mo-surface: #ffffff;
+	--mo-surface-2: #f3f4f6;
+	--mo-label: #0f141a;
+	--mo-value: #414d5c;
+	--mo-muted: #5f6b7a;
+	--mo-accent: #0972d3;
+	--mo-accent-ink: #ffffff;
+	--mo-accent-soft: rgb(9 114 211 / 0.1);
+	--mo-accent-text: #0550ae;
+	--mo-fetch-soft: rgb(120 70 200 / 0.14);
+	--mo-fetch-text: #5a2f96;
+	--mo-ok: #037f0c;
+	--mo-cloud-line: #93c5fd;
+	--mo-cloud-bg: rgb(59 130 246 / 0.06);
+	--mo-cloud-text: #0550ae;
+	--mo-site-line: #f0b84a;
+	--mo-site-bg: rgb(230 160 40 / 0.08);
+	--mo-site-text: #8a5300;
+	--mo-shadow: 0 16px 40px rgb(15 20 26 / 0.12);
+
+	--mo-code-bg: #0b0f15;
+	--mo-code-line: #262e3b;
+	--mo-code-ink: #c9d1db;
+	--mo-code-str: #ff8fd6;
+	--mo-code-note: #42b4ff;
+	--mo-code-format: rgb(66 180 255 / 0.14);
+	--mo-code-fetch: rgb(160 110 240 / 0.2);
+	--mo-code-add: rgb(62 207 110 / 0.14);
+	--mo-code-add-ink: #8ff0b4;
+	--mo-code-del: rgb(255 110 110 / 0.12);
+	--mo-code-del-ink: #ffa3a3;
+	--mo-query: #5a2f96;
+	--mo-query-ink: #efe6ff;
+	--mo-gql: #d4008f;
+}
+
+:global([data-theme="dark"]) .page {
+	--mo-line: #3a4352;
+	--mo-line-strong: #5b6576;
+	--mo-surface: #1b2230;
+	--mo-surface-2: #232b38;
+	--mo-label: #e8ecf1;
+	--mo-value: #b3bcc8;
+	--mo-muted: #9aa4b2;
+	--mo-accent: #42b4ff;
+	--mo-accent-ink: #07090d;
+	--mo-accent-soft: rgb(66 180 255 / 0.12);
+	--mo-accent-text: #7fcbff;
+	--mo-fetch-soft: rgb(160 110 240 / 0.24);
+	--mo-fetch-text: #cdb2ff;
+	--mo-ok: #3ecf6e;
+	--mo-cloud-line: #2f5d86;
+	--mo-cloud-bg: rgb(66 140 220 / 0.08);
+	--mo-cloud-text: #7fcbff;
+	--mo-site-line: #7a6330;
+	--mo-site-bg: rgb(230 180 80 / 0.07);
+	--mo-site-text: #f2c46d;
+	--mo-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
+}

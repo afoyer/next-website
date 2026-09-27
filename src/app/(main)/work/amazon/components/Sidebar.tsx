@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMobileBreakpoint } from "@/components/nav/hooks";
 import { cn } from "@/lib/utils";
@@ -16,11 +17,26 @@ const EASE = [0.4, 0, 0.2, 1] as const;
 // Desktop: open panel with a close chevron; collapses to a thin rail with an
 // open chevron. Mobile: off-canvas drawer over a backdrop, toggled from a
 // hamburger in a slim toolbar; closes when a link is tapped.
+//
+// `activeId` lets a page drive the highlight itself (e.g. from scroll position);
+// otherwise it follows the URL hash. `toolbarLabel` replaces `title` in the
+// mobile toolbar.
 
-export function Sidebar({ title, sections }: { title: string; sections: SectionNode[] }) {
+export function Sidebar({
+	title,
+	sections,
+	activeId: controlledActiveId,
+	toolbarLabel,
+}: {
+	title: string;
+	sections: SectionNode[];
+	activeId?: string | null;
+	toolbarLabel?: string;
+}) {
 	const isMobile = useMobileBreakpoint();
 	const [open, setOpen] = useState(true);
-	const [activeId, setActiveId] = useState<string | null>(null);
+	const [hashActiveId, setActiveId] = useState<string | null>(null);
+	const activeId = controlledActiveId !== undefined ? controlledActiveId : hashActiveId;
 
 	// Desktop starts open, mobile starts closed.
 	useEffect(() => {
@@ -55,6 +71,7 @@ export function Sidebar({ title, sections }: { title: string; sections: SectionN
 			title={title}
 			sections={sections}
 			activeId={activeId}
+			collapse={isMobile}
 			onSelect={handleSelect}
 			onClose={() => setOpen(false)}
 			closeIcon={isMobile ? <X size={20} /> : <ChevronLeft size={20} />}
@@ -78,7 +95,7 @@ export function Sidebar({ title, sections }: { title: string; sections: SectionN
 					>
 						<Menu size={20} />
 					</button>
-					<span className="text-sm font-semibold">{title}</span>
+					<span className="text-sm font-semibold">{toolbarLabel ?? title}</span>
 				</div>
 
 				<AnimatePresence>
@@ -163,6 +180,7 @@ function SidebarNav({
 	title,
 	sections,
 	activeId,
+	collapse,
 	onSelect,
 	onClose,
 	closeIcon,
@@ -170,6 +188,7 @@ function SidebarNav({
 	title: string;
 	sections: SectionNode[];
 	activeId: string | null;
+	collapse: boolean;
 	onSelect: (id: string) => void;
 	onClose: () => void;
 	closeIcon: React.ReactNode;
@@ -191,7 +210,13 @@ function SidebarNav({
 			<div className="h-px bg-foreground/15" />
 			<ul className="flex flex-col gap-1 px-7 py-6 text-[15px]">
 				{sections.map((section) => (
-					<SidebarItem key={section.id} node={section} activeId={activeId} onSelect={onSelect} />
+					<SidebarItem
+						key={section.id}
+						node={section}
+						activeId={activeId}
+						collapse={collapse}
+						onSelect={onSelect}
+					/>
 				))}
 			</ul>
 		</nav>
@@ -201,37 +226,51 @@ function SidebarNav({
 function SidebarItem({
 	node,
 	activeId,
+	collapse,
 	onSelect,
 	depth = 0,
 }: {
 	node: SectionNode;
 	activeId: string | null;
+	collapse: boolean;
 	onSelect: (id: string) => void;
 	depth?: number;
 }) {
 	const isActive = activeId === node.id;
+	const containsActive = !isActive && hasDescendant(node, activeId);
+	const href = node.href ?? `#${node.id}`;
+	const children = collapse && node.collapseOnMobile ? undefined : node.children;
+	const linkProps = {
+		"data-id": `nav-${node.id}`,
+		"aria-current": isActive ? ("location" as const) : undefined,
+		onClick: () => onSelect(node.id),
+		className: cn(
+			"block py-1.5 transition-colors",
+			isActive || containsActive
+				? "font-bold text-nav-accent"
+				: "text-foreground/70 hover:text-foreground",
+		),
+		style: { paddingLeft: depth * 24 },
+	};
 	return (
 		<li>
-			<a
-				href={`#${node.id}`}
-				data-id={`nav-${node.id}`}
-				aria-current={isActive ? "location" : undefined}
-				onClick={() => onSelect(node.id)}
-				className={cn(
-					"block py-1.5 transition-colors",
-					isActive ? "font-bold text-nav-accent" : "text-foreground/70 hover:text-foreground",
-				)}
-				style={{ paddingLeft: depth * 24 }}
-			>
-				{node.label}
-			</a>
-			{node.children && (
+			{href.startsWith("/") ? (
+				<Link href={href} {...linkProps}>
+					{node.label}
+				</Link>
+			) : (
+				<a href={href} {...linkProps}>
+					{node.label}
+				</a>
+			)}
+			{children && (
 				<ul className="flex flex-col gap-1">
-					{node.children.map((child) => (
+					{children.map((child) => (
 						<SidebarItem
 							key={child.id}
 							node={child}
 							activeId={activeId}
+							collapse={collapse}
 							onSelect={onSelect}
 							depth={depth + 1}
 						/>
@@ -240,4 +279,9 @@ function SidebarItem({
 			)}
 		</li>
 	);
+}
+
+function hasDescendant(node: SectionNode, id: string | null): boolean {
+	if (!id || !node.children) return false;
+	return node.children.some((child) => child.id === id || hasDescendant(child, id));
 }
